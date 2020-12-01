@@ -74,13 +74,13 @@ class Visual():
                 dict(
                     buttons=list([
                         dict(
-                            args=["type", "scatter"],
-                            label="Line Chart",
+                            args=["type", "bar"],
+                            label="Bar Chart",
                             method="restyle"
                         ),
                         dict(
-                            args=["type", "bar"],
-                            label="Bar Chart",
+                            args=["type", "line"],
+                            label="Line Chart",
                             method="restyle"
                         ),
 
@@ -139,13 +139,13 @@ class Visual():
                 dict(
                     buttons=list([
                         dict(
-                            args=["type", "scatter"],
-                            label="Line Chart",
+                            args=["type", "bar"],
+                            label="Bar Chart",
                             method="restyle"
                         ),
                         dict(
-                            args=["type", "bar"],
-                            label="Bar Chart",
+                            args=["type", "line"],
+                            label="Line Chart",
                             method="restyle"
                         ),
 
