@@ -8,6 +8,8 @@ import numpy as np
 from plotly.subplots import make_subplots
 from statsmodels.tsa.stattools import pacf, acf
 import plotly.express as px
+
+
 class Visual():
     """docstring for"""
     ########################summary pages################################
@@ -57,17 +59,20 @@ class Visual():
         fig.add_trace(go.Bar(x=df['year'],
                              y=df['influenza'],
                              name='Influenza',
-                             marker_color='rgb(55, 83, 109)'
+                             marker_color='rgb(55, 83, 109)',
+                             showlegend=True
                              ))
         fig.add_trace(go.Bar(x=df['year'],
                              y=df['dengue_fever'],
                              name='Dengue Fever',
-                             marker_color='red'
+                             marker_color='red',
+                             showlegend=True
                              ))
         fig.add_trace(go.Bar(x=df['year'],
                              y=df['diarrhoea'],
                              name='Diarrhoea',
-                             marker_color='rgb(26, 118, 255)'
+                             marker_color='rgb(26, 118, 255)',
+                             showlegend=True
                              ))
         fig.update_layout(
             updatemenus=[
@@ -95,7 +100,7 @@ class Visual():
                 ),
 
             ],
-            showlegend=False,
+            showlegend=True,
             xaxis_tickfont_size=14,
             xaxis=dict(
                 title='Year',
@@ -122,17 +127,20 @@ class Visual():
         fig.add_trace(go.Bar(x=df['year'],
                              y=df['influenza_death'],
                              name='Influenza Death',
-                             marker_color='rgb(55, 83, 109)'
+                             marker_color='rgb(55, 83, 109)',
+                             showlegend=True
                              ))
         fig.add_trace(go.Bar(x=df['year'],
                              y=df['dengue_fever_death'],
                              name='Dengue Death',
-                             marker_color='red'
+                             marker_color='red',
+                             showlegend=True
                              ))
         fig.add_trace(go.Bar(x=df['year'],
                              y=df['diarrhoea_death'],
                              name='Diarrhoea Death',
-                             marker_color='rgb(26, 118, 255)'
+                             marker_color='rgb(26, 118, 255)',
+                             showlegend=True
                              ))
         fig.update_layout(
             updatemenus=[
@@ -160,7 +168,12 @@ class Visual():
                 ),
             ],
             xaxis_tickfont_size=14,
-            showlegend=False,
+            legend=dict(
+                yanchor="top",
+                y=1.0,
+                xanchor="right",
+                x=1.02
+            ),
             xaxis=dict(
                 title='Year',
                 titlefont_size=16,
@@ -170,12 +183,6 @@ class Visual():
                 title='Yearly mean',
                 titlefont_size=16,
                 tickfont_size=14,
-            ),
-            legend=dict(
-                x=0,
-                y=1.0,
-                bgcolor='rgba(255, 255, 255, 0)',
-                bordercolor='rgba(255, 255, 255, 0)'
             ),
             template="plotly_white",
             margin={"r": 10, "t": 10, "l": 10, "b": 10},
@@ -251,7 +258,8 @@ class Visual():
             x=df['year'],
             y=df['population'],
             mode='lines+markers', name="Population",
-            marker_symbol='triangle-up', line_color="red"
+            marker_symbol='triangle-up', line_color="red",
+            showlegend=True
         ))
         fig.update_layout(
             updatemenus=[
@@ -537,7 +545,7 @@ class Visual():
                 y=mean[str(disease)],
                 mode='lines',
                 line=dict(color='rgb(31, 119, 180)'),
-                showlegend=False
+                showlegend=True
             ),
             go.Scatter(
                 name='Max ' + str(disease),
@@ -587,6 +595,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            # showlegend=True,
             xaxis_title='Year', template="plotly_white",
             width=450,
             margin=dict(l=50, r=50, b=50, t=50, pad=4),
@@ -600,6 +609,7 @@ class Visual():
     def stat_disease_month(self, df, disease, begin, end):
         fig = go.Figure()
         df = df[df['year'].between(int(begin), int(end))]
+        df = df[df[str(disease)] != 0]
         # get mean
         mean = df.groupby('month').mean().reset_index()
         max_ = df.groupby('month').max().reset_index()
@@ -616,7 +626,7 @@ class Visual():
                 y=mean[str(disease)],
                 mode='lines',
                 line=dict(color='rgb(31, 119, 180)'),
-                showlegend=False
+                showlegend=True
             ),
             go.Scatter(
                 name='Max ' + str(disease),
@@ -665,6 +675,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            # showlegend=True,
             xaxis_title='Month', template="plotly_white",
             width=450,
             margin=dict(l=50, r=50, b=50, t=50, pad=4),
@@ -689,7 +700,7 @@ class Visual():
                 y=mean[str(climate)],
                 mode='lines',
                 line=dict(color='rgb(31, 119, 180)'),
-                showlegend=False
+                showlegend=True
             ),
             go.Scatter(
                 name='Max ' + str(climate),
@@ -739,6 +750,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            # showlegend=True,
             xaxis_title='Year', template="plotly_white",
             margin=dict(l=30, r=30, b=30, t=30),
             yaxis_title=(str(climate.replace('_', ' ')).title()) +
@@ -768,7 +780,7 @@ class Visual():
                 y=mean[str(climate)],
                 mode='lines',
                 line=dict(color='rgb(31, 119, 180)'),
-                showlegend=False
+                showlegend=True
             ),
             go.Scatter(
                 name='Max ' + str(climate),
@@ -929,6 +941,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            showlegend=True,
             template="plotly_white",
             xaxis_title='Month',
             yaxis_title=(str(disease).title()).replace(
@@ -976,6 +989,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            showlegend=True,
             template="plotly_white",
             xaxis_title='Month',   margin=dict(l=30, r=30, b=30, t=30),
             yaxis_title=(str(climate.replace('_', ' ')).title()) +
@@ -1021,6 +1035,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            showlegend=True,
             template="plotly_white",
             xaxis_title='Month',
             yaxis_title=(str(disease.replace('_', ' ')
@@ -1067,6 +1082,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            showlegend=True,
             template="plotly_white",
             xaxis_title='Month', margin=dict(l=30, r=30, b=30, t=30),
             yaxis_title=(str(climate.replace('_', ' ')).title()) +
@@ -1099,7 +1115,7 @@ class Visual():
                           margin=dict(l=20, r=20, t=20, b=20))
         lagJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return lagJson
-    
+
     # seasonal region climate
 
     def region_season_climate(self, df, climate, begin, end):
@@ -1246,7 +1262,7 @@ class Visual():
                          col=2, secondary_y=False)
         fig.update_yaxes(title_text='Sun hour(hour)  mean',
                          row=3, col=2, secondary_y=True)
-        fig.update_layout(height=700, showlegend=False, template="plotly_white", margin=dict(l=30, r=10)
+        fig.update_layout(height=700, showlegend=True, template="plotly_white", margin=dict(l=30, r=10)
                           )
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
@@ -1350,7 +1366,7 @@ class Visual():
                          col=2, secondary_y=False)
         fig.update_yaxes(title_text='Rain(mm)  mean',
                          row=1, col=2, secondary_y=True)
-        fig.update_layout(height=700, showlegend=False, template="plotly_white", margin=dict(l=30, r=10)
+        fig.update_layout(height=700, showlegend=True, template="plotly_white", margin=dict(l=30, r=10)
                           )
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
@@ -1433,7 +1449,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
-            showlegend=False,
+            showlegend=True,
             template="plotly_white",
             margin=dict(l=20, r=20, t=20, b=20),
             xaxis_title='Month',
@@ -1489,7 +1505,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
-            showlegend=False,
+            showlegend=True,
             xaxis_title='Month', template="plotly_white",  margin=dict(l=30, r=30, b=30, t=30),
             yaxis_title=(str(climate.replace('_', ' ')).title()) +
             ' montly mean' + str(dv)
@@ -1508,12 +1524,12 @@ class Visual():
         fig.add_trace(go.Scatter(x=df1['year'], y=df1[str(disease)],
                                  name=str(df1['name'][0]),
                                  mode='lines+markers',
-                                 marker_symbol='triangle-up', showlegend=False
+                                 marker_symbol='triangle-up', showlegend=True
                                  ))
         fig.add_trace(go.Scatter(x=df2['year'], y=df2[str(disease)],
                                  name=str(df2['name'][0]),
                                  mode='lines+markers',
-                                 marker_symbol='star', showlegend=False
+                                 marker_symbol='star', showlegend=True
                                  ))
         fig.update_layout(
             updatemenus=[
@@ -1542,7 +1558,6 @@ class Visual():
             ],
             template="plotly_white",
             margin=dict(l=20, r=20, t=20, b=20),
-            showlegend=False,
             xaxis_title='Year',
             yaxis_title=(str(disease).replace('_', ' ')
                          ).title() + ' yearly mean'
@@ -1600,7 +1615,7 @@ class Visual():
             ],
             template="plotly_white",
             margin=dict(l=20, r=20, t=20, b=20),
-            showlegend=False,
+            showlegend=True,
             xaxis_title='Month',
             yaxis_title=(str(disease).replace('_', ' ')).title()+' monthly mean')
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -1617,10 +1632,10 @@ class Visual():
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(go.Scatter(x=df['date1'], y=df[str(disease)],
                                  mode='lines',
-                                 name=str(disease)), secondary_y=False,)
+                                 name=str(disease),showlegend=True), secondary_y=False,)
         fig.add_trace(go.Scatter(x=df['date1'], y=df[str(disease)+'_death'],
                                  mode='lines',
-                                 name=str(disease)+' death'), secondary_y=True,)
+                                 name=str(disease)+' death',showlegend=True), secondary_y=True,)
 
         fig.update_xaxes(title_text="Year")
         fig.update_yaxes(title_text=((str(disease).replace('_', ' ')).title() +
@@ -1652,6 +1667,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
+            
         )
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
@@ -1700,11 +1716,11 @@ class Visual():
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=df1['year'], y=df1[str(climate)],
                                  name=self.listToString(df1['name'].unique()),
-                                 mode='lines', showlegend=False
+                                 mode='lines', showlegend=True
                                  ))
         fig.add_trace(go.Scatter(x=df2['year'], y=df2[str(climate)],
                                  name=self.listToString(df2['name'].unique()),
-                                 mode='lines', showlegend=False
+                                 mode='lines', showlegend=True
                                  ))
 
         dv = self.title_climate(str(climate))
@@ -1756,11 +1772,11 @@ class Visual():
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=mean1['month'], y=mean1[str(climate)],
                                  name=str(mean1['name'][0]),
-                                 mode='lines', showlegend=False
+                                 mode='lines', showlegend=True
                                  ))
         fig.add_trace(go.Scatter(x=mean2['month'], y=mean2[str(climate)],
                                  name=str(mean2['name'][0]),
-                                 mode='lines', showlegend=False
+                                 mode='lines', showlegend=True
                                  ))
         dv = self.title_climate(str(climate))
 
@@ -1808,7 +1824,8 @@ class Visual():
 
         fig.update_layout(
             xaxis_title=str(df0['name'][0]),
-            yaxis_title=str(df1['name'][0]))
+            yaxis_title=str(df1['name'][0]),
+            showlegend=True)
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
     # visulization linear month compare data
@@ -1827,6 +1844,6 @@ class Visual():
 
         fig.update_layout(
             xaxis_title=str(mean1['name'][0]),
-            yaxis_title=str(mean2['name'][0]))
+            yaxis_title=str(mean2['name'][0]),showlegend=True)
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line

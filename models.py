@@ -128,6 +128,7 @@ class Querydata():
                     from
                     disease'''
         data = pd.read_sql_query(query, conn)
+        data = data[(data['influenza'] !=0) & (data['dengue_fever'] !=0) &(data['diarrhoea'] !=0)]
         data = data.groupby('year').min().reset_index()
         return data
     ############query data disease region and province###
@@ -316,8 +317,8 @@ class Querydata():
                     from disease
                     where province_code =
                     '''+str(province)
-
         data = pd.read_sql_query(query, conn)
+        # data = data[(data['influenza'] !=0) & (data['dengue_fever'] !=0) &(data['diarrhoea'] !=0)]
         data = data.groupby('year').min().reset_index()
         return data
     # disease month province
@@ -438,8 +439,8 @@ class Querydata():
                         inner join disease as b
                         on a.province_code = b.province_code
                         where region= ''' + str(region)
-
         data = pd.read_sql_query(query, conn)
+        # data = data[(data['influenza'] !=0) & (data['dengue_fever'] !=0) &(data['diarrhoea'] !=0)]
         data = data.groupby('year').min().reset_index()
 
         return data
@@ -805,6 +806,7 @@ class Querydata():
         data = pd.read_sql_query(query, conn)
         data['raining_day'] = pd.to_numeric(
             data['raining_day'], errors='coerce')
+            
         data = data.groupby('year').min().reset_index()
         return data
     # read data heatmap climate
