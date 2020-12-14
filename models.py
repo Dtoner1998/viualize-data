@@ -1060,7 +1060,6 @@ class Querydata():
         data = pd.read_sql_query(query, conn)
         data = data.groupby(['year', 'name']).mean().reset_index()
         return data
-
     # get name provice month
 
     def compare_pro_month(self, province):

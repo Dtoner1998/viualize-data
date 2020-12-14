@@ -1,10 +1,9 @@
-from flask import Flask
-import flask
 from flask import Flask, render_template, json, request, url_for, jsonify
 from flask_assets import Bundle, Environment
 from models import Querydata
 from visual import Visual
 import pandas as pd
+
 ################################################
 app = Flask(__name__)
 bundles = {
@@ -38,6 +37,8 @@ assets.register(bundles)
 query = Querydata()
 visual = Visual()
 vn_json = query.read_json_vn()
+
+
 ##################################################
 
 def listToString(s):
@@ -52,13 +53,16 @@ def summary():
     columns = query.get_columns()
     # get columns disease
     disease = columns['disease']
+    disease = disease.drop([1, 3, 5])
     # get columns climate
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
     climate2 = columns['climate2'].dropna()
-    data = query.groupby_disease_year()
-    barJson = visual.bar_chart_disease(data)
-    barJsonDeath = visual.bar_chart_disease_death(data)
+    # data = query.groupby_disease_year()
+    data2 = query.disease_death_rate()
+    print(data2.columns)
+    barJson = visual.bar_chart_disease(data2)
+    barJsonDeath = visual.bar_chart_disease_death(data2)
     return render_template('home.html',
                            disease=disease,
                            climate1=climate1,
@@ -66,6 +70,8 @@ def summary():
                            barJson=barJson,
                            barJsonDeath=barJsonDeath,
                            )
+
+
 # response data home
 
 
@@ -93,25 +99,27 @@ def summary_response():
     return jsonify({'data': render_template('response_home.html',
                                             feature_selected=feature_selected)})
 
+
 # data date1 home
 
 
 @app.route('/date1_home_disease', methods=['GET', 'POST'])
 def date1_home_disease():
-
     disease = request.args['disease']
+    print(disease)
     begin = request.args['begin']
     end = request.args['end']
 
     data = query.read_disease()
     line = visual.line_date1_exp(data, disease, begin, end)
     return line
+
+
 # data disease date1 home region
 
 
 @app.route('/region_date1_disease_home', methods=['GET', 'POST'])
 def region_date1_disease_home():
-
     disease = request.args['disease']
     begin = request.args['begin']
     end = request.args['end']
@@ -120,12 +128,13 @@ def region_date1_disease_home():
     data = query.region_disease_month(region)
     line = visual.region_date1_exp(data, disease, begin, end)
     return line
+
+
 # data date1 climate home
 
 
 @app.route('/date1_home_climate', methods=['GET', 'POST'])
 def date1_home_climate():
-
     climate = request.args['climate']
     begin = request.args['begin']
     end = request.args['end']
@@ -133,12 +142,13 @@ def date1_home_climate():
     data = query.read_climate()
     line = visual.line_date1_climate_exp(data, climate, begin, end)
     return line
+
+
 # region date1 climate
 
 
 @app.route('/region_date1_climate_home', methods=['GET', 'POST'])
 def region_date1_climate_home():
-
     climate = request.args['climate']
     begin = request.args['begin']
     end = request.args['end']
@@ -147,6 +157,8 @@ def region_date1_climate_home():
     data = query.region_climate_month(region)
     line = visual.region_date1_climate_exp(data, climate, begin, end)
     return line
+
+
 # disease ca nuoc heatmap VN
 
 
@@ -160,28 +172,29 @@ def heatmap_vn():
 
     VNJson = visual.heatmap_vn(df, vn_json, disease, begin, end)
     return VNJson
+
+
 # line chart disease ca nuoc
 
 
 @app.route('/line_chart_disease', methods=['GET', 'POST'])
 def line_chart_disease():
-
-    
     disease = request.args['disease']
     begin = request.args['begin']
     end = request.args['end']
     mean = query.groupby_disease_year()
     max_ = query.groupby_disease_max()
     min_ = query.groupby_disease_min()
-    LineJson = visual.stat_disease_year(mean,max_,min_ ,disease, begin, end)
-    
+    LineJson = visual.stat_disease_year(mean, max_, min_, disease, begin, end)
+
     return LineJson
+
+
 # population ca nuoc
 
 
 @app.route('/heatmap_population', methods=['GET', 'POST'])
 def heatmap_population():
-
     data = query.read_heatmap_population()
 
     begin = request.args['begin']
@@ -190,6 +203,8 @@ def heatmap_population():
     VNJson = visual.heatmap_population(data, vn_json, begin, end)
 
     return VNJson
+
+
 # line chart population
 
 
@@ -203,6 +218,8 @@ def line_chart_population():
     line = visual.line_chart_population(data, begin, end)
 
     return line
+
+
 # chart region population
 
 
@@ -215,12 +232,13 @@ def chart_region_population():
     line = visual.chart_region_population(data, begin, end)
 
     return line
+
+
 # ratio disease/population ca nuoc
 
 
 @app.route('/heatmap_ratio', methods=['GET', 'POST'])
 def heatmap_ratio():
-
     data = query.read_heatmap_ratio()
 
     disease = request.args['disease']
@@ -229,12 +247,13 @@ def heatmap_ratio():
 
     VNJson = visual.heatmap_ratio(data, vn_json, disease, begin, end)
     return VNJson
+
+
 # line chart ratio
 
 
 @app.route('/line_chart_ratio', methods=['GET', 'POST'])
 def line_chart_ratio():
-
     data = query.read_heatmap_ratio()
 
     disease = request.args['disease']
@@ -243,6 +262,8 @@ def line_chart_ratio():
 
     line = visual.line_chart_ratio(data, disease, begin, end)
     return line
+
+
 # line chart ratio region
 
 
@@ -256,6 +277,8 @@ def chart_region_ratio():
     line = visual.chart_region_ratio(data, disease, begin, end)
 
     return line
+
+
 # climate ca nuoc
 
 
@@ -287,6 +310,8 @@ def line_chart_climate():
     LineJson = visual.box_chart_feature(data, climate, begin, end)
 
     return LineJson
+
+
 ##########################################################
 
 # line chart disease region tung vung mien
@@ -294,7 +319,6 @@ def line_chart_climate():
 
 @app.route('/line_chart_region_disease', methods=['GET', 'POST'])
 def line_chart_region_disease():
-
     disease = request.args['disease']
     region = request.args['region']
     begin = request.args['begin']
@@ -304,15 +328,16 @@ def line_chart_region_disease():
     max_ = query.max_region_disease(region)
     min_ = query.min_region_disease(region)
 
-    LineJson = visual.stat_disease_year(mean,max_,min_,disease, begin, end)
+    LineJson = visual.stat_disease_year(mean, max_, min_, disease, begin, end)
 
     return LineJson
+
+
 # line chart climate region tung vung mien
 
 
 @app.route('/line_chart_region_climate', methods=['GET', 'POST'])
 def line_chart_region_climate():
-
     climate = request.args['climate']
     begin = request.args['begin']
     end = request.args['end']
@@ -323,12 +348,13 @@ def line_chart_region_climate():
     LineJson = visual.box_chart_feature(data, climate, begin, end)
 
     return LineJson
+
+
 # heatmap climate region tung vung mien
 
 
 @app.route('/heatmap_climate_region', methods=['GET', 'POST'])
 def heatmap_climate_region():
-
     climate = request.args['climate']
     begin = request.args['begin']
     end = request.args['end']
@@ -338,12 +364,13 @@ def heatmap_climate_region():
 
     VNJson = visual.heatmap_climate(data, vn_json, climate, begin, end)
     return VNJson
+
+
 # heatmap disease viet nam
 
 
 @app.route('/heatmap_vn_region', methods=['GET', 'POST'])
 def heatmap_vn_region():
-
     disease = request.args['disease']
     region = request.args['region']
     begin = request.args['begin']
@@ -354,12 +381,13 @@ def heatmap_vn_region():
     LineJson = visual.heatmap_vn_region(data, vn_json, disease, begin, end)
 
     return LineJson
+
+
 # heatmap population
 
 
 @app.route('/heatmap_pop_region', methods=['GET', 'POST'])
 def heatmap_pop_region():
-
     # disease = request.args['disease']
     region = request.args['region']
     begin = request.args['begin']
@@ -370,12 +398,13 @@ def heatmap_pop_region():
     VNJson = visual.heatmap_pop_region(data, vn_json, begin, end)
 
     return VNJson
+
+
 # heatmap ratio
 
 
 @app.route('/heatmap_radio_region', methods=['GET', 'POST'])
 def heatmap_radio_region():
-
     disease = request.args['disease']
     region = request.args['region']
     begin = request.args['begin']
@@ -386,6 +415,7 @@ def heatmap_radio_region():
     VNJson = visual.heatmap_radio_region(data, vn_json, disease, begin, end)
 
     return VNJson
+
 
 ########################### explorer pages#######################
 
@@ -410,6 +440,8 @@ def explore():
                            climate2=climate2,
                            province=zip(province_name, province_code),
                            )
+
+
 # information province response
 
 
@@ -438,6 +470,8 @@ def explore_response(id):
 
     return jsonify({'data': render_template('explore_response.html',
                                             feature_selected=feature_selected)})
+
+
 # information province climate
 
 
@@ -468,6 +502,8 @@ def exp_climate_response(id):
 
     return jsonify({'data': render_template('exp_climate_response.html',
                                             feature_selected=feature_selected)})
+
+
 # region disease response
 
 
@@ -495,6 +531,8 @@ def explore_response_region(id):
 
     return jsonify({'data': render_template('explore_response.html',
                                             feature_selected=feature_selected)})
+
+
 # region climate response
 
 
@@ -525,6 +563,8 @@ def explore_region_climate(id):
 
     return jsonify({'data': render_template('exp_climate_response.html',
                                             feature_selected=feature_selected)})
+
+
 # show chart in here lag correlation disease
 
 # lag disease
@@ -539,6 +579,8 @@ def lag_correlation():
     data = query.lag_query(province)
     lag = visual.lag_correlation(data, disease, begin, end)
     return lag
+
+
 # lag region disease
 
 
@@ -552,6 +594,7 @@ def lag_region_disease():
     lag = visual.lag_correlation(data, disease, begin, end)
     return lag
 
+
 # lag climate correlation
 
 
@@ -564,12 +607,13 @@ def lag_climate_correlation():
     data = query.lag_query_climate(province)
     lag = visual.lag_correlation(data, climate, begin, end)
     return lag
+
+
 # lag correlation region
 
 
 @app.route('/lag_region_climate', methods=['GET', 'POST'])
 def lag_region_climate():
-
     climate = request.args['climate']
     begin = request.args['begin']
     end = request.args['end']
@@ -578,12 +622,13 @@ def lag_region_climate():
     data = query.group_climate_region(region)
     lag = visual.lag_correlation(data, climate, begin, end)
     return lag
+
+
 # line chart disease for year
 
 
 @app.route('/line_province_disease_year', methods=['GET', 'POST'])
 def province_disease_year():
-
     province = request.args['province']
     begin = request.args['begin']
     end = request.args['end']
@@ -596,12 +641,13 @@ def province_disease_year():
     LineJson = visual.stat_disease_year(
         mean, max_, min_, disease, begin, end)
     return LineJson
+
+
 # chart disease month
 
 
 @app.route('/line_province_disease_month', methods=['GET', 'POST'])
 def province_disease_month():
-
     province = request.args['province']
     begin = request.args['begin']
     end = request.args['end']
@@ -611,6 +657,8 @@ def province_disease_month():
 
     LineJson = visual.stat_disease_month(data, disease, begin, end)
     return LineJson
+
+
 # seasonal analyst
 
 
@@ -625,12 +673,13 @@ def seasonal_disease_exp():
     seasonal = visual.seasonal_disease_exp(data, disease, begin, end)
 
     return seasonal
+
+
 # seasonal disease
 
 
 @app.route('/region_seasonal_disease', methods=['GET', 'POST'])
 def region_seasonal_disease():
-
     begin = request.args['begin']
     end = request.args['end']
     disease = request.args['disease']
@@ -640,6 +689,7 @@ def region_seasonal_disease():
 
     linejson = visual.region_season_disease(data, disease, begin, end)
     return linejson
+
 
 # climate year
 
@@ -657,12 +707,13 @@ def province_climate_year():
 
     LineJson = visual.stat_climate_year(mean, max_, min_, climate, begin, end)
     return LineJson
+
+
 # climate month
 
 
 @app.route('/province_climate_month', methods=['GET', 'POST'])
 def province_climate_month():
-
     climate = request.args['climate']
     begin = request.args['begin']
     end = request.args['end']
@@ -671,6 +722,8 @@ def province_climate_month():
 
     LineJson = visual.stat_climate_month(data, climate, begin, end)
     return LineJson
+
+
 # seasonal analyst
 
 
@@ -687,6 +740,8 @@ def seasonal_climate_exp():
     return LineJson
     # region
     # end region
+
+
 # seasonal climate region
 
 
@@ -702,6 +757,7 @@ def region_seasonal_climate():
     linejson = visual.region_season_climate(data, climate, begin, end)
     return linejson
 
+
 # correlation pages explore
 
 
@@ -715,12 +771,13 @@ def corr_disease_exp():
     data = query.climate_disease_exp(province)
     corr = visual.corr_disease_exp(data, disease, begin, end)
     return corr
+
+
 # correlation region disease
 
 
 @app.route('/region_corr_disease_exp', methods=['GET', 'POST'])
 def region_corr_disease_exp():
-
     data = query.climate_disease()
     disease = request.args.getlist('disease[]')
     begin = request.args['begin']
@@ -730,6 +787,8 @@ def region_corr_disease_exp():
     data = query.region_climate_disease(region)
     corr = visual.corr_disease_exp(data, disease, begin, end)
     return corr
+
+
 # line chart date1
 
 
@@ -742,12 +801,13 @@ def line_date1_exp():
     data = query.disease_month_exp(provice)
     line = visual.line_date1_exp(data, disease, begin, end)
     return line
+
+
 # date1 region
 
 
 @app.route('/date1_region_disease', methods=['GET', 'POST'])
 def date1_region_disease():
-
     disease = request.args['disease']
     begin = request.args['begin']
     end = request.args['end']
@@ -756,6 +816,7 @@ def date1_region_disease():
     data = query.region_disease_month(region)
     line = visual.region_date1_exp(data, disease, begin, end)
     return line
+
 
 # line chart climate date1
 
@@ -770,12 +831,12 @@ def line_date1_climate_exp():
     line = visual.line_date1_climate_exp(data, climate, begin, end)
     return line
 
+
 # date1 climate
 
 
 @app.route('/region_date1_climate_exp', methods=['GET', 'POST'])
 def region_date1_climate_exp():
-
     # data = query.climate_disease()
     climate = request.args['climate']
     begin = request.args['begin']
@@ -785,13 +846,14 @@ def region_date1_climate_exp():
     data = query.region_climate_month(region)
     line = visual.region_date1_climate_exp(data, climate, begin, end)
     return line
+
+
 ###############################region id province Viet Nam ###################
 # region disease year
 
 
 @app.route('/region_disease_year', methods=['GET', 'POST'])
 def region_disease_year():
-
     begin = request.args['begin']
     end = request.args['end']
     disease = request.args['disease']
@@ -804,12 +866,13 @@ def region_disease_year():
     linejson = visual.stat_disease_year(
         mean, max_, min_, disease, begin, end)
     return linejson
+
+
 # region disease month
 
 
 @app.route('/region_disease_month', methods=['GET', 'POST'])
 def region_disease_month():
-
     begin = request.args['begin']
     end = request.args['end']
     disease = request.args['disease']
@@ -819,12 +882,13 @@ def region_disease_month():
 
     linejson = visual.stat_disease_month(data, disease, begin, end)
     return linejson
+
+
 # region climate
 
 
 @app.route('/region_climate_year', methods=['GET', 'POST'])
 def region_climate_year():
-
     begin = request.args['begin']
     end = request.args['end']
     climate = request.args['climate']
@@ -836,12 +900,13 @@ def region_climate_year():
 
     linejson = visual.stat_climate_year(mean, max_, min_, climate, begin, end)
     return linejson
+
+
 # region climate month
 
 
 @app.route('/region_climate_month', methods=['GET', 'POST'])
 def region_climate_month():
-
     begin = request.args['begin']
     end = request.args['end']
     climate = request.args['climate']
@@ -851,6 +916,7 @@ def region_climate_month():
 
     linejson = visual.stat_climate_month(data, climate, begin, end)
     return linejson
+
 
 ############################# comparation factor##############################
 
@@ -872,6 +938,7 @@ def compare():
                            climate1=climate1, climate2=climate2,
                            province=zip(province_name, province_code)
                            )
+
 
 # population response
 
@@ -900,6 +967,7 @@ def popu_response(id, id0):
     return jsonify({'data': render_template('popu_response.html',
                                             feature_selected=feature_selected)})
 
+
 # compare factor
 
 
@@ -922,6 +990,8 @@ def factor():
                            province=zip(province_name, province_code)
 
                            )
+
+
 # show subplotly in here
 
 
@@ -933,6 +1003,8 @@ def subplotly():
     end = request.args['end']
     sub = visual.compare_factor(data, disease, begin, end)
     return sub
+
+
 # show subplotly year in here
 
 
@@ -943,8 +1015,10 @@ def subplotly_year():
     begin = request.args['begin']
     end = request.args['end']
     y_m = request.args['y_m']
-    sub = visual.compare_factor_year(data, disease,y_m,begin, end)
+    sub = visual.compare_factor_year(data, disease, y_m, begin, end)
     return sub
+
+
 # correlation
 
 
@@ -956,6 +1030,8 @@ def corr_factor():
     end = request.args['end']
     sub = visual.corr_factor(data, disease, begin, end)
     return sub
+
+
 ###########################comparation two province disease#############################
 
 
@@ -971,6 +1047,8 @@ def compare_province():
 
     line = visual.compare_disease_year(df1, df2, disease, begin, end)
     return line
+
+
 # compare province month disease
 
 
@@ -986,6 +1064,8 @@ def compare_pro_month():
 
     line = visual.compare_disease_month(df1, df2, disease, begin, end)
     return line
+
+
 # comparation two province climate
 
 
@@ -1001,6 +1081,8 @@ def compare_pro_climate():
 
     line = visual.compare_climate_province(df1, df2, climate, begin, end)
     return line
+
+
 # compare two province climate month
 
 
@@ -1016,6 +1098,8 @@ def compare_pro_climate_month():
 
     line = visual.compare_climate_province_month(df1, df2, climate, begin, end)
     return line
+
+
 # pie chart in here
 
 
@@ -1031,6 +1115,8 @@ def pie_disease_year():
 
     pie = visual.pie_chart_disease(df1, df2, disease, begin, end)
     return pie
+
+
 # climate chart in here
 
 
@@ -1046,6 +1132,8 @@ def pie_climate_month():
 
     pie = visual.pie_chart_climate(df1, df2, climate, begin, end)
     return pie
+
+
 # compare disease
 
 
@@ -1057,6 +1145,7 @@ def compare_disease():
     data = query.read_disease()
     line = visual.compare_disease(data, disease, begin, end)
     return line
+
 
 # compare 2 province date1
 
@@ -1072,6 +1161,8 @@ def comp_date1_disease():
     df2 = query.compare_pro_month(province2)
     line = visual.compare_disease_date1(df1, df2, disease, begin, end)
     return line
+
+
 # line chart climate date1
 
 
@@ -1086,6 +1177,8 @@ def comp_date1_climate():
     df2 = query.compare_pro_climate_month(province2)
     line = visual.compare_climate_date1(df1, df2, climate, begin, end)
     return line
+
+
 #  linear chart disease
 
 
@@ -1100,6 +1193,8 @@ def linear_comp_year():
     df2 = query.compare_province(province2)
     line = visual.linear_comp_year(df1, df2, disease, begin, end)
     return line
+
+
 #  linear chart disease  month
 
 
@@ -1114,6 +1209,8 @@ def linear_comp_month():
     df2 = query.compare_pro_month(province2)
     line = visual.linear_comp_month(df1, df2, disease, begin, end)
     return line
+
+
 # linear climate year
 
 
@@ -1128,6 +1225,8 @@ def linear_climate_year():
     df2 = query.compare_pro_climate(province2)
     line = visual.linear_comp_year(df1, df2, climate, begin, end)
     return line
+
+
 # linear climate month
 
 
