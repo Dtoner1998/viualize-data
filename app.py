@@ -1,5 +1,3 @@
-from flask import Flask
-import flask
 from flask import Flask, render_template, json, request, url_for, jsonify
 from flask_assets import Bundle, Environment
 from models import Querydata
@@ -52,13 +50,16 @@ def summary():
     columns = query.get_columns()
     # get columns disease
     disease = columns['disease']
+    disease=disease.drop([1,3,5])
     # get columns climate
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
     climate2 = columns['climate2'].dropna()
-    data = query.groupby_disease_year()
-    barJson = visual.bar_chart_disease(data)
-    barJsonDeath = visual.bar_chart_disease_death(data)
+    #data = query.groupby_disease_year()
+    data2=query.disease_death_rate()
+    #print(data2.columns)
+    barJson = visual.bar_chart_disease(data2)
+    barJsonDeath = visual.bar_chart_disease_death(data2)
     return render_template('home.html',
                            disease=disease,
                            climate1=climate1,
@@ -196,6 +197,7 @@ def heatmap_population():
 @app.route('/line_chart_population', methods=['GET', 'POST'])
 def line_chart_population():
     data = query.read_heatmap_population()
+    data = data.groupby(["date1", "province_name"], as_index=False).first()
 
     begin = request.args['begin']
     end = request.args['end']

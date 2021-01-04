@@ -101,6 +101,17 @@ class Querydata():
         return data
     # read data mean  disease groupby
 
+    def disease_death_rate(self):
+        query = '''select a.year, a.month, a.influenza_death, a.influenza,
+                a.dengue_fever_death, a.dengue_fever, a.diarrhoea_death, a.diarrhoea, b.date1, b.population, a.province_code
+                from disease as a
+                inner join
+                population as b
+                on a.province_code = b.province_code AND 
+                a.date1 = b.date1'''
+        data = pd.read_sql_query(query, conn)
+        return data
+
     def groupby_disease_year(self):
         query = ''' select year,month,influenza,
                     influenza_death,dengue_fever_death,dengue_fever,

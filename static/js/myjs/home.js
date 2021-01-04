@@ -84,10 +84,17 @@ $(document).ready(function () {
 
     if (this.checked) {
       disease_array.push(this.value);
+      var x=this.value;
+      var diseaseDeath=x.concat("_death");
+      disease_array.push(diseaseDeath);
       run_disease_array(disease_array);
     } else {
+      var x=this.value;
+      var diseaseDeath=x.concat("_death");
       unchecked_disease(this.value);
+      unchecked_disease(diseaseDeath);
       disease_array.pop(this.value);
+      disease_array.pop(diseaseDeath);
     }
   });
   // check nhieu yeu to
