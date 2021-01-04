@@ -11,4 +11,4 @@ class Model():
 
         conn = engine.connect()
 
-        return conn 
+        return conn
