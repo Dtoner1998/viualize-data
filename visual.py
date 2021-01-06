@@ -414,11 +414,11 @@ class Visual():
         fig.add_trace(go.Scatter(
             x=df['year'],
             y=(df[str(disease)]),
-            mode='lines+markers', marker_symbol='triangle-up', line_color="red", name=(str(disease.replace('_', ' '))).title()))
+            mode='lines', line_color="red", name=(str(disease.replace('_', ' '))).title()))
         fig.add_trace(go.Scatter(
             x=df['year'],
             y=(df[str(disease+"_death")]),
-            mode='lines+markers', marker_symbol='triangle-up', line_color="blue", name=(str(disease.replace('_', ' '))).title()+" death"))
+            mode='lines', line_color="blue", name=(str(disease.replace('_', ' '))).title()+" death"))
         fig.update_layout(
             updatemenus=[
                 dict(

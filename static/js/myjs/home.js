@@ -463,8 +463,8 @@ $(document).ready(function () {
         </div>
     </div>
 </div>
-<!-- death chart + heatmap-->
-   <div class="container-fluid">
+<div class="product-sales-area mg-tb-30" id=diseaseDeath_${name}>
+    <div class="container-fluid">
         <!-- chart in here  -->
         <div class="row">
             <!-- col 1  -->
@@ -514,7 +514,7 @@ $(document).ready(function () {
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="caption pro-sl-hd">
-                                    <span class="caption-subject" id=diseaseDeath_${order}><b></b></span>
+                                    <span class="caption-subject" id=disease_${order}><b></b></span>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -650,7 +650,7 @@ $(document).ready(function () {
 <!-- end line chart month  -->
 
 <!-- cases and deaths by year  -->
-<div class="product-sales-area mg-tb-30" id=disease_month_home_${name}>
+<div class="product-sales-area mg-tb-30" id=disease_casesAndDeaths_home_${name}>
     <div class="container-fluid">
         <!-- chart in here  -->
         <div class="row">
@@ -1037,6 +1037,9 @@ $(document).ready(function () {
     $(`#heatmapdisease_${name}`).remove();
     $(`#disease_heatmap_${name}`).remove();
     $(`#disease_date1_home_${name}`).remove();
+    $(`#disease_month_home_${name}`).remove();
+    $(`#disease_casesAndDeaths_home_${name}`).remove();
+    $(`#diseaseDeath_${name}`).remove();
     $(`#ruler1_${name}`).attr('class', 'my-4 hidden');
   };
   // create function delete climate then uncheckbox
