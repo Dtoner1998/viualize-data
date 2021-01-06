@@ -84,17 +84,10 @@ $(document).ready(function () {
 
     if (this.checked) {
       disease_array.push(this.value);
-      var x=this.value;
-      var diseaseDeath=x.concat("_death");
-      disease_array.push(diseaseDeath);
       run_disease_array(disease_array);
     } else {
-      var x=this.value;
-      var diseaseDeath=x.concat("_death");
       unchecked_disease(this.value);
-      unchecked_disease(diseaseDeath);
       disease_array.pop(this.value);
-      disease_array.pop(diseaseDeath);
     }
   });
   // check nhieu yeu to
@@ -189,6 +182,7 @@ $(document).ready(function () {
   function chart_disease(begin, end, name, order) {
 
     create_tag_chart_disease(order, name);
+    nameDeath=name+"_death";
     $.ajax({
       url: "/line_chart_disease",
       type: "GET",
@@ -203,6 +197,23 @@ $(document).ready(function () {
         Plotly.newPlot(`linechart_disease_${order}`, data, {});
         // incidence and death rates of influenza by monthly mean, Việt Nam,
         $(`#disease_line_${order}`).html(`Number case of ${name.split('_').join('  ')}
+          by yearly mean in Viet Nam from ${begin}-${end}`);
+      },
+    });
+    $.ajax({
+      url: "/line_chart_disease",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`linechart_diseaseDeath_${order}`, data, {});
+        // incidence and death rates of influenza by monthly mean, Việt Nam,
+        $(`#diseaseDeath_line_${order}`).html(`Number case of ${nameDeath.split('_').join('  ')}
           by yearly mean in Viet Nam from ${begin}-${end}`);
       },
     });
@@ -222,6 +233,24 @@ $(document).ready(function () {
         //Distribution of  influenza incidence rate by monthly mean in Viet
         // Nam, 1997-2016
         $(`#disease_${order}`).html(`Distribution of ${name.split('_').join('  ')}
+         by yearly mean in Viet Nam from ${begin}-${end}`);
+      },
+    });
+    $.ajax({
+      url: "/heatmap_vn",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`heatmapvn_death_${order}`, data, {});
+        //Distribution of  influenza incidence rate by monthly mean in Viet
+        // Nam, 1997-2016
+        $(`#diseaseDeath_${order}`).html(`Distribution of ${nameDeath.split('_').join('  ')}
          by yearly mean in Viet Nam from ${begin}-${end}`);
       },
     });
@@ -308,6 +337,39 @@ $(document).ready(function () {
         Plotly.newPlot(`linechart_date1_${order}`, data, {});
         // monthly mean influenza incidence
         $(`#title_date1_home_${order}`).html(`Monthly mean ${name.split('_').join('  ')}  in Viet Nam from ${begin}-${end}`);
+      },
+    });
+    // /month_home_disease
+    $.ajax({
+      url: "/month_home_disease",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: name,
+        begin: begin,
+        end: end,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`linechart_month_${order}`, data, {});
+        // monthly number of influenza incidence
+        $(`#title_month_home_${order}`).html(`Monthly number of cases of ${name.split('_').join('  ')}  in Viet Nam from ${begin}-${end}`);
+      },
+    });
+       $.ajax({
+      url: "/casesAndDeaths",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: name,
+        begin: begin,
+        end: end,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`linechart_casesAndDeaths_${order}`, data, {});
+        // monthly number of influenza incidence
+        $(`#title_casesAndDeaths_home_${order}`).html(`Yearly number of cases/deaths of ${name.split('_').join('  ')}  in Viet Nam from ${begin}-${end}`);
       },
     });
   };
@@ -401,6 +463,93 @@ $(document).ready(function () {
         </div>
     </div>
 </div>
+<!-- death chart + heatmap-->
+   <div class="container-fluid">
+        <!-- chart in here  -->
+        <div class="row">
+            <!-- col 1  -->
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-sales-chart">
+                    <div class="portlet-title">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="caption pro-sl-hd">
+                                    <span class="caption-subject" id=diseaseDeath_line_${order}><b></b></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="actions graph-rp graph-rp-dl">
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Select region Viet Nam
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Region Viet Nam</div>
+                                            <hr>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='3'
+                                                data-disease="${name}">Viet Nam</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='0'
+                                                data-disease="${name}">North</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='1'
+                                                data-disease="${name}">Central</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='2'
+                                                data-disease="${name}">South</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- chart in here -->
+                    <div id="linechart_diseaseDeath_${order}" class="linechart_diseaseDeath_${order}"
+                        style="height: auto;width:auto"></div>
+                </div>
+            </div>
+            <!-- col 2  -->
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-sales-chart">
+                    <div class="portlet-title">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="caption pro-sl-hd">
+                                    <span class="caption-subject" id=diseaseDeath_${order}><b></b></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="actions graph-rp graph-rp-dl">
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Select region Viet Nam
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Region Viet Nam</div>
+                                            <hr>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='3'
+                                                data-disease="${name}">Viet Nam</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='0'
+                                                data-disease="${name}">North</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='1'
+                                                data-disease="${name}">Central</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='2'
+                                                data-disease="${name}">South</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- chart in here  -->
+                    <div id="heatmapvn_death_${order}" class="heatmapvn_death_${order}" style="height: auto;width:auto"></div>
+                </div>
+            </div>
+            <!-- end col 2  -->
+        </div>
+    </div>
+</div>
 <!-- lline chart date1  -->
 <div class="product-sales-area mg-tb-30" id=disease_date1_home_${name}>
     <div class="container-fluid">
@@ -449,7 +598,105 @@ $(document).ready(function () {
         </div>
     </div>
 </div>
-<!-- end line chart date1  -->
+<!-- lline chart month  -->
+<div class="product-sales-area mg-tb-30" id=disease_month_home_${name}>
+    <div class="container-fluid">
+        <!-- chart in here  -->
+        <div class="row">
+            <!-- col 1  -->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-sales-chart">
+                    <div class="portlet-title">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="caption pro-sl-hd">
+                                    <span class="caption-subject" id=title_month_home_${order}><b></b></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="actions graph-rp graph-rp-dl">
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Select region Viet Nam
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Region Viet Nam</div>
+                                            <hr>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='3'
+                                                data-disease="${name}">Viet Nam</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='0'
+                                                data-disease="${name}">North</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='1'
+                                                data-disease="${name}">Central</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='2'
+                                                data-disease="${name}">South</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- chart in here -->
+                    <div id="linechart_month_${order}" class="linechart_month_${order}"
+                        style="height: auto;width:auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- end line chart month  -->
+
+<!-- cases and deaths by year  -->
+<div class="product-sales-area mg-tb-30" id=disease_month_home_${name}>
+    <div class="container-fluid">
+        <!-- chart in here  -->
+        <div class="row">
+            <!-- col 1  -->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-sales-chart">
+                    <div class="portlet-title">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="caption pro-sl-hd">
+                                    <span class="caption-subject" id=title_casesAndDeaths_home_${order}><b></b></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="actions graph-rp graph-rp-dl">
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Select region Viet Nam
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Region Viet Nam</div>
+                                            <hr>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='3'
+                                                data-disease="${name}">Viet Nam</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='0'
+                                                data-disease="${name}">North</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='1'
+                                                data-disease="${name}">Central</a>
+                                            <a class="dropdown-item click_disease_region_${order}" data-value='2'
+                                                data-disease="${name}">South</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- chart in here -->
+                    <div id="linechart_casesAndDeaths_${order}" class="linechart_casesAndDeaths_${order}"
+                        style="height: auto;width:auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!--  chart  disease2-->
 <div class="library-book-area mg-t-30" id=heatmapdisease_${name}>
     <div class="container-fluid">

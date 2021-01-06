@@ -110,6 +110,18 @@ def date1_home_disease():
 # data disease date1 home region
 
 
+@app.route('/month_home_disease', methods=['GET', 'POST'])
+def month_home_disease():
+
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+
+    data = query.read_disease()
+    line = visual.line_month_disease(data, disease, begin, end)
+    return line
+
+
 @app.route('/region_date1_disease_home', methods=['GET', 'POST'])
 def region_date1_disease_home():
 
@@ -179,6 +191,19 @@ def line_chart_disease():
     return LineJson
 # population ca nuoc
 
+@app.route('/casesAndDeaths', methods=['GET', 'POST'])
+def cases_and_deaths_disease():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    df=query.disease_death_rate()
+    print(list(df.columns))
+    LineJson = visual.casesAndDeathsChart(df, disease, begin, end)
+
+    return LineJson
+
+
+# population ca nuoc
 
 @app.route('/heatmap_population', methods=['GET', 'POST'])
 def heatmap_population():
@@ -436,7 +461,7 @@ def explore_response(id):
 
         }
     )
-    print(feature_selected)
+    #print(feature_selected)
 
     return jsonify({'data': render_template('explore_response.html',
                                             feature_selected=feature_selected)})
