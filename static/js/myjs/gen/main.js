@@ -176,6 +176,21 @@ $(document).ready(function () {
         $(`#title_climate_home_${order}`).html(`Monthly mean ${name.split('_').join('  ')} in Viet Nam from ${begin}-${end}`);
       },
     });
+    $.ajax({
+      url: "/line_monthly_climate",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        climate: name,
+        begin: begin,
+        end: end,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`monthly_linechart_climate_home_${order}`, data, {});
+        $(`#title_climate_monthlyHome_${order}`).html(`Yearly mean ${name.split('_').join('  ')} in Viet Nam from ${begin}-${end} by month`);
+      },
+    });
     create_tag_chart_climate(order, name);
   }
   // request to get feature data disease
@@ -1023,6 +1038,54 @@ $(document).ready(function () {
             </div>
         </div>
     </div>
+        <!-- show chart monthly climate in here  -->
+    <div class="product-sales-area mg-tb-30" id=monthly_climate_date1_home_${name}>
+        <div class="container-fluid">
+            <!-- show chart climate in here  -->
+            <div class="row">
+                <!-- begin col 1  -->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id=title_climate_monthlyHome_${order}><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+                                        <div class="dropdown no-arrow">
+                                            <a class="dropdown-toggle" role="button" id="dropdownMenuLink"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Select region Viet Nam
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                                aria-labelledby="dropdownMenuLink">
+                                                <div class="dropdown-header">Region Viet Nam</div>
+                                                <hr>
+                                                <a class="dropdown-item click_climate_region_${order}" data-value='3'
+                                                    data-climate="${name}">Viet Nam</a>
+                                                <a class="dropdown-item click_climate_region_${order}" data-value='0'
+                                                    data-climate="${name}">North</a>
+                                                <a class="dropdown-item click_climate_region_${order}" data-value='1'
+                                                    data-climate="${name}">Central</a>
+                                                <a class="dropdown-item click_climate_region_${order}" data-value='2'
+                                                    data-climate="${name}">South</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- chart in here -->
+                        <div id="monthly_linechart_climate_home_${order}" class="monthly_linechart_climate_home_${order}"
+                            style="height: auto;width:auto"></div>
+                    </div>
+                </div >
+            </div>
+        </div>
+    </div>
     <hr class="my-4" id=ruler2_${name}>
     `;
     $(".climate_chart").append(html);
@@ -1046,6 +1109,7 @@ $(document).ready(function () {
   function unchecked_climate(name) {
     $(`#climate_${name}`).remove();
     $(`#climate_date1_home_${name}`).remove();
+    $(`#monthly_climate_date1_home_${name}`).remove();
     $(`#ruler2_${name}`).attr('class', 'my-4 hidden');
   };
   // tag a href

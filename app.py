@@ -149,6 +149,17 @@ def date1_home_climate():
 # region date1 climate
 
 
+@app.route('/line_monthly_climate', methods=['GET', 'POST'])
+def line_monthly_climate():
+    climate = request.args['climate']
+    begin = request.args['begin']
+    end = request.args['end']
+
+    data=query.read_climate()
+    line = visual.line_monthly_climate(data, climate, begin, end)
+    return line
+
+
 @app.route('/region_date1_climate_home', methods=['GET', 'POST'])
 def region_date1_climate_home():
 

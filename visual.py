@@ -1014,10 +1014,10 @@ class Visual():
 
     def line_date1_exp(self, df, disease, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
-        dfMean=(df.groupby(['date1', "province_code"], as_index=False).first())
+        df=(df.groupby(['date1', "province_code"], as_index=False).first())
         #print(list(df.columns))
         # get mean
-        dfMean = dfMean.groupby(['date1']).mean().reset_index()
+        dfMean = df.groupby(['date1']).mean().reset_index()
         dfMax = df.groupby(['date1']).max().reset_index()
         dfMin = df.groupby(['date1']).min().reset_index()
 
@@ -1096,6 +1096,35 @@ class Visual():
         )
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
+
+    def line_monthly_climate(self, df, climate, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df=(df.groupby(['date1', "province_code"], as_index=False).first())
+        #print(list(df.columns))
+        # get mean
+        dfMean = df.groupby(['year', 'month']).mean().reset_index()
+        years = [y for y in range(int(begin), int(end) + 1)]
+        # Create figure with secondary y-axis
+        fig = go.Figure()
+        for year in years:
+            df = dfMean.loc[(dfMean['year'] == int(year))]
+            fig.add_trace(go.Scatter(x=df['month'], y=df[str(climate)],
+                                     mode='lines',
+                                     marker_symbol='triangle-left-open',
+                                     marker=dict(size=10),
+                                     name=str(year),
+                                     ))
+        dv = self.title_climate(str(climate))
+        fig.update_layout(
+            showlegend=True,
+            template="plotly_white",
+            xaxis_title='Month',
+            yaxis_title=(str(climate).title()).replace(
+                '_', ' ') + ' monthly mean'
+        )
+        line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return line
+
 
     # date1 in climate
 
