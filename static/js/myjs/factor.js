@@ -89,12 +89,19 @@ $(document).ready(function () {
         }
         chart_subplotly(disease);
     });
+    var year_month2 = 'year'
+    $('.radioBtnClass1').click(function () {
+        if (this.checked) {
+            year_month2 = $(this).val();
+        }
+        chart_subplotly(disease);
+    });
     function chart_subplotly(disease) {
-        // check time 
+        // check time
         var begin = $(".begin").val();
         var end = $(".end").val();
 
-        // subplotly year 
+        // subplotly year
         $.ajax({
             url: "/subplotly_year",
             type: "GET",
@@ -108,7 +115,25 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 Plotly.newPlot(`subplotly_y`, data, {});
-                $(`#sub_title_year`).html(`Compare  ${disease.split('_').join('  ')} with climate by ${year_month}ly mean Viet Nam from ${begin}-${end}`);
+                $(`#sub_title_year`).html(`Compare  ${disease.split('_').join('  ')} with climate by ${year_month2}ly cases Viet Nam from ${begin}-${end}`);
+
+            },
+        })
+
+        //bubble subplot
+        $.ajax({
+            url: "/subplotly_bubble_year",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                begin: begin,
+                end: end,
+                y_m: year_month2
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`bubble_plot`, data, {});
+                $(`#sub_title_bubble`).html(`Total number of Influenza, Dengue Fever and Diahhroea cases per ${year_month2} compared with mean climate Viet Nam from ${begin}-${end}`);
 
             },
         })
@@ -128,7 +153,7 @@ $(document).ready(function () {
                 $(`#sub_corr_title`).html(`Correlation of ${disease.split('_').join('  ')} yearly mean Viet Nam from ${begin}-${end}`);
             },
         });
-        // chart compare disease 
+        // chart compare disease
         $.ajax({
             url: "/compare_disease",
             type: "GET",
@@ -141,7 +166,41 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 Plotly.newPlot(`comp_disease`, data, {});
-                $(`#comp_disease_title`).html(`Incidence and death of ${disease.split('_').join('  ')} by monthly mean Viet Nam from ${begin}-${end}`);
+                $(`#comp_disease_title`).html(`Incidence and death of ${disease.split('_').join('  ')} by monthly total Viet Nam from ${begin}-${end}`);
+
+            },
+        });
+        // chart compare disease bar chart
+        $.ajax({
+            url: "/compare_disease_box",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                disease: disease,
+                begin: begin,
+                end: end,
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`comp_bar`, data, {});
+                $(`#comp_disease_bar_title`).html(`Bar chart of total ${disease.split('_').join('  ')} cases per year for each province`);
+
+            },
+        });
+        // chart compare disease boxplot
+        $.ajax({
+            url: "/compare_disease_boxplot",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                disease: disease,
+                begin: begin,
+                end: end,
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`comp_boxplot`, data, {});
+                $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${disease.split('_').join('  ')} cases per year for each province`);
 
             },
         });

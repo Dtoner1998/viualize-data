@@ -46,8 +46,8 @@
               <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="caption pro-sl-hd">
                   <span class="caption-subject" id="title_disease_bar">
-                    Number of cases of influenza,diarrhoea and dengue fever
-                    per 100,000 in Viet Nam from 1997-2019
+                    Total number of cases of influenza,diarrhoea and dengue fever
+                       in Viet Nam from 1997-2019
                   </span>
                 </div>
               </div>
@@ -75,8 +75,8 @@
               <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="caption pro-sl-hd">
                   <span class="caption-subject">
-                  Number of deaths due to influenza,diarrhoea and dengue fever
-                    per 100,000 in Viet Nam from 1997-2019</span>
+                  Total number of deaths from influenza,diarrhoea and dengue fever
+                      in Viet Nam from 1997-2019</span>
                 </div>
               </div>
             </div>
@@ -87,6 +87,69 @@
             <script>
               var graphs = $("#data_disease_dath").data('value');
               Plotly.plot('disease_death_summ', graphs, {});
+            </script>
+
+          </div>
+        </div>
+      </div>
+      <!-- end col 2  -->
+    </div>
+  </div>
+</div>
+
+    <div class="product-sales-area mg-tb-30" id=disease_case_month_summary>
+  <div class="container-fluid">
+    <!-- chart in here  -->
+    <div class="row">
+      <!-- col 1  -->
+      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="product-sales-chart">
+          <div class="portlet-title">
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="caption pro-sl-hd">
+                  <span class="caption-subject" id="title_disease_bar">
+                    Monthly Mean influenza,diarrhoea and dengue fever
+                      in Viet Nam from 1997-2019
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div data-value="{{barStack}}" id="data_disease_month">
+
+          </div>
+          <!-- chart in here -->
+          <div id="bar_chart_month_disease" class="bar_chart_month_disease" style="height: auto;width:auto">
+            <script>
+              var graphs = $("#data_disease_month").data('value');
+              Plotly.plot('bar_chart_month_disease', graphs, {});
+            </script>
+
+          </div>
+        </div>
+      </div>
+      <!-- col 2  -->
+      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="product-sales-chart">
+          <div class="portlet-title">
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="caption pro-sl-hd">
+                  <span class="caption-subject">
+                  Monthly Mean of influenza,diarrhoea and dengue fever death
+                      in Viet Nam from 1997-2019</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- chart in here  -->
+          <div data-value="{{barStackDeath}}" id="disease_death_month_data"></div>
+          <div id="bar_chart_month_death" class="bar_chart_month_death" style="height: auto;width:auto">
+            <script>
+              var graphs = $("#disease_death_month_data").data('value');
+              Plotly.plot('bar_chart_month_death', graphs, {});
             </script>
 
           </div>

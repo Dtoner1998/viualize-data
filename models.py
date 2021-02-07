@@ -112,6 +112,17 @@ class Querydata():
 
     # read data mean  disease groupby
 
+    def groupby_disease_mean(self):
+        query = ''' select year,month, province_code, influenza,
+                     influenza_death,dengue_fever_death,dengue_fever,
+                     diarrhoea,diarrhoea_death,date1
+                     from
+                     disease'''
+        data = pd.read_sql_query(query, conn)
+        data = data.groupby('year').mean().reset_index()
+        return data
+    # read summed data grouped by year
+
     def disease_death_rate(self):
         query = '''select a.year, a.month, a.influenza_death, a.influenza,
                 a.dengue_fever_death, a.dengue_fever, a.diarrhoea_death, a.diarrhoea, b.date1, b.population, a.province_code
@@ -124,13 +135,14 @@ class Querydata():
         return data
 
     def groupby_disease_year(self):
-        query = ''' select year,month,influenza,
+        query = ''' select year,month,province_code,influenza,
                     influenza_death,dengue_fever_death,dengue_fever,
                     diarrhoea,diarrhoea_death,date1
                     from
                     disease'''
         data = pd.read_sql_query(query, conn)
-        data = data.groupby('year').mean().reset_index()
+        data = data.groupby(["year", "month", "province_code"], as_index=False).first()
+        data = data.groupby('year').sum().reset_index()
         return data
 
     # read data max disease groupby
@@ -582,6 +594,26 @@ class Querydata():
         data['raining_day'] = pd.to_numeric(
             data['raining_day'], errors='coerce')
         return data
+
+    def climate_disease_exp_month(self, provice):
+        query1 = ''' select year,month,influenza,
+                    influenza_death,dengue_fever_death,dengue_fever,
+                    diarrhoea,diarrhoea_death,province_code as code,date1
+                    from disease where province_code ='''+str(provice)
+        query2 = '''select province_code,vaporation,
+                        rain,max_rain,raining_day,
+                        temperature,temperature_max,
+                        temperature_min,temperature_abs_max,
+                        temperature_abs_min,
+                        humidity,humidity_min,sun_hour,date1
+                        from climate where province_code =
+                         '''+str(provice)
+        df1 = pd.read_sql_query(query1, conn)
+        df2 = pd.read_sql_query(query2, conn)
+        df = pd.concat([df2, df1], axis=1, join='inner')
+        df['raining_day'] = pd.to_numeric(df['raining_day'], errors='coerce')
+        df = df.groupby(['year', 'month']).mean().reset_index()
+        return df
 
     def read_climate_province(self):
         query = '''select province_code,vaporation,
