@@ -2593,166 +2593,163 @@ class Visual():
         BarJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return BarJson
         # box chart climate and disease
+    def compare_weather_diseases(self, df, y_m, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        years = df['year'].nunique()
+        df = (df.groupby(["year", "month", "province_code"], as_index=False).first())
+        disease_names = ["influenza", "diarrhoea", "dengue_fever"]
 
-        def compare_weather_diseases(self, df, y_m, begin, end):
-            df = df[df['year'].between(int(begin), int(end))]
-            years = df['year'].nunique()
-            df = (df.groupby(["year", "month", "province_code"], as_index=False).first())
-            disease_names = ["influenza", "diarrhoea", "dengue_fever"]
+        weather_cols = ["vaporation", "rain", "raining_day", "temperature", "humidity", "sun_hour"]
 
-            weather_cols = ["vaporation", "rain", "raining_day", "temperature", "humidity", "sun_hour"]
+        agg_dict = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
+                    "humidity": 'mean', "sun_hour": 'mean', "influenza": 'sum', "diarrhoea": 'sum',
+                    "dengue_fever": 'sum'}
 
-            agg_dict = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
-                        "humidity": 'mean', "sun_hour": 'mean', "influenza": 'sum', "diarrhoea": 'sum',
-                        "dengue_fever": 'sum'}
+        if y_m == "year":
+            df = df.groupby("year").agg(agg_dict).reset_index()
+            titles = '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average temperature' + '<br>' + str(
+                begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average rain' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average rainy days' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average humidity' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average evaporation' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average sun hour' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>'
+        else:
+            titles = '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average temperature' + '<br>' + str(
+                begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average rain' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average rainy days' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average humidity' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average evaporation' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>', \
+                     '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average sun hour' + '<br>' + str(
+                         begin) + '-' + str(end) + '</b>'
+            df = df.groupby("month").agg(agg_dict).reset_index()
+            for col in df.columns:
+                if col in disease_names:
+                    df[col] = df[col] / years
 
-            if y_m == "year":
-                df = df.groupby("year").agg(agg_dict).reset_index()
-                titles = '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average temperature' + '<br>' + str(
-                    begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average rain' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average rainy days' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average humidity' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average evaporation' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average sun hour' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>'
-            else:
-                titles = '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average temperature' + '<br>' + str(
-                    begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average rain' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average rainy days' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average humidity' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average evaporation' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>', \
-                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average sun hour' + '<br>' + str(
-                             begin) + '-' + str(end) + '</b>'
-                df = df.groupby("month").agg(agg_dict).reset_index()
-                for col in df.columns:
-                    if col in disease_names:
-                        df[col] = df[col] / years
+        # show chart
+        fig = make_subplots(rows=3, cols=2, start_cell="bottom-left",
+                            specs=[[{"secondary_y": False}, {"secondary_y": False}],
+                                   [{"secondary_y": False}, {
+                                       "secondary_y": False}],
+                                   [{"secondary_y": False}, {"secondary_y": False}]],
+                            subplot_titles=(titles))
 
-            # show chart
-            fig = make_subplots(rows=3, cols=2, start_cell="bottom-left",
-                                specs=[[{"secondary_y": False}, {"secondary_y": False}],
-                                       [{"secondary_y": False}, {
-                                           "secondary_y": False}],
-                                       [{"secondary_y": False}, {"secondary_y": False}]],
-                                subplot_titles=(titles))
+        max_v = df["dengue_fever"].max()  # used to scale the size of the bubbles
+        # Create figure with secondary y-axis
+        for disease in disease_names:
+            fig.add_trace(
+                go.Scatter(x=df[str(y_m)], y=df["raining_day"], name=disease, text=df[disease],
+                           hoverinfo='all', mode='markers',
+                           marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=2,
+                col=1)
 
-            max_v = df["dengue_fever"].max()  # used to scale the size of the bubbles
-            # Create figure with secondary y-axis
-            for disease in disease_names:
-                fig.add_trace(
-                    go.Scatter(x=df[str(y_m)], y=df["raining_day"], name=disease, text=df[disease],
-                               hoverinfo='all', mode='markers',
-                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=2,
-                    col=1)
+            fig.add_trace(
+                go.Scatter(x=df[str(y_m)], y=df["temperature"], name=disease, text=df[disease],
+                           hoverinfo='all', mode='markers',
+                           marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=1,
+                col=1)
 
-                fig.add_trace(
-                    go.Scatter(x=df[str(y_m)], y=df["temperature"], name=disease, text=df[disease],
-                               hoverinfo='all', mode='markers',
-                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=1,
-                    col=1)
+            fig.add_trace(
+                go.Scatter(x=df[str(y_m)], y=df["rain"], name=disease, text=df[disease],
+                           hoverinfo='all', mode='markers',
+                           marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=1,
+                col=2)
 
-                fig.add_trace(
-                    go.Scatter(x=df[str(y_m)], y=df["rain"], name=disease, text=df[disease],
-                               hoverinfo='all', mode='markers',
-                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=1,
-                    col=2)
+            fig.add_trace(
+                go.Scatter(x=df[str(y_m)], y=df["humidity"], name=disease, text=df[disease],
+                           hoverinfo='all', mode='markers',
+                           marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=2,
+                col=2)
 
-                fig.add_trace(
-                    go.Scatter(x=df[str(y_m)], y=df["humidity"], name=disease, text=df[disease],
-                               hoverinfo='all', mode='markers',
-                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=2,
-                    col=2)
+            fig.add_trace(
+                go.Scatter(x=df[str(y_m)], y=df["vaporation"], name=disease, text=df[disease],
+                           hoverinfo='all', mode='markers',
+                           marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=3,
+                col=1)
 
-                fig.add_trace(
-                    go.Scatter(x=df[str(y_m)], y=df["vaporation"], name=disease, text=df[disease],
-                               hoverinfo='all', mode='markers',
-                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=3,
-                    col=1)
+            fig.add_trace(
+                go.Scatter(x=df[str(y_m)], y=df["sun_hour"], name=disease, text=df[disease],
+                           hoverinfo='all', mode='markers',
+                           marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=3,
+                col=2)
 
-                fig.add_trace(
-                    go.Scatter(x=df[str(y_m)], y=df["sun_hour"], name=disease, text=df[disease],
-                               hoverinfo='all', mode='markers',
-                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=3,
-                    col=2)
+        # xtitle
+        fig.update_xaxes(title_text=str(y_m))
+        # y title
+        # disease
+        fig.update_yaxes(title_text="Mean Raining Days", row=2,
+                         col=1, secondary_y=False)
 
-            # xtitle
-            fig.update_xaxes(title_text=str(y_m))
-            # y title
-            # disease
-            fig.update_yaxes(title_text="Mean Raining Days", row=2,
-                             col=1, secondary_y=False)
+        # disease and humidity
+        fig.update_yaxes(title_text="Humidity(%) mean", row=2,
+                         col=2, secondary_y=False)
 
-            # disease and humidity
-            fig.update_yaxes(title_text="Humidity(%) mean", row=2,
-                             col=2, secondary_y=False)
+        # disease and Temperature
+        fig.update_yaxes(title_text='Temperature(oC) mean', row=1,
+                         col=1, secondary_y=False)
 
-            # disease and Temperature
-            fig.update_yaxes(title_text='Temperature(oC) mean', row=1,
-                             col=1, secondary_y=False)
+        fig.update_yaxes(title_text="Evaporation(mm) mean", row=3,
+                         col=1, secondary_y=False)
 
-            fig.update_yaxes(title_text="Evaporation(mm) mean", row=3,
-                             col=1, secondary_y=False)
+        # sun hour
+        fig.update_yaxes(title_text='Sun hour(hour) mean', row=3,
+                         col=2, secondary_y=False)
 
-            # sun hour
-            fig.update_yaxes(title_text='Sun hour(hour) mean', row=3,
-                             col=2, secondary_y=False)
+        # disease and Rain
+        fig.update_yaxes(title_text='Rain(mm)  mean', row=1,
+                         col=2, secondary_y=False)
 
-            # disease and Rain
-            fig.update_yaxes(title_text='Rain(mm)  mean', row=1,
-                             col=2, secondary_y=False)
+        fig.update_layout(height=700, showlegend=False, template="plotly_white", margin=dict(l=30, r=10)
+                          )
+        line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return line
 
-            fig.update_layout(height=700, showlegend=False, template="plotly_white", margin=dict(l=30, r=10)
-                              )
-            line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-            return line
+    def compare_disease_bar(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(["date1", "province_name"], as_index=False).first()
+        df = (df.groupby(["year", "province_name"], as_index=False).sum())
+        fig = px.bar(df, x="province_name", y=disease, color="province_name", animation_frame="year",
+                     animation_group="province_name",
+                     log_y=True, range_y=[1, 100000])
+        bar = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return bar
 
-        def compare_disease_bar(self, df, disease, begin, end):
-            df = df[df['year'].between(int(begin), int(end))]
-            df = df.groupby(["date1", "province_name"], as_index=False).first()
-            df = (df.groupby(["year", "province_name"], as_index=False).sum())
-            fig = px.bar(df, x="province_name", y=disease, color="province_name", animation_frame="year",
-                         animation_group="province_name",
-                         log_y=True, range_y=[1, 100000])
-            bar = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-            return bar
+    def compare_disease_boxplot(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(["date1", "province_name"], as_index=False).first()
+        df = (df.groupby(["year", "month", "province_name"], as_index=False).sum())
+        fig = px.box(df, x="province_name", y=disease, log_y=True, points="outliers", color="province_name",
+                     animation_frame="year", animation_group="province_name", hover_data=[df[disease]]
+                     )
+        boxplot = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return boxplot
 
-        def compare_disease_boxplot(self, df, disease, begin, end):
-            df = df[df['year'].between(int(begin), int(end))]
-            df = df.groupby(["date1", "province_name"], as_index=False).first()
-            df = (df.groupby(["year", "month", "province_name"], as_index=False).sum())
-            fig = px.box(df, x="province_name", y=disease, log_y=True, points="outliers", color="province_name",
-                         animation_frame="year", animation_group="province_name", hover_data=[df[disease]]
-                         )
-            boxplot = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-            return boxplot
-
-        def climate_comp_bubble(self, df0, df1, feature, begin, end):
-            df0 = df0[df0['year'].between(int(begin), int(end))]
-            df1 = df1[df1['year'].between(int(begin), int(end))]
-            pd.to_numeric(df0[str(feature)], errors='ignore')
-            pd.to_numeric(df1[str(feature)], errors='ignore')
-
-            df = pd.concat([df0, df1])
-
-            df = (df.groupby(["year", "name", "month"], as_index=False).sum())
-            maxdf = (df.groupby(["year", "name", "month"], as_index=False).max())
-            print(maxdf[str(feature)])
-            max = df[str(feature)].max()
-            fig = px.line(df, x="month", y=str(feature), color="name", animation_frame="year",
-                          animation_group="name", range_y=(0, max))
-            # maxdf[str(feature)]
-            line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-            return line
+    def climate_comp_bubble(self, df0, df1, feature, begin, end):
+        df0 = df0[df0['year'].between(int(begin), int(end))]
+        df1 = df1[df1['year'].between(int(begin), int(end))]
+        pd.to_numeric(df0[str(feature)], errors='ignore')
+        pd.to_numeric(df1[str(feature)], errors='ignore')
+        df = pd.concat([df0, df1])
+        df = (df.groupby(["year", "name", "month"], as_index=False).sum())
+        maxdf = (df.groupby(["year", "name", "month"], as_index=False).max())
+        print(maxdf[str(feature)])
+        max = df[str(feature)].max()
+        fig = px.line(df, x="month", y=str(feature), color="name", animation_frame="year",
+                      animation_group="name", range_y=(0, max))
+        # maxdf[str(feature)]
+        line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return line
 
 
 

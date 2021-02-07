@@ -3340,14 +3340,14 @@ $(document).ready(function () {
                 </div>
 			</div>
 			<!-- end line chart year  -->
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+<!--            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="white-box res-mg-t-30 table-mg-t-pro-n">
                     <span class="box-title" id="climate_pro_month_${order}"></span>
                     <div id="climate_pro_m_${order}" class="climate_pro_m_${order}">
-                        <!-- chart in here  -->
+                       
                     </div>
                 </div>
-            </div>
+            </div>-->
             <!-- end line chart month  -->
         </div>
     </div>
@@ -3396,8 +3396,8 @@ $(document).ready(function () {
 			<!-- pie chart  -->
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box">
-					<span class="box-title" id="title_pro_year_${order}"></span>
-					<div class="line_pro_year_${order}" id="line_pro_year_${order}" style="width:auto;height:auto">
+					<span class="box-title" id="pie_disease_year_${order}"></span>
+					<div class="pie_disease_y_${order}" id="pie_disease_y_${order}" style="width:auto;height:auto">
 						<!-- chart in here  -->
 					</div>
 				</div>
@@ -3406,8 +3406,8 @@ $(document).ready(function () {
 			<!-- line chart year  -->
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
-					<span class="box-title" id="title_pro_death_year_${order}"></span>
-					<div id="line_pro_death_year_${order}" class="line_pro_death_year_${order}" style="width:auto;height:auto">
+					<span class="box-title" id="title_pro_year_${order}"></span>
+					<div id="line_pro_year_${order}" class="line_pro_year_${order}" style="width:auto;height:auto">
 						<!-- chart in here  -->
 					</div>
 				</div>
@@ -3416,7 +3416,7 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
-<!-- comp_date1_disease -->
+<!-- end -->
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
 		<div class="row">
@@ -3436,53 +3436,16 @@ $(document).ready(function () {
 							</div>
 						</div>
 					</div>
-					<div class="disease_date1_comp_${order}" id="disease_date1_comp_${order}" style="height: auto;width:auto">
-					</div>
-				</div>
-			</div>
-			<!-- end line chart year  -->
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-				<div class="caption pro-sl-hd">
-					<span class="box-title" id="title_date1_comp_disease_death_${order}"></span>
-					<div id="disease_death_date1_comp_${order}" class="disease_death_date1_comp_${order}" style="width:auto;height:auto">
-						<!-- chart in here  -->
-					</div>
-				</div>
-			</div>
-			<!-- end line chart month  -->
-		</div>
-	</div>
-</div>
-
-<!-- compare_pro_month -->
-<div class="product-sales-area mg-tb-30" id='disease_comp_pro_month_${name}'>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-				<div class="product-sales-chart">
-					<div class="portlet-title">
-						<div class="row">
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-								<div class="caption pro-sl-hd">
-									<span class="caption-subject" id="title_pro_month_${order}"><b></b></span>
-								</div>
-							</div>
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-								<div class="actions graph-rp graph-rp-dl">
-
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="line_pro_month_${order}" id="line_pro_month_${order}" style="height: auto;width:auto">
+					<div class="disease_date1_comp_${order}" id="disease_date1_comp_${order}"
+						style="height: auto;width:auto">
 					</div>
 				</div>
 			</div>
 			<!-- end line chart year  -->
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
-					<span class="box-title" id="title_pro_month_death_${order}"></span>
-					<div id="line_pro_month_death_${order}" class="line_pro_month_death_${order}" style="width:auto;height:auto">
+					<span class="box-title" id="title_pro_month_${order}"></span>
+					<div id="line_pro_month_${order}" class="line_pro_month_${order}" style="width:auto;height:auto">
 						<!-- chart in here  -->
 					</div>
 				</div>
@@ -3528,7 +3491,6 @@ $(document).ready(function () {
   function chosen_province_disease(begin, end, name, order) {
     // pie chart year
     create_tag_disease(order, name);
-    nameDeath=name+"_death";
     $.ajax({
       url: "/pie_disease_year",
       type: "GET",
@@ -3561,24 +3523,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`line_pro_year_${order}`, data, {});
-        $(`#title_pro_year_${order}`).html(`compare_province Number case of  ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
-      },
-    });
-    $.ajax({
-      url: "/compare_province",
-      type: "GET",
-      contentType: "application/json;charset=UTF-8",
-      data: {
-        disease: nameDeath,
-        begin: begin,
-        end: end,
-        province1: id_click_once,
-        province2: id_click_twice,
-      },
-      dataType: "json",
-      success: function (data) {
-        Plotly.newPlot(`line_pro_death_year_${order}`, data, {});
-        $(`#title_pro_death_year_${order}`).html(`compare_province Number case of  ${nameDeath.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#title_pro_year_${order}`).html(`Number case of  ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line month disease
@@ -3596,24 +3541,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`line_pro_month_${order}`, data, {});
-        $(`#title_pro_month_${order}`).html(`compare_pro_month Number of  ${name.split('_').join('  ')} monthly mean from ${begin}-${end}`);
-      },
-    });
-    $.ajax({
-      url: "/compare_pro_month",
-      type: "GET",
-      contentType: "application/json;charset=UTF-8",
-      data: {
-        disease: nameDeath,
-        begin: begin,
-        end: end,
-        province1: id_click_once,
-        province2: id_click_twice,
-      },
-      dataType: "json",
-      success: function (data) {
-        Plotly.newPlot(`line_pro_month_death_${order}`, data, {});
-        $(`#title_pro_month_death_${order}`).html(`compare_pro_month Number of  ${nameDeath.split('_').join('  ')} monthly mean from ${begin}-${end}`);
+        $(`#title_pro_month_${order}`).html(`Number of  ${name.split('_').join('  ')} monthly mean from ${begin}-${end}`);
       },
     });
     // disease_date1_comp_${order}
@@ -3631,25 +3559,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`disease_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_disease_${order}`).html(`comp_date1_disease Number case of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
-      },
-    });
-    // disease_date1_comp_${order}
-    $.ajax({
-      url: "/comp_date1_disease",
-      type: "GET",
-      contentType: "application/json;charset=UTF-8",
-      data: {
-        disease: nameDeath,
-        begin: begin,
-        end: end,
-        province1: id_click_once,
-        province2: id_click_twice,
-      },
-      dataType: "json",
-      success: function (data) {
-        Plotly.newPlot(`disease_death_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_disease_death_${order}`).html(`comp_date1_disease Number case of  ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_disease_${order}`).html(`Number case of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // linear disease year
@@ -3667,7 +3577,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`linear_disease_y_${order}`, data, {});
-        $(`#linear_disease_year_${order}`).html(`linear_comp_year Linear of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#linear_disease_year_${order}`).html(`Linear of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // linear disease month
@@ -3685,7 +3595,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`linear_pro_month_${order}`, data, {});
-        $(`#linear_title_year_${order}`).html(`linear_comp_month Linear of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#linear_title_year_${order}`).html(`Linear of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
 
@@ -3696,7 +3606,6 @@ $(document).ready(function () {
     $(`#disease_comp_${name}`).remove();
     $(`#disease_date1_comp_${name}`).remove();
     $(`#linear_comp_${name}`).remove();
-    $(`#disease_comp_pro_month_${name}`).remove();
     $(`#ruler_comp_${name}`).attr('class', 'my-4 hidden');
   };
   // run disease
@@ -4012,12 +3921,19 @@ $(document).ready(function () {
         }
         chart_subplotly(disease);
     });
+    var year_month2 = 'year'
+    $('.radioBtnClass1').click(function () {
+        if (this.checked) {
+            year_month2 = $(this).val();
+        }
+        chart_subplotly(disease);
+    });
     function chart_subplotly(disease) {
-        // check time 
+        // check time
         var begin = $(".begin").val();
         var end = $(".end").val();
 
-        // subplotly year 
+        // subplotly year
         $.ajax({
             url: "/subplotly_year",
             type: "GET",
@@ -4031,7 +3947,25 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 Plotly.newPlot(`subplotly_y`, data, {});
-                $(`#sub_title_year`).html(`Compare  ${disease.split('_').join('  ')} with climate by ${year_month}ly mean Viet Nam from ${begin}-${end}`);
+                $(`#sub_title_year`).html(`Compare  ${disease.split('_').join('  ')} with climate by ${year_month2}ly cases Viet Nam from ${begin}-${end}`);
+
+            },
+        })
+
+        //bubble subplot
+        $.ajax({
+            url: "/subplotly_bubble_year",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                begin: begin,
+                end: end,
+                y_m: year_month2
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`bubble_plot`, data, {});
+                $(`#sub_title_bubble`).html(`Total number of Influenza, Dengue Fever and Diahhroea cases per ${year_month2} compared with mean climate Viet Nam from ${begin}-${end}`);
 
             },
         })
@@ -4051,7 +3985,7 @@ $(document).ready(function () {
                 $(`#sub_corr_title`).html(`Correlation of ${disease.split('_').join('  ')} yearly mean Viet Nam from ${begin}-${end}`);
             },
         });
-        // chart compare disease 
+        // chart compare disease
         $.ajax({
             url: "/compare_disease",
             type: "GET",
@@ -4064,7 +3998,41 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 Plotly.newPlot(`comp_disease`, data, {});
-                $(`#comp_disease_title`).html(`Incidence and death of ${disease.split('_').join('  ')} by monthly mean Viet Nam from ${begin}-${end}`);
+                $(`#comp_disease_title`).html(`Incidence and death of ${disease.split('_').join('  ')} by monthly total Viet Nam from ${begin}-${end}`);
+
+            },
+        });
+        // chart compare disease bar chart
+        $.ajax({
+            url: "/compare_disease_box",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                disease: disease,
+                begin: begin,
+                end: end,
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`comp_bar`, data, {});
+                $(`#comp_disease_bar_title`).html(`Bar chart of total ${disease.split('_').join('  ')} cases per year for each province`);
+
+            },
+        });
+        // chart compare disease boxplot
+        $.ajax({
+            url: "/compare_disease_boxplot",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                disease: disease,
+                begin: begin,
+                end: end,
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`comp_boxplot`, data, {});
+                $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${disease.split('_').join('  ')} cases per year for each province`);
 
             },
         });

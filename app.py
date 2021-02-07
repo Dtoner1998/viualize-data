@@ -57,8 +57,9 @@ def summary():
     data = query.groupby_disease_year()
     years = data['year'].nunique()
     diseases = query.read_disease()
-    barJson = visual.bar_chart_disease(data)
-    barJsonDeath = visual.bar_chart_disease_death(data)
+    data2 = query.disease_death_rate()
+    barJson = visual.bar_chart_disease(data2)
+    barJsonDeath = visual.bar_chart_disease_death(data2)
     barStackDeath = visual.bar_chart_month_disease_death(diseases, years)
     barStack = visual.bar_chart_month_disease(diseases, years)
     return render_template('home.html',
