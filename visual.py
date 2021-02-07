@@ -1740,84 +1740,81 @@ class Visual():
 
     def compare_factor_year(self, df, feature, y_m, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
-        # get mean
-        df = df.groupby(str(y_m)).mean().reset_index()
-        # show chart
-        fig = make_subplots(rows=3, cols=2, start_cell="bottom-left",
-                            specs=[[{"secondary_y": True}, {"secondary_y": True}],
-                                   [{"secondary_y": True}, {
-                                       "secondary_y": True}],
-                                   [{"secondary_y": True}, {"secondary_y": True}]],
-                            subplot_titles=('<b>' + str(y_m).title() + 'ly mean' + str(feature).replace('_',
-                                                                                                        ' ') + ' and temperature' + '<br>' + str(
-                                begin) + '-' + str(end) + '</b>',
-                                            '<b>' + str(y_m).title() + 'ly mean ' +
-                                            str(feature).replace('_', ' ') + ' and rain' + '<br>' +
-                                            str(begin) + '-' + str(end) + '</b>',
-                                            '<b> Incidence rates of ' +
-                                            str(feature).replace('_', ' ') + 'Yearly mean <br>' +
-                                            str(begin) + '-' + str(end) + '</b>',
-                                            '<b>' + str(y_m).title() + 'ly mean ' +
-                                            str(feature).replace('_', ' ') + ' and humidity' + '<br>' +
-                                            str(begin) + '-' + str(end) + '</b>',
-                                            '<b>' + str(y_m).title() + 'ly mean ' + str(feature).replace('_',
-                                                                                                         ' ') + ' and vaporation' +
-                                            '<br>' + str(begin) + '-' +
-                                            str(end) + '</b>',
-                                            '<b>' + str(y_m).title() + 'ly mean ' +
-                                            str(feature).replace('_', ' ') + ' and sun hour' + '<br>' +
-                                            str(begin) + '-' + str(end) + '</b>'
-                                            ))
+        years = df['year'].nunique()
+        df = (df.groupby(["year", "month", "province_code"], as_index=False).first())
+        disease_names = ["influenza", "diarrhoea", "dengue_fever", "influenza_death", "diarrhoea_death","dengue_fever_death"]
+
+
+        agg_dict = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
+                    "humidity": 'mean', "sun_hour": 'mean', "influenza": 'sum', "diarrhoea": 'sum',
+                    "dengue_fever": 'sum', "influenza_death": 'sum', "diarrhoea_death": 'sum', "dengue_fever_death": 'sum' }
+
+        if y_m == "year":
+            df = df.groupby("year").agg(agg_dict).reset_index()
+            titles='<b>'+'Total ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average temperature'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Total ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average rain'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Total ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and death incidence'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Total ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average humidity'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Total ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average evaporation'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Total ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average sun hour'+'<br>'+str(begin)+'-'+str(end)+'</b>'
+        else:
+            titles='<b>'+'Mean ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average temperature'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Mean ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average rain'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Mean ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and death incidence'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Mean ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average humidity'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Mean ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average evaporation'+'<br>'+str(begin)+'-'+str(end)+'</b>',\
+                   '<b>'+'Mean ' +str(feature).replace('_', ' ')+" "+str(y_m).title() + 'ly cases and average sun hour'+'<br>'+str(begin)+'-'+str(end)+'</b>'
+            df = df.groupby("month").agg(agg_dict).reset_index()
+            for col in df.columns:
+                if col in disease_names:
+                    df[col] = df[col]/years
+
+
+
+        fig = make_subplots(rows=3, cols=2, start_cell="bottom-left", specs=[[{"secondary_y": True}, {"secondary_y": True}],
+                                                                             [{"secondary_y": True}, {
+                                                                                 "secondary_y": True}],
+                                                                             [{"secondary_y": True}, {"secondary_y": True}]],
+                            subplot_titles=(titles ))
         # Create figure with secondary y-axis
 
-        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=(str(feature).replace('_', ' ')).title(),
-                                 line_color="red",
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=(str(feature).replace('_', ' ')).title(), line_color="red",
                                  marker_symbol='triangle-up'),
                       row=2, col=1, secondary_y=False)
 
-        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature) + '_death'],
-                                 name=(str(feature) + '_death').title(), line_color="blue", marker_symbol='x'),
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)+'_death'],
+                                 name=(str(feature)+'_death').title(), line_color="blue", marker_symbol='x'),
                       row=2, col=1, secondary_y=True)
 
         fig.add_trace(go.Scatter(x=df[str(y_m)], y=df['temperature'], name='Temperature'),
                       row=1, col=1, secondary_y=True)
 
-        fig.add_trace(
-            go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=str(feature).replace('_', ' '), line_color="red",
-                       marker_symbol='triangle-up'),
-            row=1, col=1, secondary_y=False)
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=str(feature).replace('_', ' '), line_color="red",
+                                 marker_symbol='triangle-up'),
+                      row=1, col=1, secondary_y=False)
 
         fig.add_trace(go.Scatter(x=df[str(y_m)], y=df['rain'], name='Rain', marker_symbol='asterisk-open'),
                       row=1, col=2, secondary_y=True)
 
-        fig.add_trace(
-            go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=str(feature).replace('_', ' '), line_color='red',
-                       marker_symbol='triangle-up'),
-            row=1, col=2, secondary_y=False)
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=str(feature).replace('_', ' '), line_color='red', marker_symbol='triangle-up'),
+                      row=1, col=2, secondary_y=False)
 
-        fig.add_trace(
-            go.Scatter(x=df[str(y_m)], y=df['humidity'], name='Humidity', line_color='green', marker_symbol='star'),
-            row=2, col=2, secondary_y=True)
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df['humidity'], name='Humidity', line_color='green', marker_symbol='star'),
+                      row=2, col=2, secondary_y=True)
 
-        fig.add_trace(
-            go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=str(feature).replace('_', ' '), line_color='red',
-                       marker_symbol='triangle-up'),
-            row=2, col=2, secondary_y=False)
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=str(feature).replace('_', ' '), line_color='red', marker_symbol='triangle-up'),
+                      row=2, col=2, secondary_y=False)
         # vaporation
-        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df['vaporation'], name='Vaporation', line_color='black',
-                                 marker_symbol='asterisk-open'),
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df['vaporation'], name='Vaporation', line_color='black', marker_symbol='asterisk-open'),
                       row=3, col=1, secondary_y=True)
 
-        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=(str(feature).replace('_', ' ')).title(),
-                                 line_color='red', marker_symbol='triangle-up'),
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=(str(feature).replace('_', ' ')).title(), line_color='red', marker_symbol='triangle-up'),
                       row=3, col=1, secondary_y=False)
         # sun hour
-        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df['sun_hour'], name='Sun hour', line_color='orange',
-                                 marker_symbol='asterisk-open'),
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df['sun_hour'], name='Sun hour', line_color='orange', marker_symbol='asterisk-open'),
                       row=3, col=2, secondary_y=True)
 
-        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=(str(feature).replace('_', ' ')).title(),
-                                 line_color='red', marker_symbol='triangle-up'),
+        fig.add_trace(go.Scatter(x=df[str(y_m)], y=df[str(feature)], name=(str(feature).replace('_', ' ')).title(), line_color='red', marker_symbol='triangle-up'),
                       row=3, col=2, secondary_y=False)
         # xtitle
         fig.update_xaxes(title_text=str(y_m))
@@ -1825,7 +1822,7 @@ class Visual():
         # disease
         fig.update_yaxes(title_text=(str(feature).replace('_', ' ')).title(), row=2,
                          col=1, secondary_y=False)
-        fig.update_yaxes(title_text=(str(feature).replace('_', ' ')).title() + '  Death mean',
+        fig.update_yaxes(title_text=(str(feature).replace('_', ' ')).title()+'  Death',
                          row=2, col=1, secondary_y=True)
         # disease and humidity
         fig.update_yaxes(title_text=(str(feature).replace('_', ' ')).title(), row=2,
@@ -2008,18 +2005,24 @@ class Visual():
         df1 = df1[df1['year'].between(int(begin), int(end))]
         # get data province 2
         df2 = df2[df2['year'].between(int(begin), int(end))]
+
+        mean1 = df1.groupby(['year', 'name']).mean().reset_index()
+        mean2 = df2.groupby(['year', 'name']).mean().reset_index()
+        max1 = df1.groupby(['year', 'name']).max().reset_index()
+        max1 = df1.groupby(['year', 'name']).agg({str(disease): ['mean', 'min', 'max']})
+
         # get mean
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=df1['year'], y=df1[str(disease)],
-                                 name=str(df1['name'][0]),
-                                 mode='lines+markers',
-                                 marker_symbol='triangle-up', showlegend=True
-                                 ))
-        fig.add_trace(go.Scatter(x=df2['year'], y=df2[str(disease)],
-                                 name=str(df2['name'][0]),
-                                 mode='lines+markers',
-                                 marker_symbol='star', showlegend=True
-                                 ))
+        fig.add_trace(go.Scatter(x=mean1['year'], y=mean1[str(disease)],
+                                  name=str(mean1['name'][0]) + " Mean",
+                                  mode='lines+markers',
+                                  marker_symbol='triangle-up', showlegend=True
+                                  ))
+        fig.add_trace(go.Scatter(x=mean2['year'], y=mean2[str(disease)],
+                                  name=str(mean2['name'][0]) + " Mean",
+                                  mode='lines+markers',
+                                  marker_symbol='star', showlegend=True
+                                  ))
         fig.update_layout(
             updatemenus=[
                 dict(
@@ -2047,6 +2050,7 @@ class Visual():
             ],
             template="plotly_white",
             margin=dict(l=20, r=20, t=20, b=20),
+            hovermode='x unified',
             xaxis_title='Year',
             yaxis_title=(str(disease).replace('_', ' ')
                          ).title() + ' yearly mean'
@@ -2061,19 +2065,48 @@ class Visual():
         df1 = df1[df1['year'].between(int(begin), int(end))]
         # get data province 2
         df2 = df2[df2['year'].between(int(begin), int(end))]
+
         # get mean
         mean1 = df1.groupby(['month', 'name']).mean().reset_index()
         mean2 = df2.groupby(['month', 'name']).mean().reset_index()
+        max1 = df1.groupby(['month', 'name']).max().reset_index()
+        max2 = df2.groupby(['month', 'name']).max().reset_index()
+        min1 = df1.groupby(['month', 'name']).min().reset_index()
+        min2 = df2.groupby(['month', 'name']).min().reset_index()
         mean1['month'] = mean1['month'].apply(lambda x: calendar.month_abbr[x])
         mean2['month'] = mean2['month'].apply(lambda x: calendar.month_abbr[x])
+        max1['month'] = max1['month'].apply(lambda x: calendar.month_abbr[x])
+        max2['month'] = max2['month'].apply(lambda x: calendar.month_abbr[x])
+        min1['month'] = min1['month'].apply(lambda x: calendar.month_abbr[x])
+        min2['month'] = min2['month'].apply(lambda x: calendar.month_abbr[x])
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=mean1['month'], y=mean1[str(disease)],
-                                 name=str(mean1['name'][0]),
+                                 name=str(mean1['name'][0]) + " Mean",
                                  mode='lines+markers',
                                  marker_symbol='triangle-up'
                                  ))
         fig.add_trace(go.Scatter(x=mean2['month'], y=mean2[str(disease)],
-                                 name=str(mean2['name'][0]),
+                                 name=str(mean2['name'][0]) + " Mean",
+                                 mode='lines+markers',
+                                 marker_symbol='star'
+                                 ))
+        fig.add_trace(go.Scatter(x=max1['month'], y=max1[str(disease)],
+                                 name=str(max1['name'][0]) + " Max",
+                                 mode='lines+markers',
+                                 marker_symbol='triangle-up'
+                                 ))
+        fig.add_trace(go.Scatter(x=max2['month'], y=max2[str(disease)],
+                                 name=str(max2['name'][0]) + " Max",
+                                 mode='lines+markers',
+                                 marker_symbol='star'
+                                 ))
+        fig.add_trace(go.Scatter(x=min1['month'], y=min1[str(disease)],
+                                 name=str(min1['name'][0]) + " Min",
+                                 mode='lines+markers',
+                                 marker_symbol='triangle-up'
+                                 ))
+        fig.add_trace(go.Scatter(x=min2['month'], y=min2[str(disease)],
+                                 name=str(min2['name'][0]) + " Min",
                                  mode='lines+markers',
                                  marker_symbol='star'
                                  ))
@@ -2106,8 +2139,9 @@ class Visual():
             template="plotly_white",
             margin=dict(l=20, r=20, t=20, b=20),
             showlegend=True,
+            hovermode='x unified',
             xaxis_title='Month',
-            yaxis_title=(str(disease).replace('_', ' ')).title() + ' monthly mean')
+            yaxis_title=(str(disease).replace('_', ' ')).title()+' monthly mean')
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
 
@@ -2168,33 +2202,40 @@ class Visual():
     def pie_chart_disease(self, df1, df2, disease, begin, end):
         df1 = df1[df1['year'].between(int(begin), int(end))]
         df2 = df2[df2['year'].between(int(begin), int(end))]
-        labels = [df1['name'].unique(), df2['name'].unique()]
+        label1 = df1['name'].unique()
+        label2 = df2['name'].unique()
+        years = df1['year'].nunique()
         value0 = df1[str(disease)].mean()
         value1 = df2[str(disease)].mean()
-        fig = go.Figure()
 
-        fig.add_trace(go.Pie(labels=labels, values=[
-            value0, value1], name=str(disease)))
+
+        fig = go.Figure(data=[
+            go.Bar(name=str(label1[0]), x=[disease], y=[value0], text=round(value0, 2), textposition='auto'),
+            go.Bar(name=str(label2[0]), x=[disease], y=[value1], text=round(value1, 2), textposition='auto')
+        ])
+
+        fig.update_layout(barmode='stack')
         fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
-        fig.update_traces(hole=.4, hoverinfo="label+percent+name")
-        pie = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-        return pie
+        bar = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return bar
 
     # pie chart climate
 
     def pie_chart_climate(self, df1, df2, climate, begin, end):
         df1 = df1[df1['year'].between(int(begin), int(end))]
         df2 = df2[df2['year'].between(int(begin), int(end))]
-        labels = [df1['name'].unique(), df2['name'].unique()]
+        label1 = df1['name'].unique()
+        label2 = df2['name'].unique()
         value0 = df1[str(climate)].mean()
         value1 = df2[str(climate)].mean()
-        fig = go.Figure()
+        fig = go.Figure(data=[
+            go.Bar(name=str(label1[0]), x=[climate], y=[value0], text=round(value0, 2), textposition='auto'),
+            go.Bar(name=str(label2[0]), x=[climate], y=[value1], text=round(value1, 2), textposition='auto')
+        ])
+        fig.update_layout(barmode='stack')
 
-        fig.add_trace(go.Pie(labels=labels, values=[
-            value0, value1], name=str(climate)))
-        #   template="plotly_dark",
         fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
-        fig.update_traces(hole=.4, hoverinfo="label+percent+name")
+
         pie = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return pie
 
@@ -2206,18 +2247,44 @@ class Visual():
         # get data province 2
         df2 = df2[df2['year'].between(int(begin), int(end))]
         # get mean
+
+        mean1 = df1.groupby(['year', 'name']).mean().reset_index()
+        mean2 = df2.groupby(['year','name']).mean().reset_index()
+        max1 = df1.groupby(['year','name']).max().reset_index()
+        max2 = df2.groupby(['year','name']).max().reset_index()
+        min1 = df1.groupby(['year','name']).min().reset_index()
+        min2 = df2.groupby(['year','name']).min().reset_index()
+
+
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=df1['year'], y=df1[str(climate)],
-                                 name=self.listToString(df1['name'].unique()),
+        fig.add_trace(go.Scatter(x=mean1['year'], y=mean1[str(climate)],
+                                 name=self.listToString(mean1['name'].unique()) + " Mean",
                                  mode='lines', showlegend=True
                                  ))
-        fig.add_trace(go.Scatter(x=df2['year'], y=df2[str(climate)],
-                                 name=self.listToString(df2['name'].unique()),
+        fig.add_trace(go.Scatter(x=mean2['year'], y=mean2[str(climate)],
+                                 name=self.listToString(mean2['name'].unique()) + " Mean",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=max1['month'], y=max1[str(climate)],
+                                 name=str(max1['name'][0]) + " Max",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=max2['month'], y=max2[str(climate)],
+                                 name=str(max2['name'][0]) + " Max",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=min1['month'], y=min1[str(climate)],
+                                 name=str(min1['name'][0]) + " Min",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=min2['month'], y=min2[str(climate)],
+                                 name=str(min2['name'][0]) + " Min",
                                  mode='lines', showlegend=True
                                  ))
 
         dv = self.title_climate(str(climate))
         fig.update_layout(
+            hovermode='x unified',
             updatemenus=[
                 dict(
                     buttons=list([
@@ -2245,7 +2312,7 @@ class Visual():
             xaxis_title='Year', template="plotly_white",
             margin=dict(l=30, r=30, b=30, t=30),
             yaxis_title=(str(climate.replace('_', ' ')).title()) +
-                        ' yearly mean' + str(dv)
+            ' yearly mean' + str(dv)
         )
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
@@ -2257,24 +2324,50 @@ class Visual():
         df1 = df1[df1['year'].between(int(begin), int(end))]
         # get data province 2
         df2 = df2[df2['year'].between(int(begin), int(end))]
-        # get mean
+        # get mean, max and min
         mean1 = df1.groupby(['month', 'name']).mean().reset_index()
         mean2 = df2.groupby(['month', 'name']).mean().reset_index()
+        max1 = df1.groupby(['month', 'name']).max().reset_index()
+        max2 = df2.groupby(['month', 'name']).max().reset_index()
+        min1 = df1.groupby(['month', 'name']).min().reset_index()
+        min2 = df2.groupby(['month', 'name']).min().reset_index()
         # month
         mean1['month'] = mean1['month'].apply(lambda x: calendar.month_abbr[x])
         mean2['month'] = mean2['month'].apply(lambda x: calendar.month_abbr[x])
+        max1['month'] = max1['month'].apply(lambda x: calendar.month_abbr[x])
+        max2['month'] = max2['month'].apply(lambda x: calendar.month_abbr[x])
+        min1['month'] = min1['month'].apply(lambda x: calendar.month_abbr[x])
+        min2['month'] = min2['month'].apply(lambda x: calendar.month_abbr[x])
+
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=mean1['month'], y=mean1[str(climate)],
-                                 name=str(mean1['name'][0]),
+                                 name=str(mean1['name'][0]) + " Mean",
                                  mode='lines', showlegend=True
                                  ))
         fig.add_trace(go.Scatter(x=mean2['month'], y=mean2[str(climate)],
-                                 name=str(mean2['name'][0]),
+                                 name=str(mean2['name'][0]) + " Mean",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=max1['month'], y=max1[str(climate)],
+                                 name=str(max1['name'][0]) + " Max",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=max2['month'], y=max2[str(climate)],
+                                 name=str(max2['name'][0]) + " Max",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=min1['month'], y=min1[str(climate)],
+                                 name=str(min1['name'][0]) + " Min",
+                                 mode='lines', showlegend=True
+                                 ))
+        fig.add_trace(go.Scatter(x=min2['month'], y=min2[str(climate)],
+                                 name=str(min2['name'][0]) + " Min",
                                  mode='lines', showlegend=True
                                  ))
         dv = self.title_climate(str(climate))
 
         fig.update_layout(
+            hovermode='x unified',
             updatemenus=[
                 dict(
                     buttons=list([
@@ -2302,7 +2395,7 @@ class Visual():
             xaxis_title='Month', template="plotly_white",
             margin=dict(l=30, r=30, b=30, t=30),
             yaxis_title=(str(climate.replace('_', ' ')).title()) +
-                        ' monthly mean' + str(dv)
+            ' monthly mean' + str(dv)
         )
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
@@ -2313,6 +2406,8 @@ class Visual():
         df0 = df0[df0['year'].between(int(begin), int(end))]
         # get data province 2
         df1 = df1[df1['year'].between(int(begin), int(end))]
+        pd.to_numeric(df0[str(feature)], errors='ignore')
+        pd.to_numeric(df1[str(feature)], errors='ignore')
         fig = px.scatter(x=df0[str(feature)], y=df1[str(feature)],
                          trendline="ols", color=df0['year'])
 
@@ -2326,9 +2421,11 @@ class Visual():
     # visulization linear month compare data
 
     def linear_comp_month(self, df0, df1, feature, begin, end):
+
         df0 = df0[df0['year'].between(int(begin), int(end))]
-        # get data province 2
         df1 = df1[df1['year'].between(int(begin), int(end))]
+        pd.to_numeric(df0[str(feature)], errors='ignore')
+        pd.to_numeric(df1[str(feature)], errors='ignore')
         mean1 = df0.groupby(['month', 'name']).mean().reset_index()
         mean2 = df1.groupby(['month', 'name']).mean().reset_index()
         # month
@@ -2342,3 +2439,323 @@ class Visual():
             yaxis_title=str(mean2['name'][0]), showlegend=True)
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
+
+    def bar_chart_month_disease_death(self, df, years):
+
+        df = (df.groupby(["year", "month", "province_code"], as_index=False).first())
+        df = (df.groupby(["month"], as_index=False).sum())
+
+        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        fig = go.Figure()
+        fig.add_trace(go.Bar(x=months,
+                             y=df['influenza_death']/years,
+                             name='Influenza Death',
+                             marker_color='rgb(55, 83, 109)',
+                             showlegend=True
+                             ))
+        fig.add_trace(go.Bar(x=months,
+                             y=df['dengue_fever_death']/years,
+                             name='Dengue Death',
+                             marker_color='red',
+                             showlegend=True
+                             ))
+        fig.add_trace(go.Bar(x=months,
+                             y=df['diarrhoea_death']/years,
+                             name='Diarrhoea Death',
+                             marker_color='rgb(26, 118, 255)',
+                             showlegend=True
+                             ))
+        fig.update_layout(
+            updatemenus=[
+                dict(
+                    buttons=list([
+                        dict(
+                            args=["type", "bar"],
+                            label="Bar Chart",
+                            method="restyle",
+
+                        ),
+                        dict(
+                            args=["type", "line"],
+                            label="Line Chart",
+                            method="restyle"
+                        ),
+
+                    ]),
+                    direction="down",
+                    pad={"r": 10, "t": 10},
+                    showactive=True,
+                    x=1.2,
+                    xanchor="right",
+                    y=1.2,
+                    yanchor="top"
+                ),
+            ],
+            xaxis_tickfont_size=14,
+            legend=dict(
+                yanchor="top",
+                y=1,
+                xanchor="right",
+                x=1.2
+            ),
+            xaxis=dict(
+                title='Year',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            yaxis=dict(
+                title='Monthly mean',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            template="plotly_white",
+            margin={"r": 10, "t": 10, "l": 10, "b": 10},
+            barmode='stack',
+            bargap=0.15,  # gap between bars of adjacent location coordinates.
+            # gap between bars of the same location coordinate.
+            bargroupgap=0.1
+        )
+        BarJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return BarJson
+
+    def bar_chart_month_disease(self, df, years):
+        df = (df.groupby(["year", "month", "province_code"], as_index=False).first())
+        df = (df.groupby(["month"], as_index=False).sum())
+        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        fig = go.Figure()
+        fig.add_trace(go.Bar(x=months,
+                             y=df["influenza"] / years,
+                             name="Influenza",
+                             marker_color='rgb(55, 83, 109)',
+                             showlegend=True
+                             ))
+        fig.add_trace(go.Bar(x=months,
+                             y=df["dengue_fever"] / years,
+                             name="Dengue fever",
+                             marker_color='red',
+                             showlegend=True
+                             ))
+        fig.add_trace(go.Bar(x=months,
+                             y=df["diarrhoea"] / years,
+                             name="Diarrhoea",
+                             marker_color='rgb(26, 118, 255)',
+                             showlegend=True
+                             ))
+        fig.update_layout(
+            updatemenus=[
+                dict(
+                    buttons=list([
+                        dict(
+                            args=["type", "bar"],
+                            label="Bar Chart",
+                            method="restyle"
+                        ),
+                        dict(
+                            args=["type", "line"],
+                            label="Line Chart",
+                            method="restyle"
+                        ),
+
+                    ]),
+                    direction="down",
+                    pad={"r": 10, "t": 10},
+                    showactive=True,
+                    x=1.2,
+                    xanchor="right",
+                    y=1.2,
+                    yanchor="top"
+                ),
+            ],
+            xaxis_tickfont_size=14,
+            legend=dict(
+                yanchor="top",
+                y=1.0,
+                xanchor="right",
+                x=1.2
+            ),
+            xaxis=dict(
+                title='Year',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            yaxis=dict(
+                title='Monthly mean',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            template="plotly_white",
+            margin={"r": 10, "t": 10, "l": 10, "b": 10},
+            barmode='stack',
+            bargap=0.15,  # gap between bars of adjacent location coordinates.
+            # gap between bars of the same location coordinate.
+            bargroupgap=0.1
+        )
+        BarJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return BarJson
+        # box chart climate and disease
+
+        def compare_weather_diseases(self, df, y_m, begin, end):
+            df = df[df['year'].between(int(begin), int(end))]
+            years = df['year'].nunique()
+            df = (df.groupby(["year", "month", "province_code"], as_index=False).first())
+            disease_names = ["influenza", "diarrhoea", "dengue_fever"]
+
+            weather_cols = ["vaporation", "rain", "raining_day", "temperature", "humidity", "sun_hour"]
+
+            agg_dict = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
+                        "humidity": 'mean', "sun_hour": 'mean', "influenza": 'sum', "diarrhoea": 'sum',
+                        "dengue_fever": 'sum'}
+
+            if y_m == "year":
+                df = df.groupby("year").agg(agg_dict).reset_index()
+                titles = '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average temperature' + '<br>' + str(
+                    begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average rain' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average rainy days' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average humidity' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average evaporation' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Total ' + str(y_m).title() + 'ly cases and average sun hour' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>'
+            else:
+                titles = '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average temperature' + '<br>' + str(
+                    begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average rain' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average rainy days' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average humidity' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average evaporation' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>', \
+                         '<b>' + 'Mean ' + str(y_m).title() + 'ly cases and average sun hour' + '<br>' + str(
+                             begin) + '-' + str(end) + '</b>'
+                df = df.groupby("month").agg(agg_dict).reset_index()
+                for col in df.columns:
+                    if col in disease_names:
+                        df[col] = df[col] / years
+
+            # show chart
+            fig = make_subplots(rows=3, cols=2, start_cell="bottom-left",
+                                specs=[[{"secondary_y": False}, {"secondary_y": False}],
+                                       [{"secondary_y": False}, {
+                                           "secondary_y": False}],
+                                       [{"secondary_y": False}, {"secondary_y": False}]],
+                                subplot_titles=(titles))
+
+            max_v = df["dengue_fever"].max()  # used to scale the size of the bubbles
+            # Create figure with secondary y-axis
+            for disease in disease_names:
+                fig.add_trace(
+                    go.Scatter(x=df[str(y_m)], y=df["raining_day"], name=disease, text=df[disease],
+                               hoverinfo='all', mode='markers',
+                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=2,
+                    col=1)
+
+                fig.add_trace(
+                    go.Scatter(x=df[str(y_m)], y=df["temperature"], name=disease, text=df[disease],
+                               hoverinfo='all', mode='markers',
+                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=1,
+                    col=1)
+
+                fig.add_trace(
+                    go.Scatter(x=df[str(y_m)], y=df["rain"], name=disease, text=df[disease],
+                               hoverinfo='all', mode='markers',
+                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=1,
+                    col=2)
+
+                fig.add_trace(
+                    go.Scatter(x=df[str(y_m)], y=df["humidity"], name=disease, text=df[disease],
+                               hoverinfo='all', mode='markers',
+                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=2,
+                    col=2)
+
+                fig.add_trace(
+                    go.Scatter(x=df[str(y_m)], y=df["vaporation"], name=disease, text=df[disease],
+                               hoverinfo='all', mode='markers',
+                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=3,
+                    col=1)
+
+                fig.add_trace(
+                    go.Scatter(x=df[str(y_m)], y=df["sun_hour"], name=disease, text=df[disease],
+                               hoverinfo='all', mode='markers',
+                               marker=dict(sizemode='area', size=((df[disease]) / max_v) * 100, line_width=2)), row=3,
+                    col=2)
+
+            # xtitle
+            fig.update_xaxes(title_text=str(y_m))
+            # y title
+            # disease
+            fig.update_yaxes(title_text="Mean Raining Days", row=2,
+                             col=1, secondary_y=False)
+
+            # disease and humidity
+            fig.update_yaxes(title_text="Humidity(%) mean", row=2,
+                             col=2, secondary_y=False)
+
+            # disease and Temperature
+            fig.update_yaxes(title_text='Temperature(oC) mean', row=1,
+                             col=1, secondary_y=False)
+
+            fig.update_yaxes(title_text="Evaporation(mm) mean", row=3,
+                             col=1, secondary_y=False)
+
+            # sun hour
+            fig.update_yaxes(title_text='Sun hour(hour) mean', row=3,
+                             col=2, secondary_y=False)
+
+            # disease and Rain
+            fig.update_yaxes(title_text='Rain(mm)  mean', row=1,
+                             col=2, secondary_y=False)
+
+            fig.update_layout(height=700, showlegend=False, template="plotly_white", margin=dict(l=30, r=10)
+                              )
+            line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+            return line
+
+        def compare_disease_bar(self, df, disease, begin, end):
+            df = df[df['year'].between(int(begin), int(end))]
+            df = df.groupby(["date1", "province_name"], as_index=False).first()
+            df = (df.groupby(["year", "province_name"], as_index=False).sum())
+            fig = px.bar(df, x="province_name", y=disease, color="province_name", animation_frame="year",
+                         animation_group="province_name",
+                         log_y=True, range_y=[1, 100000])
+            bar = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+            return bar
+
+        def compare_disease_boxplot(self, df, disease, begin, end):
+            df = df[df['year'].between(int(begin), int(end))]
+            df = df.groupby(["date1", "province_name"], as_index=False).first()
+            df = (df.groupby(["year", "month", "province_name"], as_index=False).sum())
+            fig = px.box(df, x="province_name", y=disease, log_y=True, points="outliers", color="province_name",
+                         animation_frame="year", animation_group="province_name", hover_data=[df[disease]]
+                         )
+            boxplot = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+            return boxplot
+
+        def climate_comp_bubble(self, df0, df1, feature, begin, end):
+            df0 = df0[df0['year'].between(int(begin), int(end))]
+            df1 = df1[df1['year'].between(int(begin), int(end))]
+            pd.to_numeric(df0[str(feature)], errors='ignore')
+            pd.to_numeric(df1[str(feature)], errors='ignore')
+
+            df = pd.concat([df0, df1])
+
+            df = (df.groupby(["year", "name", "month"], as_index=False).sum())
+            maxdf = (df.groupby(["year", "name", "month"], as_index=False).max())
+            print(maxdf[str(feature)])
+            max = df[str(feature)].max()
+            fig = px.line(df, x="month", y=str(feature), color="name", animation_frame="year",
+                          animation_group="name", range_y=(0, max))
+            # maxdf[str(feature)]
+            line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+            return line
+
+
+
+
+
+

@@ -50,22 +50,25 @@ def summary():
     columns = query.get_columns()
     # get columns disease
     disease = columns['disease']
-    disease=disease.drop([1,3,5])
     # get columns climate
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
-    climate1=climate1.reset_index(drop=True)
-    climate1=climate1.drop([10, 11])
-    #data = query.groupby_disease_year()
-    data2=query.disease_death_rate()
-    #print(data2.columns)
-    barJson = visual.bar_chart_disease(data2)
-    barJsonDeath = visual.bar_chart_disease_death(data2)
+    climate2 = columns['climate2'].dropna()
+    data = query.groupby_disease_year()
+    years = data['year'].nunique()
+    diseases = query.read_disease()
+    barJson = visual.bar_chart_disease(data)
+    barJsonDeath = visual.bar_chart_disease_death(data)
+    barStackDeath = visual.bar_chart_month_disease_death(diseases, years)
+    barStack = visual.bar_chart_month_disease(diseases, years)
     return render_template('home.html',
                            disease=disease,
                            climate1=climate1,
+                           climate2=climate2,
                            barJson=barJson,
                            barJsonDeath=barJsonDeath,
+                           barStack=barStack,
+                           barStackDeath=barStackDeath
                            )
 # response data home
 
@@ -74,19 +77,58 @@ def summary():
 def summary_response():
     data = query.read_heatmap_population()
     disease = query.read_disease()
-    # begin = request.args['begin']
-    # end = request.args['end']
-    # data = data[data['year'].between(int(begin), int(end))]
-    # disease = disease[disease['year'].between(int(begin), int(end))]
-    # end between time
+
+    begin = request.args['begin']
+    end = request.args['end']
+    data = data[data['year'].between(int(begin), int(end))]
+    disease = disease[disease['year'].between(int(begin), int(end))]
+    #end between time
     feature_selected = []
     # get attribute columns
+    years = data['year'].nunique()
+
+
+    disease = (disease.groupby(["year", "month", "province_code"], as_index=False).first())
+  #  print(disease.head(100).to_string())
+
+    cases_per_year = disease.groupby(["year"]).sum()
+  #  print(cases_per_year.head(100).to_string())
+
+
+
     feature_selected.append(
         {
             'population': round(data['population'].sum(), 0),
-            'influenza': round(disease['influenza'].sum(), 0),
-            'diarrhoea': round(disease['diarrhoea'].sum(), 0),
-            'dengue': round(disease['dengue_fever'].sum(), 0)
+            'influenza_mean_cases': round(disease['influenza'].sum()/years, 0),
+            'influenza_mean_deaths': round(disease['influenza_death'].sum()/years, 0),
+            'influenza_min_cases': round(cases_per_year['influenza'].min(), 0),
+            'year_min_influenza': cases_per_year.influenza.idxmin(),
+            'influenza_min_deaths': round(cases_per_year['influenza_death'].min(), 0),
+            'year_min_death_influenza': cases_per_year.influenza_death.idxmin(),
+            'influenza_max_cases': round(cases_per_year['influenza'].max(), 0),
+            'year_max_influenza': cases_per_year.influenza.idxmax(),
+            'influenza_max_deaths': round(cases_per_year['influenza_death'].max(), 0),
+            'year_max_death_influenza': cases_per_year.influenza_death.idxmax(),
+            'diarrhoea_mean_cases': round(disease['diarrhoea'].sum()/years, 0),
+            'diarrhoea_mean_deaths': round(disease['diarrhoea_death'].sum() / years, 0),
+            'diarrhoea_min_cases': round(cases_per_year['diarrhoea'].min(), 0),
+            'year_min_diarrhoea': cases_per_year.diarrhoea.idxmin(),
+            'diarrhoea_min_deaths': round(cases_per_year['diarrhoea_death'].min(), 0),
+            'year_min_death_diarrhoea': cases_per_year.diarrhoea_death.idxmin(),
+            'diarrhoea_max_cases': round(cases_per_year['diarrhoea'].max(), 0),
+            'year_max_diarrhoea': cases_per_year.diarrhoea.idxmax(),
+            'diarrhoea_max_deaths': round(cases_per_year['diarrhoea_death'].max(), 0),
+            'year_max_death_diarrhoea': cases_per_year.diarrhoea_death.idxmax(),
+            'dengue_mean_cases': round(disease['dengue_fever'].sum()/years, 0),
+            'dengue_mean_deaths': round(disease['dengue_fever_death'].sum() / years, 0),
+            'dengue_min_cases': round(cases_per_year['dengue_fever'].min(), 0),
+            'year_min_dengue': cases_per_year.dengue_fever.idxmin(),
+            'dengue_min_deaths': round(cases_per_year['dengue_fever_death'].min(), 0),
+            'year_min_death_dengue': cases_per_year.dengue_fever_death.idxmin(),
+            'dengue_max_cases': round(cases_per_year['dengue_fever'].max(), 0),
+            'year_max_dengue': cases_per_year.dengue_fever.idxmax(),
+            'dengue_max_deaths': round(cases_per_year['dengue_fever_death'].max(), 0),
+            'year_max_death_dengue': cases_per_year.dengue_fever_death.idxmax(),
 
         }
     )
@@ -515,22 +557,29 @@ def explore_response(id):
     disease = query.disease_month_exp(id)
     begin = request.args['begin']
     end = request.args['end']
-    # data = data[data['year'].between(int(begin), int(end))]
-    # disease = disease[disease['year'].between(int(begin), int(end))]
-    # end between time
+    data = data[data['year'].between(int(begin), int(end))]
+    disease = disease[disease['year'].between(int(begin), int(end))]
+
+
+    disease = (disease.groupby(["year", "month"], as_index=False).first())
+
+    cases_per_year = disease.groupby(disease["year"]).sum()
+
+    years = data['year'].nunique()
+
     feature_selected = []
     # get attribute columns
     feature_selected.append(
         {
             'name': listToString(data['province_name'].unique()),
-            'population': round(data['population'].sum(), 4),
-            'influenza': round(disease['influenza'].sum(), 4),
-            'diarrhoea': round(disease['diarrhoea'].sum(), 4),
-            'dengue': round(disease['dengue_fever'].sum(), 4)
+            'population': round(data['population'].mean(), 4),
+            'influenza': round(cases_per_year['influenza'].sum()/years, 4),
+            'diarrhoea': round(cases_per_year['diarrhoea'].sum()/years, 4),
+            'dengue': round(cases_per_year['dengue_fever'].sum()/years, 4)
 
         }
     )
-    #print(feature_selected)
+    print(feature_selected)
 
     return jsonify({'data': render_template('explore_response.html',
                                             feature_selected=feature_selected)})
@@ -542,23 +591,25 @@ def exp_climate_response(id):
     climate = query.climate_month_exp(id)
     begin = request.args['begin']
     end = request.args['end']
-    # climate = climate[climate['year'].between(int(begin), int(end))]
+    climate = climate[climate['year'].between(int(begin), int(end))]
+    years = climate['year'].nunique()
+
+
     feature_selected = []
-    # get attribute columns
+
     feature_selected.append(
         {
-            'vaporation': round(climate['vaporation'].sum(), 4),
-            'rain': round(climate['rain'].sum(), 4),
-            'max_rain': round(climate['max_rain'].sum(), 4),
-            'raining_day': round(climate['raining_day'].sum(), 4),
-            'temperature': round(climate['temperature'].sum(), 4),
-            'temperature_max': round(climate['temperature_max'].sum(), 4),
-            'temperature_min': round(climate['temperature_min'].sum(), 4),
-            'temperature_absolute_min': round(climate['temperature_abs_min'].sum(), 4),
-            'temperature_absolute_max': round(climate['temperature_abs_max'].sum(), 4),
-            'sun_hour': round(climate['sun_hour'].sum(), 4),
-            'humidity': round(climate['humidity'].sum(), 4),
-            'humidity_min': round(climate['humidity_min'].sum(), 4),
+            'vaporation': round(climate['vaporation'].mean(), 4),
+            'rain': round(climate['rain'].mean(), 4),
+            'raining_day': round(climate['raining_day'].mean(), 4),
+            'temperature': round(climate['temperature'].mean(), 4),
+            'temperature_max': round(climate['temperature_max'].mean(), 4),
+            'temperature_min': round(climate['temperature_min'].mean(), 4),
+            'temperature_absolute_min': round(climate['temperature_abs_min'].sum()/years, 4),
+            'temperature_absolute_max': round(climate['temperature_abs_max'].sum()/years, 4),
+            'sun_hour': round(climate['sun_hour'].mean(), 4),
+            'humidity': round(climate['humidity'].mean(), 4),
+            'humidity_min': round(climate['humidity_min'].mean(), 4),
         }
     )
 
@@ -1046,6 +1097,15 @@ def subplotly_year():
     return sub
 # correlation
 
+@app.route('/subplotly_bubble_year', methods=['GET', 'POST'])
+def subplotly_bubble_year():
+    data = query.climate_disease()
+    begin = request.args['begin']
+    end = request.args['end']
+    y_m = request.args['y_m']
+    sub = visual.compare_weather_diseases(data,y_m,begin, end)
+    return sub
+
 
 @app.route('/corr_factor', methods=['GET', 'POST'])
 def corr_factor():
@@ -1159,6 +1219,24 @@ def compare_disease():
 
 # compare 2 province date1
 
+@app.route('/compare_disease_box', methods=['GET', 'POST'])
+def compare_disease_bar():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    data = query.read_heatmap_disease()
+    line = visual.compare_disease_bar(data, disease, begin, end)
+    return line
+
+@app.route('/compare_disease_boxplot', methods=['GET', 'POST'])
+def compare_disease_boxplot():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    data = query.read_heatmap_disease()
+    line = visual.compare_disease_boxplot(data, disease, begin, end)
+    return line
+
 
 @app.route('/comp_date1_disease', methods=['GET', 'POST'])
 def comp_date1_disease():
@@ -1240,4 +1318,16 @@ def linear_climate_month():
     df1 = query.compare_pro_climate_month(province1)
     df2 = query.compare_pro_climate_month(province2)
     line = visual.linear_comp_month(df1, df2, climate, begin, end)
+    return line
+
+@app.route('/climate_disease_bubble', methods=['GET', 'POST'])
+def climate_disease_bubble():
+    climate = request.args['climate']
+    province1 = request.args['province1']
+    province2 = request.args['province2']
+    begin = request.args['begin']
+    end = request.args['end']
+    df1 = query.compare_pro_month(province1)
+    df2 = query.compare_pro_month(province2)
+    line = visual.climate_comp_bubble(df1, df2, climate, begin, end)
     return line
