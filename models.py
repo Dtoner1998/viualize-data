@@ -356,6 +356,7 @@ class Querydata():
     # disease month province
 
     def disease_month_exp(self, province):
+        print(province)
         query = '''select year,month,date1,influenza,influenza_death,
                     dengue_fever,dengue_fever_death,diarrhoea,diarrhoea_death
                     from disease
@@ -580,6 +581,25 @@ class Querydata():
         data = pd.read_sql_query(query, conn)
         data['raining_day'] = pd.to_numeric(
             data['raining_day'], errors='coerce')
+        return data
+
+    def read_climate_province(self):
+        query = '''select province_code,vaporation,
+                          rain,max_rain,raining_day,
+                          temperature,temperature_max,
+                          temperature_min,temperature_abs_max,
+                          temperature_abs_min,
+                          humidity,humidity_min,sun_hour,date1,year,month
+                          from climate
+                           '''
+        data1 = pd.read_sql_query(query, conn)
+        data1['raining_day'] = pd.to_numeric(
+            data1['raining_day'], errors='coerce')
+        query2='''select province_code, province_name
+                          from province_info
+                           '''
+        data2=pd.read_sql_query(query2, conn)
+        data=pd.merge(data1, data2, how='inner', on=['province_code', 'province_code'])
         return data
 
     # concat

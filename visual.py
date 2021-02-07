@@ -232,7 +232,107 @@ class Visual():
     # end bar chart
     # box chart climate and disease
 
-    def box_chart_feature(self, df, feature, begin, end):
+    def yearlyCaseNumbersTrendLines(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(['province_code', 'date1']).first().reset_index()
+        dfTotalCases = df.groupby(['date1']).sum().reset_index()
+        dfMean = dfTotalCases.groupby(['year']).mean().reset_index()
+        dfTemp =pd.merge(dfTotalCases, dfMean, how='outer', on=['year', 'year'])
+        #print(list(dfTemp.columns))
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=dfTemp['date1'],
+            y=dfTemp[str(disease)+"_x"],
+            mode='lines',
+            name='Total Cases per month'
+        ))
+        fig.add_trace(go.Scatter(
+            x=dfTemp['date1'],
+            y=dfTemp[str(disease)+'_y'],
+            mode='lines',
+            name='Average Cases per year'
+        ))
+
+        fig.update_layout(
+            xaxis_title="Year", template="plotly_white",
+            margin=dict(l=30, r=30, b=30, t=30),
+            yaxis_title=(str(disease.replace('_', ' ')).title())
+        )
+
+        linesJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        return linesJSON
+
+    def monthlyCaseNumbersTrendLines(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(['province_code', 'date1']).first().reset_index()
+        df = df.groupby(['year', 'month']).sum().reset_index()
+        dfMean = df.groupby(['month']).mean().reset_index()
+        dfTemp= pd.merge(df, dfMean, how='inner', on=['month', 'month'])
+        #print(dfTemp)
+        dfTemp['monthYear'] = dfTemp['month'].astype(str)+'-'+dfTemp['year_x'].astype(str)
+        #print(list(dfTemp.columns))
+        dfTemp2=dfTemp[['monthYear', str(disease)+'_x', str(disease)+'_y']]
+
+
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=dfTemp2['monthYear'],
+            y=dfTemp[str(disease) + "_x"],
+            mode='lines',
+            name='Total Cases per month'
+        ))
+        fig.add_trace(go.Scatter(
+            x=dfTemp2['monthYear'],
+            y=dfTemp[str(disease) + '_y'],
+            mode='lines',
+            name='Average Cases per year'
+        ))
+
+        fig.update_layout(
+            xaxis_title="Year", template="plotly_white",
+            margin=dict(l=30, r=30, b=30, t=30),
+            yaxis_title=(str(disease.replace('_', ' ')).title())
+        )
+
+        linesJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+
+        return linesJSON
+
+
+    def yearlyClimateNumbersTrendLines(self, df, climate, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(['province_code', 'date1']).max().reset_index()
+        dfTotalCases = df.groupby(['date1']).sum().reset_index()
+        dfMean = dfTotalCases.groupby(['year']).mean().reset_index()
+        dfTemp =pd.merge(dfTotalCases, dfMean, how='outer', on=['year', 'year'])
+        #print(list(dfTemp.columns))
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=dfTemp['date1'],
+            y=dfTemp[str(climate)+"_x"],
+            mode='lines',
+            name='Total '+str(climate)+' per month'
+        ))
+        fig.add_trace(go.Scatter(
+            x=dfTemp['date1'],
+            y=dfTemp[str(climate)+'_y'],
+            mode='lines',
+            name='Average '+str(climate)+' per year'
+        ))
+
+        fig.update_layout(
+            xaxis_title="Year", template="plotly_white",
+            margin=dict(l=30, r=30, b=30, t=30),
+            yaxis_title=(str(climate.replace('_', ' ')).title())
+        )
+
+        linesJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        return linesJSON
+
+    def box_chart_mean_feature(self, df, feature, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
         df = df.groupby(['year', 'month']).mean().reset_index()
         fig = px.box(df, x=df['year'], y=df[str(feature)], color=df['year'])
@@ -269,7 +369,8 @@ class Visual():
     def heatmap_population(self, df, vn_json, begin, end):
         # group by
         df = df[df['year'].between(int(begin), int(end))]
-        mean = df.groupby(['fips', 'province_name']).mean().reset_index()
+        mean = df.groupby(['fips', 'province_name', 'year']).max().reset_index()
+        mean = mean.groupby(['fips', 'province_name']).mean().reset_index()
         # map in here
         fig = go.Figure(go.Choroplethmapbox(
             geojson=vn_json, locations=mean['fips'], z=mean['population'],
@@ -290,7 +391,8 @@ class Visual():
 
         df = df[df['year'].between(int(begin), int(end))]
         # get mean
-        df = df.groupby('year').mean().reset_index()
+        df = df.groupby(['year', 'province_name']).max().reset_index()
+        df = df.groupby('year').sum().reset_index()
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=df['year'],
@@ -324,7 +426,7 @@ class Visual():
                     yanchor="top"
                 ),
             ],
-            xaxis_title='Year', yaxis_title='Population yearly mean',
+            xaxis_title='Year', yaxis_title='Yearly Population (1000)',
             template="plotly_white", margin={"r": 10, "t": 10, "l": 10, "b": 10}
         )
         linesJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -456,7 +558,9 @@ class Visual():
 
     def heatmap_climate(self, df, vn_json, climate, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
-        mean = df.groupby(['fips', 'province_name']).mean().reset_index()
+        #print(list(df.columns))
+        mean = df.groupby(['fips', 'province_name', 'date1']).first().reset_index()
+        mean = mean.groupby(['fips', 'province_name']).mean().reset_index()
         fig = go.Figure(go.Choroplethmapbox(geojson=vn_json, locations=mean['fips'], z=mean[str(climate)],
                                             colorscale="Viridis", hovertext=mean['province_name'],
                                             marker_opacity=0.5, marker_line_width=0))
@@ -708,9 +812,7 @@ class Visual():
 
         return linesJSON
 
-
     # month disease error band
-
     def stat_disease_month(self, df, disease, begin, end):
         fig = go.Figure()
         df = df[df['year'].between(int(begin), int(end))]
@@ -1010,12 +1112,14 @@ class Visual():
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
 
+
+
     # date1 disease province
 
-    def line_date1_exp(self, df, disease, begin, end):
+    def line_date1_home(self, df, disease, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
-        df=(df.groupby(['date1', "province_code"], as_index=False).first())
-        #print(list(df.columns))
+        print(df)
+        df=(df.groupby(['date1', 'province_code'], as_index=False).first())
         # get mean
         dfMean = df.groupby(['date1']).mean().reset_index()
         dfMax = df.groupby(['date1']).max().reset_index()
@@ -1097,9 +1201,84 @@ class Visual():
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
 
+    def line_mortality_home(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df=(df.groupby(['date1', 'province_code'], as_index=False).first())
+        df=df.groupby(['year'], as_index=False).sum()
+        print(df[['year', str(disease), str(disease)+"_death"]])
+        # get mean
+        df[str(disease)+" mortality rate"] = (df[str(disease)+"_death"]/df[str(disease)])*100
+        # Create figure with secondary y-axis
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=df['year'], y=df[str(disease)+" mortality rate"],
+                                 mode='lines',
+                                 line=dict(color='blue'),
+                                 name=(str(disease.replace('_', ' '))).title()+" mortality rate"
+                                 ))
+        fig.update_layout(
+            showlegend=True,
+            template="plotly_white",
+            xaxis_title='Month',
+            yaxis_title=(str(disease).title()).replace(
+                '_', ' ') + ' mortality rate(%)'
+        )
+        line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return line
+
+    def line_date1_exp(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        # get mean
+        dfTotal = df.groupby(['date1']).sum().reset_index()
+
+        # Create figure with secondary y-axis
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=dfTotal['date1'], y=dfTotal[str(disease)],
+                                 mode='lines',
+                                 line=dict(color='blue'),
+                                 name="Number of Cases of " + (str(disease.replace('_', ' '))).title()
+                                 ))
+        fig.add_trace(go.Bar(x=dfTotal['date1'], y=dfTotal[str(disease)],
+                             marker_color="blue",
+                             name="Number of Cases of " + (str(disease.replace('_', ' '))).title(),
+                             visible=False
+                             ))
+        fig.update_layout(
+            updatemenus=[
+                dict(
+                    buttons=list([
+                        dict(
+                            args=[{"visible": [True, False]}],
+                            label="Line Chart",
+                            method="update"
+                        ),
+                        dict(
+                            args=[{"visible": [False, True]}],
+                            label="Bar Chart",
+                            method="update"
+                        )
+
+                    ]),
+                    direction="down",
+                    pad={"r": 10, "t": 10},
+                    showactive=True,
+                    x=1.2,
+                    xanchor="right",
+                    y=1.2,
+                    yanchor="top"
+                ),
+            ],
+            showlegend=True,
+            template="plotly_white",
+            xaxis_title='Month',
+            yaxis_title=(str(disease).title()).replace(
+                '_', ' ') + ' monthly Total'
+        )
+        line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return line
+
     def line_monthly_climate(self, df, climate, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
-        df=(df.groupby(['date1', "province_code"], as_index=False).first())
+        df=(df.groupby(['date1', "province_code"], as_index=False).max())
         #print(list(df.columns))
         # get mean
         dfMean = df.groupby(['year', 'month']).mean().reset_index()
@@ -1125,6 +1304,35 @@ class Visual():
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
 
+    def line_province_climate(self, df, climate, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df=(df.groupby(['date1', "province_code", "province_name"], as_index=False).max())
+        #print(list(df.columns))
+        # get mean
+        dfMean = df.groupby(['date1', 'province_code', "province_name"]).mean().reset_index()
+        years = [y for y in range(int(begin), int(end) + 1)]
+        provinces=dfMean.province_name.unique()
+        # Create figure with secondary y-axis
+        fig = go.Figure()
+        for province in provinces:
+            df = dfMean.loc[(dfMean['province_name'] == str(province))]
+            fig.add_trace(go.Scatter(x=df['date1'], y=df[str(climate)],
+                                     mode='lines',
+                                     marker_symbol='triangle-left-open',
+                                     marker=dict(size=10),
+                                     name=str(province),
+                                     ))
+        dv = self.title_climate(str(climate))
+        fig.update_layout(
+            showlegend=True,
+            template="plotly_white",
+            xaxis_title='Month',
+            yaxis_title=(str(climate).title()).replace(
+                '_', ' ') + ' monthly mean'
+        )
+        line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return line
+
 
     # date1 in climate
 
@@ -1133,12 +1341,8 @@ class Visual():
         df=(df.groupby(['date1', "province_code"], as_index=False).first())
         df=(df.groupby(['year', 'month'], as_index=False).sum())
         df['month'] = df['month'].apply(lambda x: calendar.month_abbr[x])
-        print(list(df.columns))
-        print(df)
         fig = go.Figure()
         years = [y for y in range(int(begin), int(end) + 1)]
-        print('test')
-        print(years)
         for year in years:
             dfYear = df.loc[(df['year'] == int(year))]
             fig.add_trace(go.Scatter(x=dfYear['month'], y=dfYear[str(disease)],

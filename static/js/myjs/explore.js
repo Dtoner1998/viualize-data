@@ -339,7 +339,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`line_province_month_${order}`, data, {});
-        $(`#disease_exp_month_${order}`).html(`Number case of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#disease_exp_month_${order}`).html(`line_province_disease_month Number case of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // seasonal analyst
@@ -391,7 +391,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`date1_disease_${order}`, data, {});
-        $(`#title_date1_${order}`).html(`Number case of ${name.split('_').join('  ')} by montly mean from ${begin}-${end}`);
+        $(`#title_date1_${order}`).html(`line_date1_exp Number case of ${name.split('_').join('  ')} by montly mean from ${begin}-${end}`);
       },
     });
   };

@@ -54,7 +54,8 @@ def summary():
     # get columns climate
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
-    climate2 = columns['climate2'].dropna()
+    climate1=climate1.reset_index(drop=True)
+    climate1=climate1.drop([10, 11])
     #data = query.groupby_disease_year()
     data2=query.disease_death_rate()
     #print(data2.columns)
@@ -63,7 +64,6 @@ def summary():
     return render_template('home.html',
                            disease=disease,
                            climate1=climate1,
-                           climate2=climate2,
                            barJson=barJson,
                            barJsonDeath=barJsonDeath,
                            )
@@ -105,9 +105,21 @@ def date1_home_disease():
     end = request.args['end']
 
     data = query.read_disease()
-    line = visual.line_date1_exp(data, disease, begin, end)
+    line = visual.line_date1_home(data, disease, begin, end)
     return line
 # data disease date1 home region
+
+
+@app.route('/mortality_home_disease', methods=['GET', 'POST'])
+def year_mortality_home_disease():
+
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+
+    data = query.read_disease()
+    line = visual.line_mortality_home(data, disease, begin, end)
+    return line
 
 
 @app.route('/month_home_disease', methods=['GET', 'POST'])
@@ -157,6 +169,17 @@ def line_monthly_climate():
 
     data=query.read_climate()
     line = visual.line_monthly_climate(data, climate, begin, end)
+    return line
+
+
+@app.route('/line_province_climate',methods=['GET', 'POST'])
+def line_province_climate():
+    climate = request.args['climate']
+    begin = request.args['begin']
+    end = request.args['end']
+
+    data = query.read_climate_province()
+    line = visual.line_province_climate(data, climate, begin, end)
     return line
 
 
@@ -322,7 +345,7 @@ def line_chart_climate():
     begin = request.args['begin']
     end = request.args['end']
 
-    LineJson = visual.box_chart_feature(data, climate, begin, end)
+    LineJson = visual.box_chart_mean_feature(data, climate, begin, end)
 
     return LineJson
 ##########################################################
@@ -358,7 +381,7 @@ def line_chart_region_climate():
 
     data = query.region_climate_month(region)
 
-    LineJson = visual.box_chart_feature(data, climate, begin, end)
+    LineJson = visual.box_chart_mean_feature(data, climate, begin, end)
 
     return LineJson
 # heatmap climate region tung vung mien
@@ -394,6 +417,38 @@ def heatmap_vn_region():
     return LineJson
 # heatmap population
 
+
+@app.route('/yearlyCaseNumbersTrendLines', methods=['GET', 'POST'])
+def yearlyCaseNumbersTrendLine():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    data = query.read_disease()
+
+    VNJSON= visual.yearlyCaseNumbersTrendLines(data, disease, begin, end)
+
+    return VNJSON
+
+@app.route('/yearlyClimateNumbersTrendLines', methods=['GET','POST'])
+def yearlyClimateNumbersTrendLines():
+    climate = request.args['climate']
+    begin = request.args['begin']
+    end = request.args['end']
+    data = query.read_climate()
+    line = visual.yearlyClimateNumbersTrendLines(data, climate, begin, end)
+    return line
+
+
+@app.route('/monthlyCaseNumbersTrendLines', methods=['GET','POST'])
+def monthlyCaseNumbersTrendLines():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    data = query.read_disease()
+
+    VNJSON= visual.monthlyCaseNumbersTrendLines(data, disease, begin, end)
+
+    return VNJSON
 
 @app.route('/heatmap_pop_region', methods=['GET', 'POST'])
 def heatmap_pop_region():
@@ -433,10 +488,13 @@ def explore():
     columns = query.get_columns()
     # get columns disease
     disease = columns['disease']
+    disease = disease.drop([1, 3, 5])
     # get columns climate
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
     climate2 = columns['climate2'].dropna()
+    climate1 = climate1.reset_index(drop=True)
+    climate1 = climate1.drop([10, 11])
     # name province
     province_name = query.get_province_name()
     province_code = query.get_province_code()
@@ -776,8 +834,8 @@ def line_date1_exp():
     disease = request.args['disease']
     begin = request.args['begin']
     end = request.args['end']
-    provice = request.args['province']
-    data = query.disease_month_exp(provice)
+    province = request.args['province']
+    data = query.disease_month_exp(province)
     line = visual.line_date1_exp(data, disease, begin, end)
     return line
 # date1 region
@@ -898,6 +956,7 @@ def compare():
     columns = query.get_columns()
     # get columns disease
     disease = columns['disease']
+    disease = disease.drop([1, 3, 5])
     # get columns climate
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
@@ -919,6 +978,8 @@ def popu_response(id, id0):
     feature_selected = []
     data0 = query.population_province_exp(id)
     data1 = query.population_province_exp(id0)
+    data0 = data0.groupby(['year', 'month', 'province_name']).mean().reset_index()
+    data1 = data1.groupby(['year', 'month', 'province_name']).mean().reset_index()
     begin = request.args['begin']
     end = request.args['end']
     # data0 = data0[data0['year'].between(int(begin), int(end))]
@@ -930,8 +991,8 @@ def popu_response(id, id0):
         {
             'name0': listToString(data0['province_name'].unique()),
             'name1': listToString(data1['province_name'].unique()),
-            'population0': round(data0['population'].sum(), 4),
-            'population1': round(data1['population'].sum(), 4),
+            'population0': round(data0['population'].iloc[1], 4),
+            'population1': round(data1['population'].iloc[1], 4),
         }
     )
 
