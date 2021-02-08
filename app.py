@@ -50,10 +50,13 @@ def summary():
     columns = query.get_columns()
     # get columns disease
     disease = columns['disease']
+    disease = disease.drop([1, 3, 5])
     # get columns climate
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
     climate2 = columns['climate2'].dropna()
+    climate1 = climate1.reset_index(drop=True)
+    climate1 = climate1.drop([10, 11])
     data = query.groupby_disease_year()
     years = data['year'].nunique()
     diseases = query.read_disease()
