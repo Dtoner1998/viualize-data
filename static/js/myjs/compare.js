@@ -231,8 +231,8 @@ $(document).ready(function () {
             <!-- line chart year  -->
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="white-box res-mg-t-30 table-mg-t-pro-n">
-                    <span class="box-title" id="climate_pro_year_${order}"></span>
-                    <div id="climate_pro_y_${order}" class="climate_pro_y_${order}">
+                    <span class="box-title" id="climate_pro_month_${order}"></span>
+                    <div id="climate_pro_m_${order}" class="climate_pro_m_${order}">
                         <!-- chart in here  -->
                     </div>
                 </div>
@@ -245,7 +245,7 @@ $(document).ready(function () {
 <div class="product-sales-area mg-tb-30" id='date1_comp_${name}'>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-sales-chart">
                     <div class="portlet-title">
                         <div class="row">
@@ -330,15 +330,21 @@ $(document).ready(function () {
 			</div>
 			<!-- end pie chart  -->
 			<!-- line chart year  -->
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		<!--	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
 					<span class="box-title" id="title_pro_year_${order}"></span>
 					<div id="line_pro_year_${order}" class="line_pro_year_${order}" style="width:auto;height:auto">
-						<!-- chart in here  -->
+						
+					</div>
+				</div>
+			</div>-->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_pro_month_${order}"></span>
+					<div id="line_pro_month_${order}" class="line_pro_month_${order}" style="width:auto;height:auto">
 					</div>
 				</div>
 			</div>
-			
 		</div>
 	</div>
 </div>
@@ -346,7 +352,7 @@ $(document).ready(function () {
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 				<div class="product-sales-chart">
 					<div class="portlet-title">
 						<div class="row">
@@ -368,14 +374,13 @@ $(document).ready(function () {
 				</div>
 			</div>
 			<!-- end line chart year  -->
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+<!--			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
 					<span class="box-title" id="title_pro_month_${order}"></span>
 					<div id="line_pro_month_${order}" class="line_pro_month_${order}" style="width:auto;height:auto">
-						<!-- chart in here  -->
 					</div>
 				</div>
-			</div>
+			</div>-->
 			<!-- end line chart month  -->
 		</div>
 	</div>
@@ -431,7 +436,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`pie_disease_y_${order}`, data, {});
-        $(`#pie_disease_year_${order}`).html(`Number case of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#pie_disease_year_${order}`).html(`Number cases of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line year disease
@@ -449,7 +454,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`line_pro_year_${order}`, data, {});
-        $(`#title_pro_year_${order}`).html(`Number case of  ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#title_pro_year_${order}`).html(`Number cases of  ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line month disease
@@ -485,7 +490,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`disease_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_disease_${order}`).html(`Number case of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_disease_${order}`).html(`Number cases of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // linear disease year
@@ -569,7 +574,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`pie_climate_y_${order}`, data, {});
-        $(`#pie_climate_year_${order}`).html(`Number of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#pie_climate_year_${order}`).html(`${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line year climate
@@ -587,7 +592,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`climate_pro_y_${order}`, data, {});
-        $(`#climate_pro_year_${order}`).html(`Number of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#climate_pro_year_${order}`).html(`${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line month climate
@@ -605,7 +610,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`climate_pro_m_${order}`, data, {});
-        $(`#climate_pro_month_${order}`).html(`Number of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#climate_pro_month_${order}`).html(`${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // date1 climate 
@@ -624,7 +629,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`climate_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_${order}`).html(`Number of ${name.split('_').join('  ')} monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_${order}`).html(`${name.split('_').join('  ')} monthly mean from ${begin}-${end}`);
       },
     });
     // linear year climate
