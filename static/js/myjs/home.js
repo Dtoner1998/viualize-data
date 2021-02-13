@@ -228,6 +228,40 @@ $(document).ready(function () {
 
     create_tag_chart_disease(order, name);
     nameDeath=name+"_death";
+            // chart compare disease bar chart
+    $.ajax({
+        url: "/compare_disease_box",
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        data: {
+            disease: name,
+            begin: begin,
+            end: end,
+        },
+        dataType: "json",
+        success: function (data) {
+            Plotly.newPlot(`comp_bar`, data, {});
+            $(`#comp_disease_bar_title`).html(`Bar chart of total ${name.split('_').join('  ')} cases per year for each province`);
+
+        },
+    });
+    // chart compare disease boxplot
+    $.ajax({
+        url: "/compare_disease_boxplot",
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        data: {
+            disease: name,
+            begin: begin,
+            end: end,
+        },
+        dataType: "json",
+        success: function (data) {
+            Plotly.newPlot(`comp_boxplot`, data, {});
+            $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${name.split('_').join('  ')} cases per year for each province`);
+
+        },
+    });
     $.ajax({
       url: "/line_chart_disease",
       type: "GET",
@@ -504,6 +538,62 @@ $(document).ready(function () {
     var html = '';
     html += `<div class="product-sales-area mg-tb-30" id=disease_${name}>
     <div class="container-fluid">
+    
+           <!-- show barchart here  -->
+    <div class="product-sales-area mg-tb-30" id='comp_disease_bar'>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id="comp_disease_bar_title"><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comp_bar" id="comp_bar" style="height: auto;width:auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+           <!-- show boxplot here  -->
+    <div class="product-sales-area mg-tb-30" id='comp_disease_boxplot'>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id="comp_disease_boxplot_title"><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comp_boxplot" id="comp_boxplot" style="height: auto;width:auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
         <!-- chart in here  -->
         <div class="row">
             <!-- col 1  -->
@@ -1559,6 +1649,8 @@ $(document).ready(function () {
     $(`#disease_deaths_yearly_trendline_home_${name}`).remove();
     $(`#disease_monthly_trendline_home_${name}`).remove();
     $(`#mortality_yearly_home_${name}`).remove();
+    $(`#comp_disease_boxplot`).remove();
+    $(`#comp_disease_bar`).remove();
     $(`#ruler1_${name}`).attr('class', 'my-4 hidden');
   };
   // create function delete climate then uncheckbox

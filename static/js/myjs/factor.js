@@ -170,40 +170,6 @@ $(document).ready(function () {
 
             },
         });
-        // chart compare disease bar chart
-        $.ajax({
-            url: "/compare_disease_box",
-            type: "GET",
-            contentType: "application/json;charset=UTF-8",
-            data: {
-                disease: disease,
-                begin: begin,
-                end: end,
-            },
-            dataType: "json",
-            success: function (data) {
-                Plotly.newPlot(`comp_bar`, data, {});
-                $(`#comp_disease_bar_title`).html(`Bar chart of total ${disease.split('_').join('  ')} cases per year for each province`);
-
-            },
-        });
-        // chart compare disease boxplot
-        $.ajax({
-            url: "/compare_disease_boxplot",
-            type: "GET",
-            contentType: "application/json;charset=UTF-8",
-            data: {
-                disease: disease,
-                begin: begin,
-                end: end,
-            },
-            dataType: "json",
-            success: function (data) {
-                Plotly.newPlot(`comp_boxplot`, data, {});
-                $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${disease.split('_').join('  ')} cases per year for each province`);
-
-            },
-        });
     };
     chart_subplotly(disease);
     title_factor(1997, 2019);
