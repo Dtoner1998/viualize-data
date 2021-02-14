@@ -1856,8 +1856,8 @@ class Visual():
     # correlation
     def corr_factor(self, df, feature, begin, end):
         fig = make_subplots(rows=1, cols=2, subplot_titles=(
-            "<b>Yearly mean cases Viet Nam" + '<br>' + str(begin) + '-' + str(end),
-            "<b>Yearly mean deaths Viet Nam " + '<br>' + str(begin) + '-' + str(end)))
+            "<b>Yearly cases correlation Viet Nam" + '<br>' + str(begin) + '-' + str(end),
+            "<b>Yearly deaths correlation Viet Nam " + '<br>' + str(begin) + '-' + str(end)))
         df = df[df['year'].between(int(begin), int(end))]
 
         agg_dict = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
@@ -1906,7 +1906,8 @@ class Visual():
                 z=correlated_df,
                 x=weather_names,
                 y=disease_names,
-                hoverongaps=False),
+                hoverongaps=False,
+                showscale=True),
             row=1, col=1)
 
         fig.add_trace(
@@ -1914,7 +1915,8 @@ class Visual():
                 z=correlated_death_df,
                 x=weather_names,
                 y=death_names,
-                hoverongaps=False),
+                hoverongaps=False,
+                showscale=False),
             row=1, col=2
         )
         fig.update_layout(height=600, template="plotly_white")

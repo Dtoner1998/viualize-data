@@ -150,7 +150,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 Plotly.newPlot(`corr_compare`, data, {});
-                $(`#sub_corr_title`).html(`Correlation of ${disease.split('_').join('  ')} yearly mean Viet Nam from ${begin}-${end}`);
+                $(`#sub_corr_title`).html(`Correlation of Diseases and Weather in Viet Nam from ${begin}-${end}`);
             },
         });
         // chart compare disease
