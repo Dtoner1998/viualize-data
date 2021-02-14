@@ -170,6 +170,22 @@ $(document).ready(function () {
 
             },
         });
+        $.ajax({
+            url: "/disease_and_weather",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                disease: disease,
+                begin: begin,
+                end: end,
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`line_bar_disease`, data, {});
+                $(`#line_bar_title`).html(`Total ${disease.split('_').join('  ')} cases per year and average weather Viet Nam from ${begin}-${end}`);
+
+            },
+        });
     };
     chart_subplotly(disease);
     title_factor(1997, 2019);

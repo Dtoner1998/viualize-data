@@ -1110,6 +1110,15 @@ def subplotly_bubble_year():
     sub = visual.compare_weather_diseases(data,y_m,begin, end)
     return sub
 
+@app.route('/disease_and_weather', methods=['GET', 'POST'])
+def disease_and_weather():
+    data = query.climate_disease()
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    sub = visual.disease_and_weather_line_bar(data, disease, begin, end)
+    return sub
+
 
 @app.route('/corr_factor', methods=['GET', 'POST'])
 def corr_factor():

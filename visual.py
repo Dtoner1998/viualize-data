@@ -2752,6 +2752,147 @@ class Visual():
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
 
+    def disease_and_weather_line_bar(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+
+        agg_dict = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
+                    "humidity": 'mean', "sun_hour": 'mean', "influenza": 'first', "diarrhoea": 'first',
+                    "dengue_fever": 'first', "influenza_death": 'first', "diarrhoea_death": 'first',
+                    "dengue_fever_death": 'first'}
+        df = df.groupby(["year", "month", "province_code"]).agg(agg_dict).reset_index()
+
+        agg_dict2 = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
+                    "humidity": 'mean', "sun_hour": 'mean', "influenza": 'sum', "diarrhoea": 'sum',
+                    "dengue_fever": 'sum', "influenza_death": 'sum', "diarrhoea_death": 'sum',
+                    "dengue_fever_death": 'sum'}
+
+        df = df.groupby(["year"]).agg(agg_dict2).reset_index()
+
+        fig = go.Figure()
+        fig.add_trace(
+            go.Bar(
+                x=df['year'],
+                y=df[str(disease)],
+                opacity=0.6,
+                name=str(disease)
+            ))
+
+        fig.add_trace(
+            go.Scatter(
+                x=df['year'],
+                y=df["vaporation"],
+                name="mean vaporation",
+                line_color="#ff7f0e",
+                yaxis="y2"
+            ))
+
+        fig.add_trace(
+            go.Scatter(
+                x=df['year'],
+                y=df["sun_hour"],
+                name="mean sun hour",
+                line_color="#d62728",
+                yaxis="y3"
+            ))
+
+        fig.add_trace(
+            go.Scatter(
+                x=df['year'],
+                y=df["rain"],
+                name="mean rain",
+                line_color="#9467bd",
+                yaxis="y4"
+            ))
+
+        fig.add_trace(
+            go.Scatter(
+                x=df['year'],
+                y=df["temperature"],
+                name="mean temperature",
+                line_color="#1f77b4",
+                yaxis="y5"
+            ))
+
+        fig.add_trace(
+            go.Scatter(
+                x=df['year'],
+                y=df["raining_day"],
+                name="mean raining days",
+                line_color="#ffe476",
+                yaxis="y6"
+            ))
+
+        fig.add_trace(
+            go.Scatter(
+                x=df['year'],
+                y=df["humidity"],
+                name="mean humidity",
+                line_color="#0000ff",
+                yaxis="y7"
+            ))
+
+
+        # Create axis objects
+        fig.update_layout(
+            plot_bgcolor="#FFF",
+            hovermode='x unified',
+            yaxis=dict(
+                title=str(disease),
+                showgrid=False
+            ),
+            yaxis2=dict(
+                visible=False,
+                anchor="x",
+                overlaying="y",
+                side="right",
+                showgrid=False
+            ),
+            yaxis3=dict(
+                visible=False,
+                anchor="free",
+                overlaying="y",
+                side="right",
+                position=0.9,
+                showgrid=False
+            ),
+            yaxis4 = dict(
+                visible=False,
+                anchor="free",
+                overlaying="y",
+                side="right",
+                position=0.92,
+                showgrid=False
+
+            ),
+            yaxis5=dict(
+                visible=False,
+                anchor="free",
+                overlaying="y",
+                side="right",
+                showgrid=False,
+                position=0.95,
+
+            ),
+            yaxis6=dict(
+                visible=False,
+                anchor="free",
+                overlaying="y",
+                side="right",
+                showgrid=False,
+            ),
+            yaxis7=dict(
+                visible=False,
+                anchor="free",
+                overlaying="y",
+                side="right",
+                showgrid=False,
+            ),
+        )
+        print(df.head(50).to_string())
+
+        bar = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return bar
+
     def compare_disease_bar(self, df, disease, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
         df = df.groupby(["date1", "province_name"], as_index=False).first()
