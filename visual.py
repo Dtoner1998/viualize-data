@@ -238,7 +238,6 @@ class Visual():
         dfTotalCases = df.groupby(['date1']).sum().reset_index()
         dfMean = dfTotalCases.groupby(['year']).mean().reset_index()
         dfTemp =pd.merge(dfTotalCases, dfMean, how='outer', on=['year', 'year'])
-        #print(list(dfTemp.columns))
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=dfTemp['date1'],
@@ -348,21 +347,40 @@ class Visual():
     # heatmap disease Viet Nam
 
     def heatmap_vn(self, df, vn_json, disease, begin, end):
-        # map_vn = []
         df = df[df['year'].between(int(begin), int(end))]
-        mean = df.groupby(['fips', 'province_name']).mean().reset_index()
+        df = (df.groupby(["year", "month", "fips"], as_index=False).first())
+
+        cases = df.groupby(['year', 'fips', 'province_name']).sum().reset_index()
+
         # get data
-        fig = go.Figure(go.Choroplethmapbox(geojson=vn_json, locations=mean['fips'], z=mean[str(disease)],
-                                            colorscale="Viridis", hovertext=mean['province_name'],
-                                            marker_opacity=0.5, marker_line_width=0
-                                            ))
-        fig.update_layout(mapbox_style="carto-positron", mapbox_zoom=4.0,
-                          margin={"r": 20, "t": 20, "l": 20, "b": 20},
-                          mapbox_center={"lat": 16.4,
-                                         "lon": 107.683333333333})
+        fig = px.choropleth(cases, geojson=vn_json, locations='fips', color=str(disease),
+                            color_continuous_scale="Viridis",hover_data=["province_name"], animation_frame="year"
+                            )
+        fig.update_geos(fitbounds="locations", visible=False)
+
+        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
         VNJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return VNJson
+
+#ORIGINAL NON ANIMATED HEATMAP (AVERAGE)
+    # def heatmap_vn(self, df, vn_json, disease, begin, end):
+    #
+    #     df = df[df['year'].between(int(begin), int(end))]
+    #     df = (df.groupby(["year", "month", "fips"], as_index=False).first())
+    #     mean = df.groupby(['fips', 'province_name']).mean().reset_index()
+    #         # get data
+    #     fig = go.Figure(go.Choroplethmapbox(geojson=vn_json, locations=mean['fips'], z=mean[str(disease)],
+    #                                         colorscale="Viridis", hovertext=mean['province_name'],
+    #                                         marker_opacity=0.5, marker_line_width=0
+    #                                         ))
+    #     fig.update_layout(mapbox_style="carto-positron", mapbox_zoom=4.0,
+    #                       margin={"r": 20, "t": 20, "l": 20, "b": 20},
+    #                       mapbox_center={"lat": 16.4,
+    #                                      "lon": 107.683333333333})
+    #
+    #     VNJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    #     return VNJson
 
     # heatmap population in Viet Nam
 
@@ -464,7 +482,7 @@ class Visual():
         df = df.loc[:, ~df.columns.duplicated()]
         df = df.groupby(["date1", "province_name"], as_index=False).first()
         df = df.groupby(["year1"], as_index=False).sum()
-        #print(list(df.columns))
+
         df[str(disease + " rate per 100,000")] = df.apply(lambda x: x[str(disease)] if x[str(disease)] < 1 else x[str(disease)] / x['population'], axis=1)
         df[str(disease + " rate per 100,000")] = df[str(disease + " rate per 100,000")].apply(lambda x: x* 100)
         fig = go.Figure()
@@ -1118,7 +1136,6 @@ class Visual():
 
     def line_date1_home(self, df, disease, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
-        print(df)
         df=(df.groupby(['date1', 'province_code'], as_index=False).first())
         # get mean
         dfMean = df.groupby(['date1']).mean().reset_index()
@@ -1205,7 +1222,6 @@ class Visual():
         df = df[df['year'].between(int(begin), int(end))]
         df=(df.groupby(['date1', 'province_code'], as_index=False).first())
         df=df.groupby(['year'], as_index=False).sum()
-        print(df[['year', str(disease), str(disease)+"_death"]])
         # get mean
         df[str(disease)+" mortality rate"] = (df[str(disease)+"_death"]/df[str(disease)])*100
         # Create figure with secondary y-axis
@@ -2888,7 +2904,6 @@ class Visual():
                 showgrid=False,
             ),
         )
-        print(df.head(50).to_string())
 
         bar = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return bar
@@ -2921,11 +2936,9 @@ class Visual():
         df = pd.concat([df0, df1])
         df = (df.groupby(["year", "name", "month"], as_index=False).sum())
         maxdf = (df.groupby(["year", "name", "month"], as_index=False).max())
-        print(maxdf[str(feature)])
         max = df[str(feature)].max()
         fig = px.line(df, x="month", y=str(feature), color="name", animation_frame="year",
                       animation_group="name", range_y=(0, max))
-        # maxdf[str(feature)]
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
 
