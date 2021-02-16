@@ -277,7 +277,6 @@ def cases_and_deaths_disease():
     begin = request.args['begin']
     end = request.args['end']
     df=query.disease_death_rate()
-    print(list(df.columns))
     LineJson = visual.casesAndDeathsChart(df, disease, begin, end)
 
     return LineJson
@@ -475,6 +474,21 @@ def yearlyCaseNumbersTrendLine():
 
     return VNJSON
 
+
+@app.route('/compYearlyCaseNumbersTrendLines', methods=['GET', 'POST'])
+def compYearlyCaseNumbersTrendLine():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    province = request.args['province']
+    data = query.compare_province_trend(province)
+    print(list(data.columns))
+
+    VNJSON= visual.compYearlyCaseNumbersTrendLines(data, disease, begin, end)
+
+    return VNJSON
+
+
 @app.route('/yearlyClimateNumbersTrendLines', methods=['GET','POST'])
 def yearlyClimateNumbersTrendLines():
     climate = request.args['climate']
@@ -583,7 +597,6 @@ def explore_response(id):
 
         }
     )
-    print(feature_selected)
 
     return jsonify({'data': render_template('explore_response.html',
                                             feature_selected=feature_selected)})
@@ -1016,6 +1029,8 @@ def compare():
     climate1 = columns['climate1'].append(columns['climate2'].dropna())
     # get columns climate 2
     climate2 = columns['climate2'].dropna()
+    climate1 = climate1.reset_index(drop=True)
+    climate1 = climate1.drop([10, 11])
     # get province column
     province_name = query.get_province_name()
     province_code = query.get_province_code()

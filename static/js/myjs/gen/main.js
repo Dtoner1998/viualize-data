@@ -228,6 +228,40 @@ $(document).ready(function () {
 
     create_tag_chart_disease(order, name);
     nameDeath=name+"_death";
+            // chart compare disease bar chart
+    $.ajax({
+        url: "/compare_disease_box",
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        data: {
+            disease: name,
+            begin: begin,
+            end: end,
+        },
+        dataType: "json",
+        success: function (data) {
+            Plotly.newPlot(`comp_bar`, data, {});
+            $(`#comp_disease_bar_title`).html(`Bar chart of total ${name.split('_').join('  ')} cases per year for each province`);
+
+        },
+    });
+    // chart compare disease boxplot
+    $.ajax({
+        url: "/compare_disease_boxplot",
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        data: {
+            disease: name,
+            begin: begin,
+            end: end,
+        },
+        dataType: "json",
+        success: function (data) {
+            Plotly.newPlot(`comp_boxplot`, data, {});
+            $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${name.split('_').join('  ')} cases per year for each province`);
+
+        },
+    });
     $.ajax({
       url: "/line_chart_disease",
       type: "GET",
@@ -504,6 +538,62 @@ $(document).ready(function () {
     var html = '';
     html += `<div class="product-sales-area mg-tb-30" id=disease_${name}>
     <div class="container-fluid">
+    
+           <!-- show barchart here  -->
+    <div class="product-sales-area mg-tb-30" id='comp_disease_bar'>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id="comp_disease_bar_title"><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comp_bar" id="comp_bar" style="height: auto;width:auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+           <!-- show boxplot here  -->
+    <div class="product-sales-area mg-tb-30" id='comp_disease_boxplot'>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id="comp_disease_boxplot_title"><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comp_boxplot" id="comp_boxplot" style="height: auto;width:auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
         <!-- chart in here  -->
         <div class="row">
             <!-- col 1  -->
@@ -1559,6 +1649,8 @@ $(document).ready(function () {
     $(`#disease_deaths_yearly_trendline_home_${name}`).remove();
     $(`#disease_monthly_trendline_home_${name}`).remove();
     $(`#mortality_yearly_home_${name}`).remove();
+    $(`#comp_disease_boxplot`).remove();
+    $(`#comp_disease_bar`).remove();
     $(`#ruler1_${name}`).attr('class', 'my-4 hidden');
   };
   // create function delete climate then uncheckbox
@@ -2138,6 +2230,7 @@ $(document).ready(function () {
   }
   // chart disease 
   function chart_disease_explore(begin, end, name, order) {
+    nameDeath=name+"_death"
     create_tag_exp(order, name)
     // lag correlation
     $.ajax({
@@ -2174,6 +2267,22 @@ $(document).ready(function () {
         $(`#disease_explore_${order}`).html(`Number case of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
+    $.ajax({
+      url: "/line_province_disease_year",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province: province_code
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`line_province_death_${order}`, data, {});
+        $(`#disease_explore_death_${order}`).html(`Number case of ${nameDeath.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+      },
+    });
     // disease month province
     $.ajax({
       url: "/line_province_disease_month",
@@ -2188,7 +2297,24 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`line_province_month_${order}`, data, {});
-        $(`#disease_exp_month_${order}`).html(`line_province_disease_month Number case of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#disease_exp_month_${order}`).html(`Number case of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+      },
+    });
+    // disease month province
+    $.ajax({
+      url: "/line_province_disease_month",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province: province_code
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`line_province_month_death_${order}`, data, {});
+        $(`#disease_exp_month_death_${order}`).html(`Number case of ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // seasonal analyst
@@ -2206,6 +2332,23 @@ $(document).ready(function () {
       success: function (data) {
         Plotly.newPlot(`seasonal_disease_${order}`, data, {});
         $(`#seasonal_${order}`).html(`Seasonal of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+      },
+    });
+        // seasonal analyst
+    $.ajax({
+      url: "/seasonal_disease_exp",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province: province_code
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`seasonal_disease_death_${order}`, data, {});
+        $(`#seasonal_death_${order}`).html(`Seasonal of ${nameDeath.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // correlation 
@@ -2240,7 +2383,23 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`date1_disease_${order}`, data, {});
-        $(`#title_date1_${order}`).html(`line_date1_exp Number case of ${name.split('_').join('  ')} by montly mean from ${begin}-${end}`);
+        $(`#title_date1_${order}`).html(`Number case of ${name.split('_').join('  ')} by montly mean from ${begin}-${end}`);
+      },
+    });
+    $.ajax({
+      url: "/line_date1_exp",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province: province_code
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`date1_disease_death_${order}`, data, {});
+        $(`#title_date1_death_${order}`).html(`Number case of ${nameDeath.split('_').join('  ')} by montly mean from ${begin}-${end}`);
       },
     });
   };
@@ -2429,6 +2588,107 @@ $(document).ready(function () {
             </div>
             <!-- chart in here  -->
             <div class="line_province_month_${order}" id=line_province_month_${order}
+              style="height: auto;width:auto"></div>
+          </div>
+        </div>
+        <!-- end col 2  -->
+      </div>
+    </div>
+  </div>
+  <!--  chart  disease2-->
+  <div class="product-sales-area mg-tb-30" id=disease_death_one${name}>
+    <div class="container-fluid">
+      <!-- show chart in here seasonal -->
+      <div class="row">
+        <!-- begin col 1  -->
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+          <div class="product-sales-chart">
+            <div class="portlet-title">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="caption pro-sl-hd">
+                    <span class="caption-subject" id=seasonal_death_${order}><b></b></span>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="actions graph-rp graph-rp-dl">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- chart in here -->
+            <div id=seasonal_disease_death_${order} class=seasonal_disease_death_${order} style="height: auto;width:auto">
+            </div>
+          </div>
+        </div>
+        <!-- col 2  month-->
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+          <div class="product-sales-chart">
+            <div class="portlet-title">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="caption pro-sl-hd">
+                    <span class="caption-subject" id=disease_exp_month_death_${order}><b></b></span>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="actions graph-rp graph-rp-dl">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- chart in here  -->
+            <div class="line_province_month_death_${order}" id=line_province_month_death_${order}
+              style="height: auto;width:auto"></div>
+          </div>
+        </div>
+        <!-- end col 2  -->
+      </div>
+    </div>
+  </div>
+  <div class="product-sales-area mg-tb-30" id=disease_death_two${name}>
+    <div class="container-fluid">
+      <!-- show chart in here seasonal -->
+      <div class="row">
+        <!-- begin col 1  -->
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+          <div class="product-sales-chart">
+            <div class="portlet-title">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="caption pro-sl-hd">
+                    <span class="caption-subject" id=disease_explore_death_${order}><b></b></span>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="actions graph-rp graph-rp-dl">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- chart in here -->
+            <div id=line_province_death_${order} class=line_province_death_${order} style="height: auto;width:auto">
+            </div>
+          </div>
+        </div>
+        <!-- col 2  month-->
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+          <div class="product-sales-chart">
+            <div class="portlet-title">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="caption pro-sl-hd">
+                    <span class="caption-subject" id=title_date1_death_${order}><b></b></span>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="actions graph-rp graph-rp-dl">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- chart in here  -->
+            <div class="date1_disease_death_${order}" id=date1_disease_death_${order}
               style="height: auto;width:auto"></div>
           </div>
         </div>
@@ -2637,6 +2897,7 @@ $(document).ready(function () {
     $(`#disease_exp0_${name}`).remove();
     $(`#disease_exp1_${name}`).remove();
     $(`#date1_exp_${name}`).remove();
+    $(`#disease_death_one${name}`).remove();
     $(`#ruler_exp_${name}`).attr('class', 'my-4 hidden');;
   }
   // uncheck climate
@@ -3305,8 +3566,8 @@ $(document).ready(function () {
             <!-- line chart year  -->
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="white-box res-mg-t-30 table-mg-t-pro-n">
-                    <span class="box-title" id="climate_pro_year_${order}"></span>
-                    <div id="climate_pro_y_${order}" class="climate_pro_y_${order}">
+                    <span class="box-title" id="climate_pro_month_${order}"></span>
+                    <div id="climate_pro_m_${order}" class="climate_pro_m_${order}">
                         <!-- chart in here  -->
                     </div>
                 </div>
@@ -3319,7 +3580,7 @@ $(document).ready(function () {
 <div class="product-sales-area mg-tb-30" id='date1_comp_${name}'>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-sales-chart">
                     <div class="portlet-title">
                         <div class="row">
@@ -3404,15 +3665,53 @@ $(document).ready(function () {
 			</div>
 			<!-- end pie chart  -->
 			<!-- line chart year  -->
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		<!--	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
 					<span class="box-title" id="title_pro_year_${order}"></span>
 					<div id="line_pro_year_${order}" class="line_pro_year_${order}" style="width:auto;height:auto">
+						
+					</div>
+				</div>
+			</div>-->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_pro_month_${order}"></span>
+					<div id="line_pro_month_${order}" class="line_pro_month_${order}" style="width:auto;height:auto">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+    <div class="courses-area mg-b-15" id='disease_comp_death_${name}'>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- pie chart  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box">
+					<span class="box-title" id="pie_disease_death_year_${order}"></span>
+					<div class="pie_disease_death_y_${order}" id="pie_disease_death_y_${order}" style="width:auto;height:auto">
 						<!-- chart in here  -->
 					</div>
 				</div>
 			</div>
-			
+			<!-- end pie chart  -->
+			<!-- line chart year  -->
+		<!--	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_pro_year_${order}"></span>
+					<div id="line_pro_year_${order}" class="line_pro_year_${order}" style="width:auto;height:auto">
+						
+					</div>
+				</div>
+			</div>-->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_pro_month_${order}"></span>
+					<div id="line_pro_month_death_${order}" class="line_pro_month_death_${order}" style="width:auto;height:auto">
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -3420,7 +3719,7 @@ $(document).ready(function () {
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 				<div class="product-sales-chart">
 					<div class="portlet-title">
 						<div class="row">
@@ -3442,14 +3741,50 @@ $(document).ready(function () {
 				</div>
 			</div>
 			<!-- end line chart year  -->
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+<!--			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
 					<span class="box-title" id="title_pro_month_${order}"></span>
 					<div id="line_pro_month_${order}" class="line_pro_month_${order}" style="width:auto;height:auto">
-						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>-->
+			<!-- end line chart month  -->
+		</div>
+	</div>
+</div>
+<!-- end -->
+<div class="product-sales-area mg-tb-30" id='disease_date1_comp_death_${name}'>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="product-sales-chart">
+					<div class="portlet-title">
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="caption pro-sl-hd">
+									<span class="caption-subject" id="title_date1_comp_disease_death_${order}"><b></b></span>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="actions graph-rp graph-rp-dl">
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="disease_date1_comp_death_${order}" id="disease_date1_comp_death_${order}"
+						style="height: auto;width:auto">
 					</div>
 				</div>
 			</div>
+			<!-- end line chart year  -->
+<!--			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_pro_month_${order}"></span>
+					<div id="line_pro_month_${order}" class="line_pro_month_${order}" style="width:auto;height:auto">
+					</div>
+				</div>
+			</div>-->
 			<!-- end line chart month  -->
 		</div>
 	</div>
@@ -3480,6 +3815,58 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
+<div class="courses-area mg-b-15" id='linear_comp_death_${name}'>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- pie chart  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box">
+					<span class="box-title" id="linear_disease_year_death_${order}"></span>
+					<div class="linear_disease_y_death_${order}" id="linear_disease_y_death_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			<!-- end pie chart  -->
+			<!-- line chart year  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="linear_title_year_${order}"></span>
+					<div id="linear_pro_month_death_${order}" class="linear_pro_month_death_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
+<div class="courses-area mg-b-15" id='trendlines_${name}'>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- pie chart  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box">
+					<span class="box-title" id="title_trendline1_${order}"></span>
+					<div class="trendline1_${order}" id="trendline1_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			<!-- end pie chart  -->
+			<!-- line chart year  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_trendline2_${order}"></span>
+					<div id="trendline2_${order}" class="trendline2_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
 <hr class="my-4" id=ruler_comp_${name}>
 `;
     $(`.disease_comp`).append(html);
@@ -3489,6 +3876,7 @@ $(document).ready(function () {
   };
   // choosen province disease
   function chosen_province_disease(begin, end, name, order) {
+    var nameDeath=name+"_death";
     // pie chart year
     create_tag_disease(order, name);
     $.ajax({
@@ -3505,7 +3893,24 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`pie_disease_y_${order}`, data, {});
-        $(`#pie_disease_year_${order}`).html(`Number case of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#pie_disease_year_${order}`).html(`Number cases of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+      },
+    });
+    $.ajax({
+      url: "/pie_disease_year",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province1: id_click_once,
+        province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`pie_disease_death_y_${order}`, data, {});
+        $(`#pie_disease_death_year_${order}`).html(`Number cases of ${nameDeath.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line year disease
@@ -3523,7 +3928,24 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`line_pro_year_${order}`, data, {});
-        $(`#title_pro_year_${order}`).html(`Number case of  ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#title_pro_year_${order}`).html(`Number cases of  ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+      },
+    });
+    $.ajax({
+      url: "/compare_province",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province1: id_click_once,
+        province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`line_pro_year_death_${order}`, data, {});
+        $(`#title_pro_year_death_${order}`).html(`Number cases of  ${nameDeath.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line month disease
@@ -3544,6 +3966,23 @@ $(document).ready(function () {
         $(`#title_pro_month_${order}`).html(`Number of  ${name.split('_').join('  ')} monthly mean from ${begin}-${end}`);
       },
     });
+    $.ajax({
+      url: "/compare_pro_month",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province1: id_click_once,
+        province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`line_pro_month_death_${order}`, data, {});
+        $(`#title_pro_month_death_${order}`).html(`Number of  ${nameDeath.split('_').join('  ')} monthly mean from ${begin}-${end}`);
+      },
+    });
     // disease_date1_comp_${order}
     $.ajax({
       url: "/comp_date1_disease",
@@ -3559,7 +3998,24 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`disease_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_disease_${order}`).html(`Number case of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_disease_${order}`).html(`Yearly chart - Number cases of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+      },
+    });
+    $.ajax({
+      url: "/comp_date1_disease",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province1: id_click_once,
+        province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`disease_date1_comp_death_${order}`, data, {});
+        $(`#title_date1_comp_disease_death_${order}`).html(`Yearly chart - Number cases of  ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // linear disease year
@@ -3580,6 +4036,23 @@ $(document).ready(function () {
         $(`#linear_disease_year_${order}`).html(`Linear of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
+    $.ajax({
+      url: "/linear_comp_year",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province1: id_click_once,
+        province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`linear_disease_y_death_${order}`, data, {});
+        $(`#linear_disease_year_death_${order}`).html(`Linear of ${nameDeath.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+      },
+    });
     // linear disease month
     $.ajax({
       url: "/linear_comp_month",
@@ -3598,14 +4071,66 @@ $(document).ready(function () {
         $(`#linear_title_year_${order}`).html(`Linear of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
+    $.ajax({
+      url: "/linear_comp_month",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: nameDeath,
+        begin: begin,
+        end: end,
+        province1: id_click_once,
+        province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`linear_pro_month_death_${order}`, data, {});
+        $(`#linear_title_year_death_${order}`).html(`Linear of ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+      },
+    });
+    $.ajax({
+      url: "/compYearlyCaseNumbersTrendLines",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: name,
+        begin: begin,
+        end: end,
+        province: id_click_once,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`trendline1_${order}`, data, {});
+        $(`#title_trendline1_${order}`).html(`Number of Cases of ${name.split('_').join('  ')}  by yearly mean from ${begin}-${end}`);
+      },
+    });
+     $.ajax({
+      url: "/compYearlyCaseNumbersTrendLines",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: name,
+        begin: begin,
+        end: end,
+        province: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`trendline2_${order}`, data, {});
+        $(`#title_trendline2_${order}`).html(`Number of Cases of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+      },
+    });
 
   };
-
   // uncheck disease
   function unchecked_disease_pro(name) {
     $(`#disease_comp_${name}`).remove();
+    $(`#disease_comp_death_${name}`).remove();
     $(`#disease_date1_comp_${name}`).remove();
+    $(`#disease_date1_comp_death_${name}`).remove();
     $(`#linear_comp_${name}`).remove();
+    $(`#linear_comp_death_${name}`).remove();
+    $(`#trendlines_${name}`).remove();
     $(`#ruler_comp_${name}`).attr('class', 'my-4 hidden');
   };
   // run disease
@@ -3643,7 +4168,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`pie_climate_y_${order}`, data, {});
-        $(`#pie_climate_year_${order}`).html(`Number of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#pie_climate_year_${order}`).html(`${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line year climate
@@ -3661,7 +4186,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`climate_pro_y_${order}`, data, {});
-        $(`#climate_pro_year_${order}`).html(`Number of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#climate_pro_year_${order}`).html(`${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
     // line month climate
@@ -3679,7 +4204,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`climate_pro_m_${order}`, data, {});
-        $(`#climate_pro_month_${order}`).html(`Number of ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#climate_pro_month_${order}`).html(`${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // date1 climate 
@@ -3698,7 +4223,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`climate_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_${order}`).html(`Number of ${name.split('_').join('  ')} monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_${order}`).html(`${name.split('_').join('  ')} monthly mean from ${begin}-${end}`);
       },
     });
     // linear year climate
@@ -3982,7 +4507,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 Plotly.newPlot(`corr_compare`, data, {});
-                $(`#sub_corr_title`).html(`Correlation of ${disease.split('_').join('  ')} yearly mean Viet Nam from ${begin}-${end}`);
+                $(`#sub_corr_title`).html(`Correlation of Diseases and Weather in Viet Nam from ${begin}-${end}`);
             },
         });
         // chart compare disease
@@ -4002,9 +4527,8 @@ $(document).ready(function () {
 
             },
         });
-        // chart compare disease bar chart
         $.ajax({
-            url: "/compare_disease_box",
+            url: "/disease_and_weather",
             type: "GET",
             contentType: "application/json;charset=UTF-8",
             data: {
@@ -4014,25 +4538,8 @@ $(document).ready(function () {
             },
             dataType: "json",
             success: function (data) {
-                Plotly.newPlot(`comp_bar`, data, {});
-                $(`#comp_disease_bar_title`).html(`Bar chart of total ${disease.split('_').join('  ')} cases per year for each province`);
-
-            },
-        });
-        // chart compare disease boxplot
-        $.ajax({
-            url: "/compare_disease_boxplot",
-            type: "GET",
-            contentType: "application/json;charset=UTF-8",
-            data: {
-                disease: disease,
-                begin: begin,
-                end: end,
-            },
-            dataType: "json",
-            success: function (data) {
-                Plotly.newPlot(`comp_boxplot`, data, {});
-                $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${disease.split('_').join('  ')} cases per year for each province`);
+                Plotly.newPlot(`line_bar_disease`, data, {});
+                $(`#line_bar_title`).html(`Total ${disease.split('_').join('  ')} cases per year and average weather Viet Nam from ${begin}-${end}`);
 
             },
         });

@@ -67,7 +67,7 @@ class Querydata():
         query = '''
                 select province_name,fips,year,month,influenza,
                 influenza_death,dengue_fever_death,dengue_fever,
-                diarrhoea,diarrhoea_death,date1
+                diarrhoea,diarrhoea_death,date1, a.province_code
                 from disease as a inner join province_info as b
                 on a.province_code = b.province_code
                 '''
@@ -1112,8 +1112,21 @@ class Querydata():
         data = pd.read_sql_query(query, conn)
         data = data.groupby(['year', 'name']).mean().reset_index()
         return data
-    # get name provice month
 
+    def compare_province_trend(self, province):
+        query = '''select year,month,influenza,influenza_death,
+                    province_name as name,
+                    dengue_fever,dengue_fever_death,diarrhoea,diarrhoea_death,
+                    date1
+                    from disease as a inner join province_info as b
+                    on a.province_code = b.province_code
+                    where a.province_code =
+                    ''' + str(province)
+
+        data = pd.read_sql_query(query, conn)
+        return data
+
+    # get name provice month
     def compare_pro_month(self, province):
         query = '''select year,month,influenza,influenza_death,
                     province_name as name,
@@ -1163,3 +1176,4 @@ class Querydata():
         data['raining_day'] = pd.to_numeric(
             data['raining_day'], errors='coerce')
         return data
+

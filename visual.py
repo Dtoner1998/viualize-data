@@ -262,6 +262,37 @@ class Visual():
 
         return linesJSON
 
+    def compYearlyCaseNumbersTrendLines(self, df, disease, begin, end):
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(['date1']).first().reset_index()
+        dfTotalCases = df.groupby(['date1']).sum().reset_index()
+        dfMean = dfTotalCases.groupby(['year']).mean().reset_index()
+        dfTemp =pd.merge(dfTotalCases, dfMean, how='outer', on=['year', 'year'])
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=dfTemp['date1'],
+            y=dfTemp[str(disease)+"_x"],
+            mode='lines',
+            name='Total Cases per month'
+        ))
+        fig.add_trace(go.Scatter(
+            x=dfTemp['date1'],
+            y=dfTemp[str(disease)+'_y'],
+            mode='lines',
+            name='Average Cases per year'
+        ))
+
+        fig.update_layout(
+            xaxis_title="Year", template="plotly_white",
+            margin=dict(l=30, r=30, b=30, t=30),
+            yaxis_title=(str(disease.replace('_', ' ')).title())
+        )
+
+        linesJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        return linesJSON
+
+
     def monthlyCaseNumbersTrendLines(self, df, disease, begin, end):
         df = df[df['year'].between(int(begin), int(end))]
         df = df.groupby(['province_code', 'date1']).first().reset_index()
@@ -834,7 +865,7 @@ class Visual():
     def stat_disease_month(self, df, disease, begin, end):
         fig = go.Figure()
         df = df[df['year'].between(int(begin), int(end))]
-        df = df[df[str(disease)] != 0]
+        #df = df[df[str(disease)] != 0]
         # get mean
         mean = df.groupby('month').mean().reset_index()
         max_ = df.groupby('month').max().reset_index()
