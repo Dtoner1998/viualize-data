@@ -91,14 +91,9 @@ def summary_response():
     # get attribute columns
     years = data['year'].nunique()
 
-
     disease = (disease.groupby(["year", "month", "province_code"], as_index=False).first())
-  #  print(disease.head(100).to_string())
 
     cases_per_year = disease.groupby(["year"]).sum()
-  #  print(cases_per_year.head(100).to_string())
-
-
 
     feature_selected.append(
         {
@@ -277,7 +272,6 @@ def cases_and_deaths_disease():
     begin = request.args['begin']
     end = request.args['end']
     df=query.disease_death_rate()
-    print(list(df.columns))
     LineJson = visual.casesAndDeathsChart(df, disease, begin, end)
 
     return LineJson
@@ -564,27 +558,27 @@ def explore_response(id):
     data = data[data['year'].between(int(begin), int(end))]
     disease = disease[disease['year'].between(int(begin), int(end))]
 
-
     disease = (disease.groupby(["year", "month"], as_index=False).first())
 
     cases_per_year = disease.groupby(disease["year"]).sum()
 
-    years = data['year'].nunique()
+    data = data[(data['year'] == int(end))]
+    dataLast = (data.groupby(["year"], as_index=False).last())
 
     feature_selected = []
     # get attribute columns
     feature_selected.append(
         {
             'name': listToString(data['province_name'].unique()),
-            'population': round(data['population'].mean(), 4),
-            'influenza': round(cases_per_year['influenza'].sum()/years, 4),
-            'diarrhoea': round(cases_per_year['diarrhoea'].sum()/years, 4),
-            'dengue': round(cases_per_year['dengue_fever'].sum()/years, 4)
+            'endYear': end,
+            'population': round(dataLast['population'].mean(), 4),
+            'influenza': round(cases_per_year['influenza'].mean(), 4),
+            'diarrhoea': round(cases_per_year['diarrhoea'].mean(), 4),
+            'dengue': round(cases_per_year['dengue_fever'].mean(), 4)
 
         }
     )
-    print(feature_selected)
-
+ 
     return jsonify({'data': render_template('explore_response.html',
                                             feature_selected=feature_selected)})
 # information province climate

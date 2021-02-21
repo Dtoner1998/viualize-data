@@ -306,7 +306,7 @@ class Visual():
         dfTotalCases = df.groupby(['date1']).sum().reset_index()
         dfMean = dfTotalCases.groupby(['year']).mean().reset_index()
         dfTemp =pd.merge(dfTotalCases, dfMean, how='outer', on=['year', 'year'])
-        #print(list(dfTemp.columns))
+
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=dfTemp['date1'],

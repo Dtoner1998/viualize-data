@@ -2,7 +2,7 @@
 <!-- province code  -->
 <div class="analysis-progrebar res-mg-t-30 mg-ub-10 res-mg-b-30 table-mg-t-pro-n tb-sm-res-d-n dk-res-t-d-n">
   <div class="analysis-progrebar-content">
-    <h5>Total Vaporation
+    <h5>Average Monthly Evaporation
     </h5>
     <!-- <h2 class="storage-right"><span class="counter">90</span>%</h2> -->
     <div class="progress progress-mini ug-1">
@@ -16,8 +16,8 @@
 <!-- population  -->
 <div class="analysis-progrebar reso-mg-b-30 res-mg-b-30 mg-ub-10 tb-sm-res-d-n dk-res-t-d-n">
   <div class="analysis-progrebar-content">
-    <h5>Total Rain
-      
+    <h5>Average Monthly Rain
+
     </h5>
     <div class="progress progress-mini ug-2">
       <div style="width: 100%;" class="progress-bar"></div>
@@ -26,12 +26,24 @@
       <p>{{"{:,}".format(elemt.rain)}} (mm)</p>
     </div>
   </div>
+    <br>
+  <div class="analysis-progrebar-content">
+    <h5>Average Monthly Rainy Days
+
+    </h5>
+    <div class="progress progress-mini ug-2">
+      <div style="width: 100%;" class="progress-bar"></div>
+    </div>
+    <div class="m-t-sm small">
+      <p>{{"{:,}".format(elemt.raining_day)}} days</p>
+    </div>
+  </div>
 </div>
 <!-- influenza -->
 <div class="analysis-progrebar reso-mg-b-30 res-mg-b-30 res-mg-t-30 mg-ub-10 tb-sm-res-d-n dk-res-t-d-n">
   <div class="analysis-progrebar-content">
-    <h5>Total Temperature
-      
+    <h5>Monthly Average Temperature
+
     </h5>
     <!-- <h2 class="storage-right"><span class="counter">50</span>%</h2> -->
     <div class="progress progress-mini ug-3">
@@ -40,13 +52,16 @@
     <div class="m-t-sm small">
       <p>{{"{:,}".format(elemt.temperature)}} (oC)</p>
     </div>
+
+  </div>
+
   </div>
 </div>
 <!-- diarrhoea -->
 <div class="analysis-progrebar res-mg-t-30 table-dis-n-pro tb-sm-res-d-n dk-res-t-d-n">
   <div class="analysis-progrebar-content">
-    <h5>Total Humidity
-      
+    <h5>Average Monthly Humidity
+
     </h5>
     <!-- <h2 class="storage-right"><span class="counter">40</span>%</h2> -->
     <div class="progress progress-mini ug-4">
@@ -61,7 +76,7 @@
 
 <div class="analysis-progrebar reso-mg-b-30 res-mg-b-30 res-mg-t-30 mg-ub-10 tb-sm-res-d-n dk-res-t-d-n">
   <div class="analysis-progrebar-content">
-    <h5>Total Sun Hour
+    <h5>Average Monthly Sun Hours
       
     </h5>
     <!-- <h2 class="storage-right"><span class="counter">50</span>%</h2> -->
