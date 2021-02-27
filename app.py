@@ -1130,6 +1130,29 @@ def disease_and_weather():
     sub = visual.disease_and_weather_line_bar(data, disease, begin, end)
     return sub
 
+@app.route('/disease_and_weather_region', methods=['GET', 'POST'])
+def disease_and_weather_region():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    region = request.args['province']
+    data = query.climate_disease_region(region)
+    sub = visual.disease_and_weather_line_bar(data, disease, begin, end)
+    return sub
+
+# @app.route('/region_corr_disease_exp', methods=['GET', 'POST'])
+# def region_corr_disease_exp():
+#
+#     data = query.climate_disease()
+#     disease = request.args.getlist('disease[]')
+#     begin = request.args['begin']
+#     end = request.args['end']
+#     region = request.args['region']
+#
+#     data = query.region_climate_disease(region)
+#     corr = visual.corr_disease_exp(data, disease, begin, end)
+#     return corr
+
 
 @app.route('/corr_factor', methods=['GET', 'POST'])
 def corr_factor():

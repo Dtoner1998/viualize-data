@@ -309,6 +309,23 @@ $(document).ready(function () {
         $(`#lag_explore_${order}`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
       },
     });
+    $.ajax({
+      url: "/disease_and_weather_region",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+          disease: name,
+          begin: begin,
+          end: end,
+          province: province_code
+      },
+      dataType: "json",
+      success: function (data) {
+          Plotly.newPlot(`line_bar_disease`, data, {});
+          $(`#line_bar_title`).html(`Total ${disease.split('_').join('  ')} cases per year and average weather Viet Nam from ${begin}-${end}`);
+
+      },
+    });
     // disease year province
     $.ajax({
       url: "/line_province_disease_year",
@@ -554,7 +571,33 @@ $(document).ready(function () {
   // use function
   function create_tag_exp(order, name) {
     var html = '';
-    html += ` <div class="product-sales-area mg-tb-30" id=disease_exp0_${name}>
+    html += `<div class="product-sales-area mg-tb-30" id='line_bar'>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id="line_bar_title"><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="line_bar_disease" id="line_bar_disease" style="height: auto;width:auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <div class="product-sales-area mg-tb-30" id=disease_exp0_${name}>
     <div class="container-fluid">
       <!-- chart in here  -->
       <div class="row">

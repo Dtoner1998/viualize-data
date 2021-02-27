@@ -1087,6 +1087,25 @@ class Querydata():
         df = df.groupby('year').mean().reset_index()
         return df
 
+    def climate_disease_region(self, provice):
+        query1 = ''' select year,month,influenza,
+                    influenza_death,dengue_fever_death,dengue_fever,
+                    diarrhoea,diarrhoea_death,province_code as code,date1
+                    from disease where province_code =''' + str(provice)
+        query2 = '''select province_code,vaporation,
+                        rain,max_rain,raining_day,
+                        temperature,temperature_max,
+                        temperature_min,temperature_abs_max,
+                        temperature_abs_min,
+                        humidity,humidity_min,sun_hour,date1
+                        from climate where province_code =
+                         ''' + str(provice)
+        df1 = pd.read_sql_query(query1, conn)
+        df2 = pd.read_sql_query(query2, conn)
+        df = pd.concat([df2, df1], axis=1, join='inner')
+        df['raining_day'] = pd.to_numeric(df['raining_day'], errors='coerce')
+        return df
+
     # correlation region
 
     def region_climate_disease(self, region):
