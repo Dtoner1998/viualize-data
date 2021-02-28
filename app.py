@@ -1162,8 +1162,21 @@ def corr_factor():
     end = request.args['end']
     sub = visual.corr_factor(data, disease, begin, end)
     return sub
+
 ###########################comparation two province disease#############################
 
+@app.route('/corr_comp_factor', methods=['GET', 'POST'])
+def corr_comp_factor():
+    begin = request.args['begin']
+    end = request.args['end']
+    province1 = request.args['province1']
+    province2 = request.args['province2']
+    df1 = query.climate_disease_region(province1)
+    df2 = query.climate_disease_region(province2)
+    name1 = query.get_region_name(province1)
+    name2 = query.get_region_name(province2)
+    sub = visual.corr_compare_factor(df1, df2, begin, end, name1, name2)
+    return sub
 
 @app.route('/compare_province', methods=['GET', 'POST'])
 def compare_province():

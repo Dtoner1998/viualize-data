@@ -1971,6 +1971,77 @@ class Visual():
         return line
 
 
+    def corr_compare_factor(self, df1, df2, begin, end, name1, name2):
+        name1 = name1["province_name"].iloc[0]
+        name2 = name2["province_name"].iloc[0]
+        fig = make_subplots(rows=1, cols=2, subplot_titles=(
+            "<b>Yearly cases correlation " + name1 + '<br>' + str(begin) + '-' + str(end),
+            "<b>Yearly cases correlation " + name2 + '<br>' + str(begin) + '-' + str(end)))
+
+        df1 = df1[df1['year'].between(int(begin), int(end))]
+        df2 = df2[df2['year'].between(int(begin), int(end))]
+
+        agg_dict = {"vaporation": 'mean', "rain": 'mean', "raining_day": 'mean', "temperature": 'mean',
+                    "humidity": 'mean', "sun_hour": 'mean', "influenza": 'first', "diarrhoea": 'first',
+                    "dengue_fever": 'first', "influenza_death": 'first', "diarrhoea_death": 'first', "dengue_fever_death": 'first' }
+        df1 = df1.groupby(["year", "month", "province_code"]).agg(agg_dict).reset_index()
+        print(df1.to_string())
+        df2 = df2.groupby(["year", "month", "province_code"]).agg(agg_dict).reset_index()
+
+        corr1 = df1[['influenza','diarrhoea','dengue_fever', 'rain', 'vaporation',
+                    'humidity', 'sun_hour', 'raining_day']].corr()
+
+        disease_names = ['influenza','diarrhoea', 'dengue_fever']
+        weather_names = ['rain', 'vaporation', 'humidity', 'sun_hour', 'raining_day']
+
+        cols =[]
+        for col in corr1.columns:
+            row = []
+            if col in disease_names:
+                for ind in corr1.index:
+                    if ind in weather_names:
+                        row.append(corr1[col][ind])
+            cols.append(row)
+
+        correlated_df1 = pd.DataFrame(cols, columns=weather_names)
+
+        corr2 = df2[['influenza','diarrhoea','dengue_fever', 'rain', 'vaporation',
+                    'humidity', 'sun_hour', 'raining_day']].corr()
+
+        cols2 =[]
+        for col in corr2.columns:
+            row = []
+            if col in disease_names:
+                for ind in corr2.index:
+                    if ind in weather_names:
+                        row.append(corr2[col][ind])
+            cols2.append(row)
+
+        correlated_df2 = pd.DataFrame(cols2, columns=weather_names)
+
+        fig.add_trace(
+            go.Heatmap(
+                z=correlated_df1,
+                x=weather_names,
+                y=disease_names,
+                hoverongaps=False,
+                showscale=True),
+            row=1, col=1)
+
+        fig.add_trace(
+            go.Heatmap(
+                z=correlated_df2,
+                x=weather_names,
+                y=disease_names,
+                hoverongaps=False,
+                showscale=False),
+            row=1, col=2
+        )
+        fig.update_layout(height=600, template="plotly_white")
+        line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return line
+
+
     #########################compare two province########################
     # compare date1 disease 2 province
 

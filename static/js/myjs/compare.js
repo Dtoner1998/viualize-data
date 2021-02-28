@@ -34,6 +34,7 @@ $(document).ready(function () {
               $(".begin").val(min);
               $(".indicator_begin").text(min);
               title_comp(min, end);
+              corr_populate(begin, end);
               run_province_disease(disease_pro_array);
               run_province_climate(climate_pro_array);
             }
@@ -43,6 +44,7 @@ $(document).ready(function () {
       return false;
     }
     title_comp(begin, end);
+    corr_populate(begin, end);
     run_province_disease(disease_pro_array);
     run_province_climate(climate_pro_array);
     getData_comp(id_click_once, id_click_twice);
@@ -71,8 +73,10 @@ $(document).ready(function () {
               $(".begin").val(min);
               $(".indicator_begin").text(min);
               title_comp(min, end);
+              corr_populate(begin, end);
               run_province_disease(disease_pro_array);
               run_province_climate(climate_pro_array);
+
             }
           },
         }
@@ -80,6 +84,7 @@ $(document).ready(function () {
       return false;
     }
     title_comp(begin, end);
+    corr_populate(begin, end);
     run_province_disease(disease_pro_array);
     run_province_climate(climate_pro_array);
     getData_comp(id_click_once, id_click_twice);
@@ -213,6 +218,37 @@ $(document).ready(function () {
     // end function orange
   });
   // create tag disease
+  function create_tag_corr(){
+    var html = '';
+    html += `<div class="product-sales-area mg-tb-30" id="correlation">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id="sub_corr_title"><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="corr_compare" id="corr_compare" style="height: auto;width:auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+     $(".corr_comp").append(html);
+  }
+
   function create_tag_climate(order, name) {
     var html = '';
     html += `<div class="courses-area mg-b-15" id='climate_comp_${name}'>
@@ -540,6 +576,26 @@ $(document).ready(function () {
     });
   };
   // choosen province disease
+  //create_corr
+  function corr_populate(begin, end) {
+      create_tag_corr();
+      $.ajax({
+      url: "/corr_comp_factor",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+          begin: begin,
+          end: end,
+          province1: id_click_once,
+          province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+          Plotly.newPlot(`corr_compare`, data, {});
+          $(`#sub_corr_title`).html(`Correlation of Diseases and Weather from ${begin}-${end}`);
+      },
+  });
+  }
   function chosen_province_disease(begin, end, name, order) {
     var nameDeath=name+"_death";
     // pie chart year
@@ -997,6 +1053,7 @@ $(document).ready(function () {
     //   });
     //   return false;
     // }
+    corr_populate(begin, end);
     $.ajax({
       type: "GET",
       url: "/popu_response/" + id + '/' + id0,
