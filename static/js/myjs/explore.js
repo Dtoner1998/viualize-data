@@ -322,7 +322,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
           Plotly.newPlot(`line_bar_disease`, data, {});
-          $(`#line_bar_title`).html(`Total ${disease.split('_').join('  ')} cases per year and average weather Viet Nam from ${begin}-${end}`);
+          $(`#line_bar_title`).html(`Total ${name.split('_').join('  ')} cases per year and average weather from ${begin}-${end}`);
 
       },
     });
