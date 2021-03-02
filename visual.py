@@ -1595,7 +1595,7 @@ class Visual():
     ###############################region disease###############################
 
     # lag correlation
-
+    #
     def lag_correlation(self, df, feature, begin, end):
 
         df = df[df['year'].between(int(begin), int(end))]
@@ -1613,9 +1613,55 @@ class Visual():
 
         fig.update_layout(xaxis_title='Lag (month)', template="plotly_white",
                           yaxis_title='ACF/PACF meanly mean',
-                          margin=dict(l=20, r=20, t=20, b=20))
+                          margin=dict(l=20, r=20, t=20, b=20),
+                          barmode='relative',
+                          updatemenus=[
+                              dict(
+                                  buttons=list([
+                                      dict(
+                                          args=["type", "scatter"],
+                                          label="Line Chart",
+                                          method="restyle"
+                                      ),
+                                      dict(
+                                          args=["type", "bar"],
+                                          label="Bar Chart",
+                                          method="restyle"
+                                      )
+                                  ]),
+                                  direction="down",
+                                  pad={"r": 10, "t": 10},
+                                  showactive=True,
+                                  x=1.2,
+                                  xanchor="right",
+                                  y=1.2,
+                                  yanchor="top"
+                              ),
+                          ],
+                          )
         lagJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return lagJson
+
+    # def lag_correlation(self, df, feature, begin, end):
+    #
+    #     df = df[df['year'].between(int(begin), int(end))]
+    #     saw_auto = []
+    #     saw_pauto = pacf(df[str(feature)], nlags=11)
+    #     fig = go.Figure()
+    #     # lag calculation
+    #     for i in range(0, 13):
+    #         saw_auto.append(df[str(feature)].autocorr(lag=i))
+    #     lag = list([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+    #
+    #     fig.add_trace(go.Bar(x=lag, y=saw_auto, name="ACF"))
+    #     fig.add_trace(go.Bar(x=lag, y=saw_pauto, name="PACF"
+    #                              ))
+    #
+    #     fig.update_layout(xaxis_title='Lag (month)', template="plotly_white",
+    #                       yaxis_title='ACF/PACF meanly mean', barmode='relative',
+    #                       margin=dict(l=20, r=20, t=20, b=20))
+    #     lagJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    #     return lagJson
 
     # seasonal region climate
 

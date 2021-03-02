@@ -247,6 +247,9 @@ $(document).ready(function () {
         </div>
     </div>`;
      $(".corr_comp").append(html);
+     $(`#corr_compare`).each(function (i) {
+       $('[id="' + this.id + '"]').slice(1).remove();
+    });
   }
 
   function create_tag_climate(order, name) {
@@ -416,6 +419,49 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
+<!-- lag correlation charts for both provinces -->
+       <div>
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+          <div class="product-sales-chart">
+            <div class="portlet-title">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="caption pro-sl-hd">
+                    <span class="caption-subject" id=lag1_explore_${order}><b></b></span>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="actions graph-rp graph-rp-dl">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- chart in here -->
+            <div class="lag1_province_${order}" id=lag1_province_${order} style="height: auto;width:auto"></div>
+          </div>
+        </div>
+        </div>
+        <div>
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+          <div class="product-sales-chart">
+            <div class="portlet-title">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="caption pro-sl-hd">
+                    <span class="caption-subject" id=lag2_explore_${order}><b></b></span>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="actions graph-rp graph-rp-dl">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- chart in here -->
+            <div class="lag2_province_${order}" id=lag2_province_${order} style="height: auto;width:auto"></div>
+          </div>
+        </div>
+       </div>
 <!-- end -->
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
@@ -600,6 +646,38 @@ $(document).ready(function () {
     var nameDeath=name+"_death";
     // pie chart year
     create_tag_disease(order, name);
+     $.ajax({
+      url: "/lag_region_disease",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: name,
+        begin: begin,
+        end: end,
+        region: id_click_once
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`lag1_province_${order}`, data, {});
+        $(`#lag1_explore_${order}`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
+      },
+    });
+     $.ajax({
+      url: "/lag_region_disease",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: name,
+        begin: begin,
+        end: end,
+        region: id_click_twice
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`lag2_province_${order}`, data, {});
+        $(`#lag2_explore_${order}`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
+      },
+    });
     $.ajax({
       url: "/pie_disease_year",
       type: "GET",
