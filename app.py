@@ -701,6 +701,16 @@ def lag_correlation():
     return lag
 # lag region disease
 
+@app.route('/lag_correlation_disease', methods=['GET', 'POST'])
+def lag_correlation_disease():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    data = query.read_disease()
+    data = data.groupby(["date1", "province_code"]).first().reset_index()
+    data = data.groupby(['year', 'month']).mean().reset_index()
+    lag = visual.lag_correlation(data, disease, begin, end)
+    return lag
 
 @app.route('/lag_region_disease', methods=['GET', 'POST'])
 def lag_region_disease():

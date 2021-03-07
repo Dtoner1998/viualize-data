@@ -1612,7 +1612,7 @@ class Visual():
                                  mode='lines', line=dict(color='rgb(255, 102, 0)')))
 
         fig.update_layout(xaxis_title='Lag (month)', template="plotly_white",
-                          yaxis_title='ACF/PACF meanly mean',
+                          yaxis_title='ACF/PACF monthly mean',
                           margin=dict(l=20, r=20, t=20, b=20),
                           barmode='relative',
                           updatemenus=[
@@ -2396,7 +2396,10 @@ class Visual():
 
         df = df[df['year'].between(int(begin), int(end))]
         # get mean
-        df = df.groupby(['date1']).mean().reset_index()
+        #df = df.groupby(['date1']).mean().reset_index()
+        df = df.groupby(["date1", "province_code"]).first().reset_index()
+        df = df.groupby(["date1"]).sum().reset_index()
+        #print(df.head(20).to_string())
 
         # Create figure with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -2409,9 +2412,9 @@ class Visual():
 
         fig.update_xaxes(title_text="Year")
         fig.update_yaxes(title_text=((str(disease).replace('_', ' ')).title() +
-                                     ' yearly mean'), secondary_y=False)
+                                     ' Total Cases '), secondary_y=False)
         fig.update_yaxes(title_text=((str(disease).replace(
-            '_', ' ')).title() + ' death yearly mean'), secondary_y=True)
+            '_', ' ')).title() + ' Total Deaths '), secondary_y=True)
         fig.update_layout(
             updatemenus=[
                 dict(
