@@ -477,7 +477,7 @@ def compYearlyCaseNumbersTrendLine():
     end = request.args['end']
     province = request.args['province']
     data = query.compare_province_trend(province)
-    print(list(data.columns))
+
 
     VNJSON= visual.compYearlyCaseNumbersTrendLines(data, disease, begin, end)
 
@@ -710,6 +710,20 @@ def lag_region_disease():
     region = request.args['region']
     data = query.region_disease(region)
     lag = visual.lag_correlation(data, disease, begin, end)
+    return lag
+
+@app.route('/lag_compare_region_disease', methods=['GET', 'POST'])
+def lag_compare_region_disease():
+    disease = request.args['disease']
+    begin = request.args['begin']
+    end = request.args['end']
+    region1 = request.args['region1']
+    region2 = request.args['region2']
+    data1 = query.lag_query(region1)
+    data2 = query.lag_query(region2)
+    name1 = query.get_region_name(region1)
+    name2 = query.get_region_name(region2)
+    lag = visual.lag_compare_correlation(data1, data2, disease,begin, end, name1, name2)
     return lag
 
 # lag climate correlation

@@ -218,40 +218,6 @@ $(document).ready(function () {
     // end function orange
   });
   // create tag disease
-  function create_tag_corr(){
-    var html = '';
-    html += `<div class="product-sales-area mg-tb-30" id="correlation">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="product-sales-chart">
-                        <div class="portlet-title">
-                            <div class="row">
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                    <div class="caption pro-sl-hd">
-                                        <span class="caption-subject" id="sub_corr_title"><b></b></span>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                    <div class="actions graph-rp graph-rp-dl">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="corr_compare" id="corr_compare" style="height: auto;width:auto"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>`;
-     $(".corr_comp").append(html);
-     $(`#corr_compare`).each(function (i) {
-       $('[id="' + this.id + '"]').slice(1).remove();
-    });
-  }
-
   function create_tag_climate(order, name) {
     var html = '';
     html += `<div class="courses-area mg-b-15" id='climate_comp_${name}'>
@@ -419,50 +385,34 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
-<!-- lag correlation charts for both provinces -->
-       <div>
-        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-          <div class="product-sales-chart">
-            <div class="portlet-title">
-              <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="caption pro-sl-hd">
-                    <span class="caption-subject" id=lag1_explore_${order}><b></b></span>
-                  </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="actions graph-rp graph-rp-dl">
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- chart in here -->
-            <div class="lag1_province_${order}" id=lag1_province_${order} style="height: auto;width:auto"></div>
-          </div>
-        </div>
-        </div>
-        <div>
-        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-          <div class="product-sales-chart">
-            <div class="portlet-title">
-              <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="caption pro-sl-hd">
-                    <span class="caption-subject" id=lag2_explore_${order}><b></b></span>
-                  </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="actions graph-rp graph-rp-dl">
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- chart in here -->
-            <div class="lag2_province_${order}" id=lag2_province_${order} style="height: auto;width:auto"></div>
-          </div>
-        </div>
-       </div>
-<!-- end -->
+<div class="product-sales-area mg-tb-30" id='lag_correlation'>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="product-sales-chart">
+					<div class="portlet-title">
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="caption pro-sl-hd">
+									<span class="caption-subject" id="lag_province"><b></b></span>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="actions graph-rp graph-rp-dl">
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="lag_explore" id="lag_explore"
+						style="height: auto;width:auto">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
 		<div class="row">
@@ -624,7 +574,6 @@ $(document).ready(function () {
   // choosen province disease
   //create_corr
   function corr_populate(begin, end) {
-      create_tag_corr();
       $.ajax({
       url: "/corr_comp_factor",
       type: "GET",
@@ -644,38 +593,22 @@ $(document).ready(function () {
   }
   function chosen_province_disease(begin, end, name, order) {
     var nameDeath=name+"_death";
-    // pie chart year
     create_tag_disease(order, name);
      $.ajax({
-      url: "/lag_region_disease",
+      url: "/lag_compare_region_disease",
       type: "GET",
       contentType: "application/json;charset=UTF-8",
       data: {
         disease: name,
         begin: begin,
         end: end,
-        region: id_click_once
+        region1: id_click_once,
+        region2: id_click_twice
       },
       dataType: "json",
       success: function (data) {
-        Plotly.newPlot(`lag1_province_${order}`, data, {});
-        $(`#lag1_explore_${order}`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
-      },
-    });
-     $.ajax({
-      url: "/lag_region_disease",
-      type: "GET",
-      contentType: "application/json;charset=UTF-8",
-      data: {
-        disease: name,
-        begin: begin,
-        end: end,
-        region: id_click_twice
-      },
-      dataType: "json",
-      success: function (data) {
-        Plotly.newPlot(`lag2_province_${order}`, data, {});
-        $(`#lag2_explore_${order}`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
+        Plotly.newPlot(`lag_explore`, data, {});
+        $(`#lag_province`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
       },
     });
     $.ajax({

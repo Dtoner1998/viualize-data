@@ -1642,28 +1642,73 @@ class Visual():
         lagJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return lagJson
 
-    # def lag_correlation(self, df, feature, begin, end):
-    #
-    #     df = df[df['year'].between(int(begin), int(end))]
-    #     saw_auto = []
-    #     saw_pauto = pacf(df[str(feature)], nlags=11)
-    #     fig = go.Figure()
-    #     # lag calculation
-    #     for i in range(0, 13):
-    #         saw_auto.append(df[str(feature)].autocorr(lag=i))
-    #     lag = list([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
-    #
-    #     fig.add_trace(go.Bar(x=lag, y=saw_auto, name="ACF"))
-    #     fig.add_trace(go.Bar(x=lag, y=saw_pauto, name="PACF"
-    #                              ))
-    #
-    #     fig.update_layout(xaxis_title='Lag (month)', template="plotly_white",
-    #                       yaxis_title='ACF/PACF meanly mean', barmode='relative',
-    #                       margin=dict(l=20, r=20, t=20, b=20))
-    #     lagJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    #     return lagJson
 
-    # seasonal region climate
+    def lag_compare_correlation(self, df1,df2, feature, begin, end, name1, name2):
+        name1 = name1["province_name"].iloc[0]
+        name2 = name2["province_name"].iloc[0]
+        fig = make_subplots(rows=1, cols=2, subplot_titles=("<b>Lag correlation of " + feature+ " in " + name1 + '<br>' + str(begin) + '-' + str(end),
+        "<b>Lag correlation of " + feature+ " in " +name2 + '<br>' + str(begin) + '-' + str(end)))
+
+
+        df1 = df1[df1['year'].between(int(begin), int(end))]
+        df2 = df2[df2['year'].between(int(begin), int(end))]
+
+        saw_auto1 = []
+        saw_pauto1 = pacf(df1[str(feature)], nlags=11)
+        saw_auto2 = []
+        saw_pauto2 = pacf(df2[str(feature)], nlags=11)
+
+        # lag calculation
+        for i in range(0, 13):
+            saw_auto1.append(df1[str(feature)].autocorr(lag=i))
+
+        for i in range(0, 13):
+            saw_auto2.append(df2[str(feature)].autocorr(lag=i))
+
+        lag = list([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+
+
+        fig.add_trace(go.Scatter(x=lag, y=saw_auto1, name="ACF", mode='lines'), row=1, col=1)
+        fig.add_trace(go.Scatter(x=lag, y=saw_pauto1, name="PACF",
+                                 mode='lines', line=dict(color='rgb(255, 102, 0)')), row=1, col=1)
+
+        fig.add_trace(go.Scatter(x=lag, y=saw_auto2, name="ACF", mode='lines'), row=1, col=2)
+        fig.add_trace(go.Scatter(x=lag, y=saw_pauto2, name="PACF",
+                                 mode='lines', line=dict(color='rgb(255, 102, 0)')), row=1, col=2)
+
+        fig.update_xaxes(title_text='Lag (month)', row=1, col=1)
+        fig.update_xaxes(title_text='Lag (month)', row=1, col=2)
+        fig.update_yaxes(title_text='ACF/PACF mean', row=1, col=1)
+        fig.update_yaxes(title_text='ACF/PACF mean', row=1, col=2)
+        fig.update_layout(
+                          barmode='relative',
+                          updatemenus=[
+                              dict(
+                                  buttons=list([
+                                      dict(
+                                          args=["type", "scatter"],
+                                          label="Line Chart",
+                                          method="restyle"
+                                      ),
+                                      dict(
+                                          args=["type", "bar"],
+                                          label="Bar Chart",
+                                          method="restyle"
+                                      )
+                                  ]),
+                                  direction="down",
+                                  pad={"r": 10, "t": 10},
+                                  showactive=True,
+                                  x=1.2,
+                                  xanchor="right",
+                                  y=1.2,
+                                  yanchor="top"
+                              ),
+                          ],
+                          )
+        lagJson = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return lagJson
+
 
     def region_season_climate(self, df, climate, begin, end):
         fig = go.Figure()
@@ -2031,7 +2076,6 @@ class Visual():
                     "humidity": 'mean', "sun_hour": 'mean', "influenza": 'first', "diarrhoea": 'first',
                     "dengue_fever": 'first', "influenza_death": 'first', "diarrhoea_death": 'first', "dengue_fever_death": 'first' }
         df1 = df1.groupby(["year", "month", "province_code"]).agg(agg_dict).reset_index()
-        print(df1.to_string())
         df2 = df2.groupby(["year", "month", "province_code"]).agg(agg_dict).reset_index()
 
         corr1 = df1[['influenza','diarrhoea','dengue_fever', 'rain', 'vaporation',
