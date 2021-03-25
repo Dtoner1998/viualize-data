@@ -828,7 +828,8 @@ $(document).ready(function () {
         disease: name,
         begin: begin,
         end: end,
-        province: id_click_once,
+        province1: id_click_once,
+        province2: id_click_twice,
       },
       dataType: "json",
       success: function (data) {
@@ -844,7 +845,8 @@ $(document).ready(function () {
         disease: name,
         begin: begin,
         end: end,
-        province: id_click_twice,
+        province1: id_click_once,
+        province2: id_click_twice,
       },
       dataType: "json",
       success: function (data) {

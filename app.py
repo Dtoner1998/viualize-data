@@ -12,6 +12,7 @@ bundles = {
                       'js/myjs/explore.js',
                       'js/myjs/compare.js',
                       'js/myjs/factor.js',
+                      'js/myjs/prediction.js',
                       output='js/myjs/gen/main.js'),
     'lib_js': Bundle(
         'js/myjs/lib/jquery.min.js',
@@ -75,6 +76,52 @@ def summary():
                            barStackDeath=barStackDeath
                            )
 # response data home
+
+
+@app.route('/prediction')
+def prediction():
+    columns = query.get_columns()
+    # get columns disease
+    disease = columns['disease']
+    disease = disease.drop([1, 3, 5])
+    # get columns climate
+    climate1 = columns['climate1'].append(columns['climate2'].dropna())
+    # get columns climate 2
+    climate2 = columns['climate2'].dropna()
+    climate1 = climate1.reset_index(drop=True)
+    climate1 = climate1.drop([10, 11])
+    data = query.groupby_disease_year()
+    years = data['year'].nunique()
+    diseases = query.read_disease()
+    data2 = query.disease_death_rate()
+    barJson = visual.bar_chart_disease(data2)
+    barJsonDeath = visual.bar_chart_disease_death(data2)
+    barStackDeath = visual.bar_chart_month_disease_death(diseases, years)
+    barStack = visual.bar_chart_month_disease(diseases, years)
+    return render_template('prediction.html',
+                           disease=disease,
+                           climate1=climate1,
+
+                           )
+
+@app.route('/get_prediction', methods=['GET', 'POST'])
+def get_prediction():
+    data = query.climate_disease()
+    print(list(data.columns))
+    climates = request.args['name']
+    disease = request.args['disease']
+    climatesArray = climates.split("+")
+    columns = ['province_code','year','date1', disease]
+    columns= climatesArray + columns
+    data = data.loc[:, data.columns.isin(columns)]
+    data = data.loc[:, ~data.columns.duplicated()]
+    print(list(data.columns))
+    x =visual.province_LSTM(data, disease, climatesArray,1997,2012,2016)
+    #x = visual.LSTM_one(data, disease)
+    return climates
+
+
+
 
 
 @app.route("/summary_response", methods=['GET', 'POST'])
@@ -475,9 +522,9 @@ def compYearlyCaseNumbersTrendLine():
     disease = request.args['disease']
     begin = request.args['begin']
     end = request.args['end']
-    province = request.args['province']
-    data = query.compare_province_trend(province)
-
+    province1 = request.args['province1']
+    province2 = request.args['province2']
+    data = query.compare_province_trend(province1, province2)
 
     VNJSON= visual.compYearlyCaseNumbersTrendLines(data, disease, begin, end)
 
@@ -701,16 +748,6 @@ def lag_correlation():
     return lag
 # lag region disease
 
-@app.route('/lag_correlation_disease', methods=['GET', 'POST'])
-def lag_correlation_disease():
-    disease = request.args['disease']
-    begin = request.args['begin']
-    end = request.args['end']
-    data = query.read_disease()
-    data = data.groupby(["date1", "province_code"]).first().reset_index()
-    data = data.groupby(['year', 'month']).mean().reset_index()
-    lag = visual.lag_correlation(data, disease, begin, end)
-    return lag
 
 @app.route('/lag_region_disease', methods=['GET', 'POST'])
 def lag_region_disease():
@@ -720,20 +757,6 @@ def lag_region_disease():
     region = request.args['region']
     data = query.region_disease(region)
     lag = visual.lag_correlation(data, disease, begin, end)
-    return lag
-
-@app.route('/lag_compare_region_disease', methods=['GET', 'POST'])
-def lag_compare_region_disease():
-    disease = request.args['disease']
-    begin = request.args['begin']
-    end = request.args['end']
-    region1 = request.args['region1']
-    region2 = request.args['region2']
-    data1 = query.lag_query(region1)
-    data2 = query.lag_query(region2)
-    name1 = query.get_region_name(region1)
-    name2 = query.get_region_name(region2)
-    lag = visual.lag_compare_correlation(data1, data2, disease,begin, end, name1, name2)
     return lag
 
 # lag climate correlation

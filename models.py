@@ -1137,7 +1137,7 @@ class Querydata():
         data = data.groupby(['year', 'name']).mean().reset_index()
         return data
 
-    def compare_province_trend(self, province):
+    def compare_province_trend(self, province1, province2):
         query = '''select year,month,influenza,influenza_death,
                     province_name as name,
                     dengue_fever,dengue_fever_death,diarrhoea,diarrhoea_death,
@@ -1145,7 +1145,8 @@ class Querydata():
                     from disease as a inner join province_info as b
                     on a.province_code = b.province_code
                     where a.province_code =
-                    ''' + str(province)
+                    ''' + str(province1) + '''or a.province_code =
+                    ''' + str(province2)
 
         data = pd.read_sql_query(query, conn)
         return data

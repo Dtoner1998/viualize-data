@@ -2250,6 +2250,23 @@ $(document).ready(function () {
         $(`#lag_explore_${order}`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
       },
     });
+    $.ajax({
+      url: "/disease_and_weather_region",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+          disease: name,
+          begin: begin,
+          end: end,
+          province: province_code
+      },
+      dataType: "json",
+      success: function (data) {
+          Plotly.newPlot(`line_bar_disease`, data, {});
+          $(`#line_bar_title`).html(`Total ${name.split('_').join('  ')} cases per year and average weather from ${begin}-${end}`);
+
+      },
+    });
     // disease year province
     $.ajax({
       url: "/line_province_disease_year",
@@ -2495,7 +2512,33 @@ $(document).ready(function () {
   // use function
   function create_tag_exp(order, name) {
     var html = '';
-    html += ` <div class="product-sales-area mg-tb-30" id=disease_exp0_${name}>
+    html += `<div class="product-sales-area mg-tb-30" id='line_bar'>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id="line_bar_title"><b></b></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="actions graph-rp graph-rp-dl">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="line_bar_disease" id="line_bar_disease" style="height: auto;width:auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <div class="product-sales-area mg-tb-30" id=disease_exp0_${name}>
     <div class="container-fluid">
       <!-- chart in here  -->
       <div class="row">
@@ -3369,6 +3412,7 @@ $(document).ready(function () {
               $(".begin").val(min);
               $(".indicator_begin").text(min);
               title_comp(min, end);
+              corr_populate(begin, end);
               run_province_disease(disease_pro_array);
               run_province_climate(climate_pro_array);
             }
@@ -3378,6 +3422,7 @@ $(document).ready(function () {
       return false;
     }
     title_comp(begin, end);
+    corr_populate(begin, end);
     run_province_disease(disease_pro_array);
     run_province_climate(climate_pro_array);
     getData_comp(id_click_once, id_click_twice);
@@ -3406,8 +3451,10 @@ $(document).ready(function () {
               $(".begin").val(min);
               $(".indicator_begin").text(min);
               title_comp(min, end);
+              corr_populate(begin, end);
               run_province_disease(disease_pro_array);
               run_province_climate(climate_pro_array);
+
             }
           },
         }
@@ -3415,6 +3462,7 @@ $(document).ready(function () {
       return false;
     }
     title_comp(begin, end);
+    corr_populate(begin, end);
     run_province_disease(disease_pro_array);
     run_province_climate(climate_pro_array);
     getData_comp(id_click_once, id_click_twice);
@@ -3715,7 +3763,34 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
-<!-- end -->
+<div class="product-sales-area mg-tb-30" id='lag_correlation'>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="product-sales-chart">
+					<div class="portlet-title">
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="caption pro-sl-hd">
+									<span class="caption-subject" id="lag_province"><b></b></span>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="actions graph-rp graph-rp-dl">
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="lag_explore" id="lag_explore"
+						style="height: auto;width:auto">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
 		<div class="row">
@@ -3875,10 +3950,45 @@ $(document).ready(function () {
     });
   };
   // choosen province disease
+  //create_corr
+  function corr_populate(begin, end) {
+      $.ajax({
+      url: "/corr_comp_factor",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+          begin: begin,
+          end: end,
+          province1: id_click_once,
+          province2: id_click_twice,
+      },
+      dataType: "json",
+      success: function (data) {
+          Plotly.newPlot(`corr_compare`, data, {});
+          $(`#sub_corr_title`).html(`Correlation of Diseases and Weather from ${begin}-${end}`);
+      },
+  });
+  }
   function chosen_province_disease(begin, end, name, order) {
     var nameDeath=name+"_death";
-    // pie chart year
     create_tag_disease(order, name);
+     $.ajax({
+      url: "/lag_compare_region_disease",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        disease: name,
+        begin: begin,
+        end: end,
+        region1: id_click_once,
+        region2: id_click_twice
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`lag_explore`, data, {});
+        $(`#lag_province`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
+      },
+    });
     $.ajax({
       url: "/pie_disease_year",
       type: "GET",
@@ -4096,7 +4206,8 @@ $(document).ready(function () {
         disease: name,
         begin: begin,
         end: end,
-        province: id_click_once,
+        province1: id_click_once,
+        province2: id_click_twice,
       },
       dataType: "json",
       success: function (data) {
@@ -4112,7 +4223,8 @@ $(document).ready(function () {
         disease: name,
         begin: begin,
         end: end,
-        province: id_click_twice,
+        province1: id_click_once,
+        province2: id_click_twice,
       },
       dataType: "json",
       success: function (data) {
@@ -4332,6 +4444,7 @@ $(document).ready(function () {
     //   });
     //   return false;
     // }
+    corr_populate(begin, end);
     $.ajax({
       type: "GET",
       url: "/popu_response/" + id + '/' + id0,
@@ -4510,6 +4623,21 @@ $(document).ready(function () {
                 $(`#sub_corr_title`).html(`Correlation of Diseases and Weather in Viet Nam from ${begin}-${end}`);
             },
         });
+        $.ajax({
+            url: "/lag_correlation_disease",
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            data: {
+                disease: disease,
+                begin: begin,
+                end: end,
+            },
+            dataType: "json",
+            success: function (data) {
+                Plotly.newPlot(`lag_disease`, data, {});
+                $(`#lag_title`).html(`Lag Correlation of ${disease.split('_').join('  ')} in Viet Nam from ${begin}-${end}`);
+            },
+        });
         // chart compare disease
         $.ajax({
             url: "/compare_disease",
@@ -4549,5 +4677,129 @@ $(document).ready(function () {
     function title_factor(begin, end) {
         $('.title_factor').html(` Explore Disease In Viet Nam From ${begin}-${end}`)
     }
+
+});
+$(document).ready(function () {
+  // timeseries begin and year
+  let currentURL = $(location).attr('pathname');
+  if (currentURL != '/prediction') {
+    return false;
+  }
+  $(".begin").change(function () {
+    var val = $(this).val();
+    var min = $(this).attr("min");
+    var max = $(this).attr("max");
+    // console.log(min,' ',max);
+    var portion = (val - min) / (max - min);
+    $(".indicator_begin").text(val);
+    $(".indicator_begin").css("left", portion * ($(".begin").width() - 18));
+    // check time
+    var begin = $(".begin").val();
+    var end = $(".end").val();
+    if (begin > end) {
+      $.confirm({
+        title: 'Confirm',
+        content: 'Please choose begin year bigger than or equal end year!',
+        iconClose: true,
+        buttons: {
+          ok: {
+            btnClass: 'btn-primay',
+            action: function () {
+              $(".begin").val(min);
+              $(".indicator_begin").text(min);
+              title_home(min, end);
+            }
+          },
+        }
+      });
+      return false;
+    }
+    title_home(begin, end);
+    get_data_home();
+  });
+  // end year
+  $(".end").change(function () {
+    var val = $(this).val();
+    var min = $(this).attr("min");
+    var max = $(this).attr("max");
+    var portion = (val - min) / (max - min);
+    $(".indicator_end").text(val);
+    $(".indicator_end").css("left", portion * ($(".end").width() - 18));
+    var begin = $(".begin").val();
+    var end = $(".end").val();
+    if (begin > end) {
+      $.confirm({
+        title: 'Confirm',
+        content: 'Please choose begin year bigger than or equal end year!',
+        iconClose: true,
+        buttons: {
+          ok: {
+            btnClass: 'btn-primay',
+            action: function () {
+              $(".begin").val(min);
+              $(".indicator_begin").text(min);
+              console(min);
+              title_home(min, end);
+            }
+          },
+        }
+      });
+      return false;
+    }
+    title_home(begin, end);
+
+    get_data_home();
+  });
+  // check nhieu loai benh
+  var disease_array = [];
+  $(".check_disease").click(function () {
+    var begin = $(".begin").val();
+    var end = $(".end").val();
+
+    if (this.checked) {
+      disease_array.push(this.value);
+    } else {
+      disease_array.pop(this.value);
+    }
+  });
+  // check nhieu yeu to
+  var climate_array = [];
+  $(".check_climate").click(function () {
+    var begin = $(".begin").val();
+    var end = $(".end").val();
+    if (this.checked) {
+      climate_array.push(this.value);
+    } else {
+      climate_array.pop(this.value);
+    }
+  });
+  // on click disease
+  // get region climate
+
+   $(".predict_button").click(function () {
+     let climate_array_string = climate_array.join("+");
+     $.ajax({
+      url: "/get_prediction",
+      type: "GET",
+      contentType: "application/json;charset=UTF-8",
+      data: {
+        name: climate_array_string,
+        disease : 'dengue_fever'
+      },
+      dataType: "json",
+      success: function (data) {
+        Plotly.newPlot(`monthly_trendline_cases_${order}`, data, {});
+        // monthly number of influenza incidence
+        $(`#title_monthly_trendline_cases_home_${order}`).html(`Monthly number of cases of ${name.split('_').join('  ')}  in Viet Nam from ${begin}-${end}`);
+      },
+    });
+  });
+
+
+  // title home default
+  title_home(1997, 2019);
+  function title_home(begin, end) {
+    $('.title_home').html(`Summary Data In Viet Nam From ${begin}-${end}`)
+  }
 
 });
