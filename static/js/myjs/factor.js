@@ -153,21 +153,6 @@ $(document).ready(function () {
                 $(`#sub_corr_title`).html(`Correlation of Diseases and Weather in Viet Nam from ${begin}-${end}`);
             },
         });
-        $.ajax({
-            url: "/lag_correlation_disease",
-            type: "GET",
-            contentType: "application/json;charset=UTF-8",
-            data: {
-                disease: disease,
-                begin: begin,
-                end: end,
-            },
-            dataType: "json",
-            success: function (data) {
-                Plotly.newPlot(`lag_disease`, data, {});
-                $(`#lag_title`).html(`Lag Correlation of ${disease.split('_').join('  ')} in Viet Nam from ${begin}-${end}`);
-            },
-        });
         // chart compare disease
         $.ajax({
             url: "/compare_disease",

@@ -66,6 +66,9 @@ def summary():
     barJsonDeath = visual.bar_chart_disease_death(data2)
     barStackDeath = visual.bar_chart_month_disease_death(diseases, years)
     barStack = visual.bar_chart_month_disease(diseases, years)
+
+
+
     return render_template('home.html',
                            disease=disease,
                            climate1=climate1,
@@ -91,34 +94,43 @@ def prediction():
     climate1 = climate1.reset_index(drop=True)
     climate1 = climate1.drop([10, 11])
     data = query.groupby_disease_year()
-    years = data['year'].nunique()
-    diseases = query.read_disease()
-    data2 = query.disease_death_rate()
-    barJson = visual.bar_chart_disease(data2)
-    barJsonDeath = visual.bar_chart_disease_death(data2)
-    barStackDeath = visual.bar_chart_month_disease_death(diseases, years)
-    barStack = visual.bar_chart_month_disease(diseases, years)
+    provinces=query.get_province_name()
     return render_template('prediction.html',
                            disease=disease,
                            climate1=climate1,
+                           provinces=provinces
+
 
                            )
 
 @app.route('/get_prediction', methods=['GET', 'POST'])
 def get_prediction():
-    data = query.climate_disease()
-    print(list(data.columns))
+    data = query.climate_disease_LSTM()
+    print(request)
     climates = request.args['name']
+    print('--------')
     disease = request.args['disease']
-    climatesArray = climates.split("+")
-    columns = ['province_code','year','date1', disease]
+    print('--------')
+    province = request.args['province']
+    print('--------')
+    trainBegin = int(request.args['trainBegin'])
+    print('--------')
+    trainEnd = int(request.args['trainEnd'])
+    print('--------')
+    testEnd = int(request.args['testEnd'])
+    print('--------')
+
+    climatesArray = climates.split("-")
+    columns = ['province_code', 'province_name', 'year', 'date1', disease]
     columns= climatesArray + columns
     data = data.loc[:, data.columns.isin(columns)]
     data = data.loc[:, ~data.columns.duplicated()]
     print(list(data.columns))
-    x =visual.province_LSTM(data, disease, climatesArray,1997,2012,2016)
-    #x = visual.LSTM_one(data, disease)
-    return climates
+    if(climates==''):
+        graph = visual.LSTM_univariate(data, disease, province, trainBegin, trainEnd, testEnd)
+    else:
+        graph =visual.LSTM(data, disease, province, climatesArray,trainBegin,trainEnd,testEnd)
+    return graph
 
 
 
@@ -194,6 +206,7 @@ def date1_home_disease():
 
     data = query.read_disease()
     line = visual.line_date1_home(data, disease, begin, end)
+    print("-")
     return line
 # data disease date1 home region
 
@@ -229,6 +242,7 @@ def region_date1_disease_home():
     begin = request.args['begin']
     end = request.args['end']
     region = request.args['region']
+    print(region)
 
     data = query.region_disease_month(region)
     line = visual.region_date1_exp(data, disease, begin, end)

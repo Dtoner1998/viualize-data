@@ -240,8 +240,8 @@ $(document).ready(function () {
         },
         dataType: "json",
         success: function (data) {
-            Plotly.newPlot(`comp_bar`, data, {});
-            $(`#comp_disease_bar_title`).html(`Bar chart of total ${name.split('_').join('  ')} cases per year for each province`);
+            Plotly.newPlot(`comp_bar_${order}`, data, {});
+            $(`#comp_disease_bar_title_${order}`).html(`Bar chart of total ${name.split('_').join('  ')} cases per year for each province`);
 
         },
     });
@@ -257,8 +257,8 @@ $(document).ready(function () {
         },
         dataType: "json",
         success: function (data) {
-            Plotly.newPlot(`comp_boxplot`, data, {});
-            $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${name.split('_').join('  ')} cases per year for each province`);
+            Plotly.newPlot(`comp_boxplot_${order}`, data, {});
+            $(`#comp_disease_boxplot_title_${order}`).html(`Boxplot of monthly ${name.split('_').join('  ')} cases per year for each province`);
 
         },
     });
@@ -540,7 +540,7 @@ $(document).ready(function () {
     <div class="container-fluid">
     
            <!-- show barchart here  -->
-    <div class="product-sales-area mg-tb-30" id='comp_disease_bar'>
+    <div class="product-sales-area mg-tb-30" id='comp_disease_bar_${name}'>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -560,7 +560,7 @@ $(document).ready(function () {
                             </div>
                         </div>
 
-                        <div class="comp_bar" id="comp_bar" style="height: auto;width:auto"></div>
+                        <div class="comp_bar_${order}" id="comp_bar_${order}" style="height: auto;width:auto"></div>
                     </div>
                 </div>
             </div>
@@ -587,7 +587,7 @@ $(document).ready(function () {
                             </div>
                         </div>
 
-                        <div class="comp_boxplot" id="comp_boxplot" style="height: auto;width:auto"></div>
+                        <div class="comp_boxplot_${order}" id="comp_boxplot_${order}" style="height: auto;width:auto"></div>
                     </div>
                 </div>
             </div>
@@ -1339,7 +1339,7 @@ $(document).ready(function () {
 `;
     $(".disease_chart").append(html);
     // remove dupplicate
-    $(`#disease_${name},#heatmapdisease_${name},#disease_heatmap_${name},#disease_date1_home_${name},#ruler1_${name}`).each(function (i) {
+    $(`#disease_${name},#heatmapdisease_${name},#disease_heatmap_${name},#disease_date1_home_${name},#disease_month_home_${name},#disease_month_death_home_${name},#disease_casesAndDeaths_home_${name},#diseaseDeath_${name},#disease_yearly_trendline_home_${name},#disease_deaths_yearly_trendline_home_${name},#disease_monthly_trendline_home_${name},#mortality_yearly_home_${name},#comp_disease_bar_${name},#ruler1_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
     chosen_region(order);
@@ -1630,7 +1630,7 @@ $(document).ready(function () {
     <hr class="my-4" id=ruler2_${name}>
     `;
     $(".climate_chart").append(html);
-    $(`#climate_${name},#climate_date1_home_${name},#ruler2_${name}`).each(function (i) {
+    $(`#climate_${name},#climate_date1_home_${name},#monthly_climate_date1_home_${name},#trend_climate_home_${name},#province_climate_home_${name},#ruler2_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
     chosen_region_climate(order);
@@ -1649,8 +1649,7 @@ $(document).ready(function () {
     $(`#disease_deaths_yearly_trendline_home_${name}`).remove();
     $(`#disease_monthly_trendline_home_${name}`).remove();
     $(`#mortality_yearly_home_${name}`).remove();
-    $(`#comp_disease_boxplot`).remove();
-    $(`#comp_disease_bar`).remove();
+    $(`#comp_disease_bar_${name}`).remove();
     $(`#ruler1_${name}`).attr('class', 'my-4 hidden');
   };
   // create function delete climate then uncheckbox

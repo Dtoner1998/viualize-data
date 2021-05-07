@@ -1,0 +1,4365 @@
+{
+	"info": {
+		"_postman_id": "bc8af603-ad50-4836-8d06-30c7541ca0eb",
+		"name": "Visualise Request Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Prediction",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/get_prediction?disease=influenza&name=vaporation-rain-humidity&trainBegin=1998&trainEnd=2003&testEnd=2009&province=Phú Thọ",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get_prediction"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "end",
+							"value": "2010",
+							"disabled": true
+						},
+						{
+							"key": "name",
+							"value": "vaporation-rain-humidity"
+						},
+						{
+							"key": "trainBegin",
+							"value": "1998"
+						},
+						{
+							"key": "trainEnd",
+							"value": "2003"
+						},
+						{
+							"key": "testEnd",
+							"value": "2009"
+						},
+						{
+							"key": "province",
+							"value": "Phú Thọ"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Summary Response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/summary_response?begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"summary_response"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza",
+							"disabled": true
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_population",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_population?begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_population"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza",
+							"disabled": true
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_chart_population",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_chart_population?begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_chart_population"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza",
+							"disabled": true
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "month_home_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/month_home_disease?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"month_home_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare_disease?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare_disease_box",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare_disease_box?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare_disease_box"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare_disease_boxplot",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare_disease_boxplot?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare_disease_boxplot"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "yearlyCaseNumbersTrendLines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/yearlyCaseNumbersTrendLines?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"yearlyCaseNumbersTrendLines"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "monthlyCaseNumbersTrendLines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/monthlyCaseNumbersTrendLines?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"monthlyCaseNumbersTrendLines"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compYearlyCaseNumbersTrendLines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compYearlyCaseNumbersTrendLines?disease=influenza&begin=1997&end=2010&province1=12&province2=17",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compYearlyCaseNumbersTrendLines"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "12"
+						},
+						{
+							"key": "province2",
+							"value": "17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comp_date1_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/comp_date1_disease?disease=influenza&begin=1997&end=2010&province1=12&province2=17",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"comp_date1_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "12"
+						},
+						{
+							"key": "province2",
+							"value": "17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "linear_comp_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/linear_comp_year?disease=influenza&begin=1997&end=2010&province1=12&province2=17",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"linear_comp_year"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "12"
+						},
+						{
+							"key": "province2",
+							"value": "17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "linear_comp_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/linear_comp_month?disease=influenza&begin=1997&end=2010&province1=12&province2=17",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"linear_comp_month"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "12"
+						},
+						{
+							"key": "province2",
+							"value": "17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comp_date1_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/comp_date1_climate?climate=rain&begin=1997&end=2010&province1=12&province2=17",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"comp_date1_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "12"
+						},
+						{
+							"key": "province2",
+							"value": "17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "linear_climate_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/linear_climate_year?climate=rain&begin=1997&end=2010&province1=12&province2=17",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"linear_climate_year"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "12"
+						},
+						{
+							"key": "province2",
+							"value": "17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "linear_climate_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/linear_climate_month?climate=rain&begin=1997&end=2010&province1=12&province2=17",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"linear_climate_month"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "12"
+						},
+						{
+							"key": "province2",
+							"value": "17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "climate_disease_bubble",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/climate_disease_bubble?climate=influenza&begin=1997&end=2010&province1=4&province2=16",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"climate_disease_bubble"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "16"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_ratio",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_ratio?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_ratio"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_chart_ratio",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_chart_ratio?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_chart_ratio"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "subplotly",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/subplotly?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"subplotly"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "subplotly_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/subplotly_year?disease=influenza&begin=1997&end=2010&y_m=year",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"subplotly_year"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "y_m",
+							"value": "year"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "subplotly_bubble_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/subplotly_bubble_year?begin=1997&end=2010&y_m=year",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"subplotly_bubble_year"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza",
+							"disabled": true
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "y_m",
+							"value": "year"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "date1_home_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/date1_home_disease?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"date1_home_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "disease_and_weather",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/disease_and_weather?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"disease_and_weather"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "corr_factor",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/corr_factor?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"corr_factor"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "corr_comp_factor",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/corr_comp_factor?disease=influenza&begin=1997&end=2010&province1=4&province2=11",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"corr_comp_factor"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare_province",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare_province?disease=influenza&begin=1997&end=2010&province1=4&province2=11",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare_province"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare_pro_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare_pro_month?disease=influenza&begin=1997&end=2010&province1=4&province2=11",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare_pro_month"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare_pro_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare_pro_climate?climate=rain&begin=1997&end=2010&province1=4&province2=11",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare_pro_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare_pro_climate_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare_pro_climate_month?climate=rain&begin=1997&end=2010&province1=4&province2=11",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare_pro_climate_month"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pie_climate_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/pie_climate_year?climate=rain&begin=1997&end=2010&province1=4&province2=11",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pie_climate_year"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pie_disease_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/pie_disease_year?disease=influenza&begin=1997&end=2010&province1=4&province2=11",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pie_disease_year"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province1",
+							"value": "4"
+						},
+						{
+							"key": "province2",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "disease_and_weather_region",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/disease_and_weather_region?disease=influenza&begin=1997&end=2010&province=7",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"disease_and_weather_region"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mortality_home_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/mortality_home_disease?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"mortality_home_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_vn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_vn?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_vn"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_chart_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_chart_disease?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_chart_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "casesAndDeaths",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/casesAndDeaths?disease=influenza&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"casesAndDeaths"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_date1_disease_home",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_date1_disease_home?disease=influenza&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_date1_disease_home"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "lag_region_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/lag_region_disease?disease=influenza&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"lag_region_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_pop_region",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_pop_region?begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_pop_region"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza",
+							"disabled": true
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_radio_region",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_radio_region?disease=influenza&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_radio_region"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_vn_region",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_vn_region?disease=influenza&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_vn_region"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_chart_region_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_chart_region_disease?disease=influenza&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_chart_region_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_seasonal_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_seasonal_disease?disease=influenza&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_seasonal_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "chart_region_ratio",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/chart_region_ratio?disease=influenza&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"chart_region_ratio"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "chart_region_population",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/chart_region_population?begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"chart_region_population"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza",
+							"disabled": true
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "date1_home_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/date1_home_climate?climate=rain&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"date1_home_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "yearlyClimateNumbersTrendLines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/yearlyClimateNumbersTrendLines?climate=rain&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"yearlyClimateNumbersTrendLines"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_climate?climate=rain&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_chart_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_chart_climate?climate=rain&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_chart_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_monthly_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_monthly_climate?climate=rain&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_monthly_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_province_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_province_climate?climate=rain&begin=1997&end=2010",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_province_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "lag_climate_correlation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/lag_climate_correlation?climate=rain&begin=1997&end=2010&province=7",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"lag_climate_correlation"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "province_climate_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/province_climate_year?climate=rain&begin=1997&end=2010&province=7",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"province_climate_year"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_date1_climate_exp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_date1_climate_exp?climate=rain&begin=1997&end=2010&province=7",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_date1_climate_exp"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "province_climate_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/province_climate_month?climate=rain&begin=1997&end=2010&province=7",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"province_climate_month"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "seasonal_climate_exp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/seasonal_climate_exp?climate=rain&begin=1997&end=2010&province=7",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"seasonal_climate_exp"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "lag_correlation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/lag_correlation?disease=influenza&begin=1997&end=2010&province=4",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"lag_correlation"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_province_disease_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_province_disease_year?disease=influenza&begin=1997&end=2010&province=4",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_province_disease_year"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "corr_disease_exp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/corr_disease_exp?disease=influenza,dengue_fever&begin=1997&end=2010&province=4",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"corr_disease_exp"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza,dengue_fever"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_date1_exp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_date1_exp?disease=influenza&begin=1997&end=2010&province=4",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_date1_exp"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_corr_disease_exp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_corr_disease_exp?disease=influenza,dengue_fever&begin=1997&end=2010&region=2",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_corr_disease_exp"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza,dengue_fever"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_disease_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_disease_year?disease=influenza&begin=1997&end=2010&region=2",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_disease_year"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_disease_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_disease_month?disease=influenza&begin=1997&end=2010&region=2",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_disease_month"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "date1_region_disease",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/date1_region_disease?disease=influenza&begin=1997&end=2010&region=2",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"date1_region_disease"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_province_disease_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_province_disease_month?disease=influenza&begin=1997&end=2010&province=4",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_province_disease_month"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "seasonal_disease_exp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/seasonal_disease_exp?disease=influenza&begin=1997&end=2010&province=4",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"seasonal_disease_exp"
+					],
+					"query": [
+						{
+							"key": "disease",
+							"value": "influenza"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "province",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_date1_climate_home",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_date1_climate_home?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_date1_climate_home"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_date1_climate_exp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_date1_climate_exp?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_date1_climate_exp"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "lag_region_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/lag_region_climate?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"lag_region_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_climate_year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_climate_year?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_climate_year"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_climate_month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_climate_month?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_climate_month"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "line_chart_region_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/line_chart_region_climate?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"line_chart_region_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "region_seasonal_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/region_seasonal_climate?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"region_seasonal_climate"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "heatmap_climate_region",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/heatmap_climate_region?climate=rain&begin=1997&end=2010&region=0",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"heatmap_climate_region"
+					],
+					"query": [
+						{
+							"key": "climate",
+							"value": "rain"
+						},
+						{
+							"key": "begin",
+							"value": "1997"
+						},
+						{
+							"key": "end",
+							"value": "2010"
+						},
+						{
+							"key": "region",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "explore_region_climate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/explore_region_climate/15?begin=2003&end=2015&name=Bắc Giang",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"explore_region_climate",
+						"15"
+					],
+					"query": [
+						{
+							"key": "begin",
+							"value": "2003"
+						},
+						{
+							"key": "end",
+							"value": "2015"
+						},
+						{
+							"key": "name",
+							"value": "Bắc Giang"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "explore_response_region",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/explore_response_region/15?begin=2003&end=2015&name=Bắc Giang",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"explore_response_region",
+						"15"
+					],
+					"query": [
+						{
+							"key": "begin",
+							"value": "2003"
+						},
+						{
+							"key": "end",
+							"value": "2015"
+						},
+						{
+							"key": "name",
+							"value": "Bắc Giang"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exp_climate_response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/exp_climate_response/15?begin=2003&end=2015&name=Bắc Giang",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"exp_climate_response",
+						"15"
+					],
+					"query": [
+						{
+							"key": "begin",
+							"value": "2003"
+						},
+						{
+							"key": "end",
+							"value": "2015"
+						},
+						{
+							"key": "name",
+							"value": "Bắc Giang"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "explore_response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/explore_response/15?begin=2003&end=2015",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"explore_response",
+						"15"
+					],
+					"query": [
+						{
+							"key": "begin",
+							"value": "2003"
+						},
+						{
+							"key": "end",
+							"value": "2015"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "popu_response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/popu_response/15/17?begin=2003&end=2015",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"popu_response",
+						"15",
+						"17"
+					],
+					"query": [
+						{
+							"key": "begin",
+							"value": "2003"
+						},
+						{
+							"key": "end",
+							"value": "2015"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "explore Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/explore",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"explore"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "factorPage",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/factor",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"factor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "compare Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/compare",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"compare"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Prediction Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/prediction",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"prediction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Summary Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"data\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

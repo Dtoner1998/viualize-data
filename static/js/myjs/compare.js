@@ -180,6 +180,7 @@ $(document).ready(function () {
               $(`#${id}`).css("fill", " #3b729f");
               id_click_once = id;
               count_click_once++;
+              run_province_climate(climate_pro_array)
               // check exist province code
             } else {
               $(`#${id_click_once}`).css("fill", "#88a4bc");
@@ -377,7 +378,7 @@ $(document).ready(function () {
 			</div>-->
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
-					<span class="box-title" id="title_pro_month_${order}"></span>
+					<span class="box-title" id="title_pro_month_death_${order}"></span>
 					<div id="line_pro_month_death_${order}" class="line_pro_month_death_${order}" style="width:auto;height:auto">
 					</div>
 				</div>
@@ -385,34 +386,6 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
-<div class="product-sales-area mg-tb-30" id='lag_correlation'>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-				<div class="product-sales-chart">
-					<div class="portlet-title">
-						<div class="row">
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-								<div class="caption pro-sl-hd">
-									<span class="caption-subject" id="lag_province"><b></b></span>
-								</div>
-							</div>
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-								<div class="actions graph-rp graph-rp-dl">
-
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="lag_explore" id="lag_explore"
-						style="height: auto;width:auto">
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
 		<div class="row">
@@ -528,7 +501,7 @@ $(document).ready(function () {
 			<!-- line chart year  -->
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
-					<span class="box-title" id="linear_title_year_${order}"></span>
+					<span class="box-title" id="linear_title_year_death_${order}"></span>
 					<div id="linear_pro_month_death_${order}" class="linear_pro_month_death_${order}" style="width:auto;height:auto">
 						<!-- chart in here  -->
 					</div>
@@ -564,10 +537,36 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
+<div class="courses-area mg-b-15" id='trendlines_${name}'>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- pie chart  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box">
+					<span class="box-title" id="title_pro_year_${order}"></span>
+					<div class="line_pro_year_${order}" id="line_pro_year_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			<!-- end pie chart  -->
+			<!-- line chart year  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_pro_year_death_${order}"></span>
+					<div id="line_pro_year_death_${order}" class="line_pro_year_death_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
 <hr class="my-4" id=ruler_comp_${name}>
 `;
     $(`.disease_comp`).append(html);
-    $(`#disease_comp_${name},#disease_date1_comp_${name},#ruler_comp_${name},#linear_comp_${name}`).each(function (i) {
+    $(`#disease_comp_${name},#disease_comp_death_${name},#disease_date1_comp_${name},#disease_date1_comp_death_${name},#linear_comp_death_${name},#trendlines_${name},#ruler_comp_${name},#linear_comp_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
   };
@@ -594,23 +593,6 @@ $(document).ready(function () {
   function chosen_province_disease(begin, end, name, order) {
     var nameDeath=name+"_death";
     create_tag_disease(order, name);
-     $.ajax({
-      url: "/lag_compare_region_disease",
-      type: "GET",
-      contentType: "application/json;charset=UTF-8",
-      data: {
-        disease: name,
-        begin: begin,
-        end: end,
-        region1: id_click_once,
-        region2: id_click_twice
-      },
-      dataType: "json",
-      success: function (data) {
-        Plotly.newPlot(`lag_explore`, data, {});
-        $(`#lag_province`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
-      },
-    });
     $.ajax({
       url: "/pie_disease_year",
       type: "GET",
@@ -730,7 +712,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`disease_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_disease_${order}`).html(`Yearly chart - Number cases of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_disease_${order}`).html(`Number cases of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     $.ajax({
@@ -747,7 +729,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`disease_date1_comp_death_${order}`, data, {});
-        $(`#title_date1_comp_disease_death_${order}`).html(`Yearly chart - Number cases of  ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_disease_death_${order}`).html(`Number cases of  ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // linear disease year
@@ -842,7 +824,7 @@ $(document).ready(function () {
       type: "GET",
       contentType: "application/json;charset=UTF-8",
       data: {
-        disease: name,
+        disease: nameDeath,
         begin: begin,
         end: end,
         province1: id_click_once,
@@ -851,7 +833,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`trendline2_${order}`, data, {});
-        $(`#title_trendline2_${order}`).html(`Number of Cases of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#title_trendline2_${order}`).html(`Number of Deaths due to ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
 

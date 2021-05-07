@@ -571,7 +571,7 @@ $(document).ready(function () {
   // use function
   function create_tag_exp(order, name) {
     var html = '';
-    html += `<div class="product-sales-area mg-tb-30" id='line_bar'>
+    html += `<div class="product-sales-area mg-tb-30" id='line_bar_${name}'>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -851,7 +851,7 @@ $(document).ready(function () {
   <hr class="my-4" id=ruler_exp_${name}>
   `
     $(".disease_exp").append(html);
-    $(`#disease_exp0_${name},#disease_exp1_${name},#date1_exp_${name},#ruler_exp_${name}`).each(function (i) {
+    $(`#disease_exp0_${name},#disease_exp1_${name},#date1_exp_${name},#line_bar_${name},#disease_exp_${name},#disease_death_one${name},#disease_death_two${name},#ruler_exp_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
   }
@@ -995,11 +995,14 @@ $(document).ready(function () {
   }
   // uncheck disease
   function unchecked_disease_exp(name) {
-    // $(`#disease_exp_${name}`).remove();
+    $(`#line_bar_${name}`).remove();
+    $(`#disease_exp_${name}`).remove();
     $(`#disease_exp0_${name}`).remove();
     $(`#disease_exp1_${name}`).remove();
     $(`#date1_exp_${name}`).remove();
     $(`#disease_death_one${name}`).remove();
+    $(`#disease_death_two${name}`).remove();
+
     $(`#ruler_exp_${name}`).attr('class', 'my-4 hidden');;
   }
   // uncheck climate

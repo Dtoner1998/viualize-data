@@ -240,8 +240,8 @@ $(document).ready(function () {
         },
         dataType: "json",
         success: function (data) {
-            Plotly.newPlot(`comp_bar`, data, {});
-            $(`#comp_disease_bar_title`).html(`Bar chart of total ${name.split('_').join('  ')} cases per year for each province`);
+            Plotly.newPlot(`comp_bar_${order}`, data, {});
+            $(`#comp_disease_bar_title_${order}`).html(`Bar chart of total ${name.split('_').join('  ')} cases per year for each province`);
 
         },
     });
@@ -257,8 +257,8 @@ $(document).ready(function () {
         },
         dataType: "json",
         success: function (data) {
-            Plotly.newPlot(`comp_boxplot`, data, {});
-            $(`#comp_disease_boxplot_title`).html(`Boxplot of monthly ${name.split('_').join('  ')} cases per year for each province`);
+            Plotly.newPlot(`comp_boxplot_${order}`, data, {});
+            $(`#comp_disease_boxplot_title_${order}`).html(`Boxplot of monthly ${name.split('_').join('  ')} cases per year for each province`);
 
         },
     });
@@ -540,7 +540,7 @@ $(document).ready(function () {
     <div class="container-fluid">
     
            <!-- show barchart here  -->
-    <div class="product-sales-area mg-tb-30" id='comp_disease_bar'>
+    <div class="product-sales-area mg-tb-30" id='comp_disease_bar_${name}'>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -560,7 +560,7 @@ $(document).ready(function () {
                             </div>
                         </div>
 
-                        <div class="comp_bar" id="comp_bar" style="height: auto;width:auto"></div>
+                        <div class="comp_bar_${order}" id="comp_bar_${order}" style="height: auto;width:auto"></div>
                     </div>
                 </div>
             </div>
@@ -587,7 +587,7 @@ $(document).ready(function () {
                             </div>
                         </div>
 
-                        <div class="comp_boxplot" id="comp_boxplot" style="height: auto;width:auto"></div>
+                        <div class="comp_boxplot_${order}" id="comp_boxplot_${order}" style="height: auto;width:auto"></div>
                     </div>
                 </div>
             </div>
@@ -1339,7 +1339,7 @@ $(document).ready(function () {
 `;
     $(".disease_chart").append(html);
     // remove dupplicate
-    $(`#disease_${name},#heatmapdisease_${name},#disease_heatmap_${name},#disease_date1_home_${name},#ruler1_${name}`).each(function (i) {
+    $(`#disease_${name},#heatmapdisease_${name},#disease_heatmap_${name},#disease_date1_home_${name},#disease_month_home_${name},#disease_month_death_home_${name},#disease_casesAndDeaths_home_${name},#diseaseDeath_${name},#disease_yearly_trendline_home_${name},#disease_deaths_yearly_trendline_home_${name},#disease_monthly_trendline_home_${name},#mortality_yearly_home_${name},#comp_disease_bar_${name},#ruler1_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
     chosen_region(order);
@@ -1630,7 +1630,7 @@ $(document).ready(function () {
     <hr class="my-4" id=ruler2_${name}>
     `;
     $(".climate_chart").append(html);
-    $(`#climate_${name},#climate_date1_home_${name},#ruler2_${name}`).each(function (i) {
+    $(`#climate_${name},#climate_date1_home_${name},#monthly_climate_date1_home_${name},#trend_climate_home_${name},#province_climate_home_${name},#ruler2_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
     chosen_region_climate(order);
@@ -1649,8 +1649,7 @@ $(document).ready(function () {
     $(`#disease_deaths_yearly_trendline_home_${name}`).remove();
     $(`#disease_monthly_trendline_home_${name}`).remove();
     $(`#mortality_yearly_home_${name}`).remove();
-    $(`#comp_disease_boxplot`).remove();
-    $(`#comp_disease_bar`).remove();
+    $(`#comp_disease_bar_${name}`).remove();
     $(`#ruler1_${name}`).attr('class', 'my-4 hidden');
   };
   // create function delete climate then uncheckbox
@@ -2512,7 +2511,7 @@ $(document).ready(function () {
   // use function
   function create_tag_exp(order, name) {
     var html = '';
-    html += `<div class="product-sales-area mg-tb-30" id='line_bar'>
+    html += `<div class="product-sales-area mg-tb-30" id='line_bar_${name}'>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -2792,7 +2791,7 @@ $(document).ready(function () {
   <hr class="my-4" id=ruler_exp_${name}>
   `
     $(".disease_exp").append(html);
-    $(`#disease_exp0_${name},#disease_exp1_${name},#date1_exp_${name},#ruler_exp_${name}`).each(function (i) {
+    $(`#disease_exp0_${name},#disease_exp1_${name},#date1_exp_${name},#line_bar_${name},#disease_exp_${name},#disease_death_one${name},#disease_death_two${name},#ruler_exp_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
   }
@@ -2936,11 +2935,14 @@ $(document).ready(function () {
   }
   // uncheck disease
   function unchecked_disease_exp(name) {
-    // $(`#disease_exp_${name}`).remove();
+    $(`#line_bar_${name}`).remove();
+    $(`#disease_exp_${name}`).remove();
     $(`#disease_exp0_${name}`).remove();
     $(`#disease_exp1_${name}`).remove();
     $(`#date1_exp_${name}`).remove();
     $(`#disease_death_one${name}`).remove();
+    $(`#disease_death_two${name}`).remove();
+
     $(`#ruler_exp_${name}`).attr('class', 'my-4 hidden');;
   }
   // uncheck climate
@@ -3558,6 +3560,7 @@ $(document).ready(function () {
               $(`#${id}`).css("fill", " #3b729f");
               id_click_once = id;
               count_click_once++;
+              run_province_climate(climate_pro_array)
               // check exist province code
             } else {
               $(`#${id_click_once}`).css("fill", "#88a4bc");
@@ -3755,7 +3758,7 @@ $(document).ready(function () {
 			</div>-->
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
-					<span class="box-title" id="title_pro_month_${order}"></span>
+					<span class="box-title" id="title_pro_month_death_${order}"></span>
 					<div id="line_pro_month_death_${order}" class="line_pro_month_death_${order}" style="width:auto;height:auto">
 					</div>
 				</div>
@@ -3763,34 +3766,6 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
-<div class="product-sales-area mg-tb-30" id='lag_correlation'>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-				<div class="product-sales-chart">
-					<div class="portlet-title">
-						<div class="row">
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-								<div class="caption pro-sl-hd">
-									<span class="caption-subject" id="lag_province"><b></b></span>
-								</div>
-							</div>
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-								<div class="actions graph-rp graph-rp-dl">
-
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="lag_explore" id="lag_explore"
-						style="height: auto;width:auto">
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div class="product-sales-area mg-tb-30" id='disease_date1_comp_${name}'>
 	<div class="container-fluid">
 		<div class="row">
@@ -3906,7 +3881,7 @@ $(document).ready(function () {
 			<!-- line chart year  -->
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
-					<span class="box-title" id="linear_title_year_${order}"></span>
+					<span class="box-title" id="linear_title_year_death_${order}"></span>
 					<div id="linear_pro_month_death_${order}" class="linear_pro_month_death_${order}" style="width:auto;height:auto">
 						<!-- chart in here  -->
 					</div>
@@ -3942,10 +3917,36 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
+<div class="courses-area mg-b-15" id='trendlines_${name}'>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- pie chart  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box">
+					<span class="box-title" id="title_pro_year_${order}"></span>
+					<div class="line_pro_year_${order}" id="line_pro_year_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			<!-- end pie chart  -->
+			<!-- line chart year  -->
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="white-box res-mg-t-30 table-mg-t-pro-n">
+					<span class="box-title" id="title_pro_year_death_${order}"></span>
+					<div id="line_pro_year_death_${order}" class="line_pro_year_death_${order}" style="width:auto;height:auto">
+						<!-- chart in here  -->
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
 <hr class="my-4" id=ruler_comp_${name}>
 `;
     $(`.disease_comp`).append(html);
-    $(`#disease_comp_${name},#disease_date1_comp_${name},#ruler_comp_${name},#linear_comp_${name}`).each(function (i) {
+    $(`#disease_comp_${name},#disease_comp_death_${name},#disease_date1_comp_${name},#disease_date1_comp_death_${name},#linear_comp_death_${name},#trendlines_${name},#ruler_comp_${name},#linear_comp_${name}`).each(function (i) {
       $('[id="' + this.id + '"]').slice(1).remove();
     });
   };
@@ -3972,23 +3973,6 @@ $(document).ready(function () {
   function chosen_province_disease(begin, end, name, order) {
     var nameDeath=name+"_death";
     create_tag_disease(order, name);
-     $.ajax({
-      url: "/lag_compare_region_disease",
-      type: "GET",
-      contentType: "application/json;charset=UTF-8",
-      data: {
-        disease: name,
-        begin: begin,
-        end: end,
-        region1: id_click_once,
-        region2: id_click_twice
-      },
-      dataType: "json",
-      success: function (data) {
-        Plotly.newPlot(`lag_explore`, data, {});
-        $(`#lag_province`).html(`Lag correlation of ${name.split('_').join(' ')} by monthly mean from ${begin}-${end}`);
-      },
-    });
     $.ajax({
       url: "/pie_disease_year",
       type: "GET",
@@ -4108,7 +4092,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`disease_date1_comp_${order}`, data, {});
-        $(`#title_date1_comp_disease_${order}`).html(`Yearly chart - Number cases of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_disease_${order}`).html(`Number cases of  ${name.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     $.ajax({
@@ -4125,7 +4109,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`disease_date1_comp_death_${order}`, data, {});
-        $(`#title_date1_comp_disease_death_${order}`).html(`Yearly chart - Number cases of  ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
+        $(`#title_date1_comp_disease_death_${order}`).html(`Number cases of  ${nameDeath.split('_').join('  ')} by monthly mean from ${begin}-${end}`);
       },
     });
     // linear disease year
@@ -4220,7 +4204,7 @@ $(document).ready(function () {
       type: "GET",
       contentType: "application/json;charset=UTF-8",
       data: {
-        disease: name,
+        disease: nameDeath,
         begin: begin,
         end: end,
         province1: id_click_once,
@@ -4229,7 +4213,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         Plotly.newPlot(`trendline2_${order}`, data, {});
-        $(`#title_trendline2_${order}`).html(`Number of Cases of ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
+        $(`#title_trendline2_${order}`).html(`Number of Deaths due to ${name.split('_').join('  ')} by yearly mean from ${begin}-${end}`);
       },
     });
 
@@ -4623,21 +4607,6 @@ $(document).ready(function () {
                 $(`#sub_corr_title`).html(`Correlation of Diseases and Weather in Viet Nam from ${begin}-${end}`);
             },
         });
-        $.ajax({
-            url: "/lag_correlation_disease",
-            type: "GET",
-            contentType: "application/json;charset=UTF-8",
-            data: {
-                disease: disease,
-                begin: begin,
-                end: end,
-            },
-            dataType: "json",
-            success: function (data) {
-                Plotly.newPlot(`lag_disease`, data, {});
-                $(`#lag_title`).html(`Lag Correlation of ${disease.split('_').join('  ')} in Viet Nam from ${begin}-${end}`);
-            },
-        });
         // chart compare disease
         $.ajax({
             url: "/compare_disease",
@@ -4685,81 +4654,70 @@ $(document).ready(function () {
   if (currentURL != '/prediction') {
     return false;
   }
-  $(".begin").change(function () {
+  $(".trainBegin").change(function () {
     var val = $(this).val();
     var min = $(this).attr("min");
     var max = $(this).attr("max");
     // console.log(min,' ',max);
     var portion = (val - min) / (max - min);
-    $(".indicator_begin").text(val);
-    $(".indicator_begin").css("left", portion * ($(".begin").width() - 18));
+    $(".indicator_begin_train").text(val);
+    $(".indicator_begin_train").css("left", portion * ($(".begin").width() - 18));
     // check time
-    var begin = $(".begin").val();
-    var end = $(".end").val();
-    if (begin > end) {
-      $.confirm({
-        title: 'Confirm',
-        content: 'Please choose begin year bigger than or equal end year!',
-        iconClose: true,
-        buttons: {
-          ok: {
-            btnClass: 'btn-primay',
-            action: function () {
-              $(".begin").val(min);
-              $(".indicator_begin").text(min);
-              title_home(min, end);
-            }
-          },
-        }
-      });
-      return false;
-    }
-    title_home(begin, end);
-    get_data_home();
+    var trainBegin = $(".trainBegin").val();
+    var trainEnd = $(".trainEnd").val();
+    var testEnd = $(".testEnd").val();
   });
   // end year
-  $(".end").change(function () {
+  $(".trainEnd").change(function () {
     var val = $(this).val();
     var min = $(this).attr("min");
     var max = $(this).attr("max");
     var portion = (val - min) / (max - min);
-    $(".indicator_end").text(val);
-    $(".indicator_end").css("left", portion * ($(".end").width() - 18));
-    var begin = $(".begin").val();
-    var end = $(".end").val();
-    if (begin > end) {
-      $.confirm({
-        title: 'Confirm',
-        content: 'Please choose begin year bigger than or equal end year!',
-        iconClose: true,
-        buttons: {
-          ok: {
-            btnClass: 'btn-primay',
-            action: function () {
-              $(".begin").val(min);
-              $(".indicator_begin").text(min);
-              console(min);
-              title_home(min, end);
-            }
-          },
-        }
-      });
-      return false;
-    }
-    title_home(begin, end);
-
-    get_data_home();
+    $(".indicator_end_train").text(val);
+    $(".indicator_end_train").css("left", portion * ($(".end").width() - 18));
+    var trainBegin = $(".trainBegin").val();
+    var trainEnd = $(".trainEnd").val();
+    var testEnd = $(".testEnd").val();
   });
+
+  $(".testEnd").change(function () {
+    var val = $(this).val();
+    var min = $(this).attr("min");
+    var max = $(this).attr("max");
+    var portion = (val - min) / (max - min);
+    $(".indicator_end_test").text(val);
+    $(".indicator_end_test").css("left", portion * ($(".end").width() - 18));
+    var trainBegin = $(".trainBegin").val();
+    var trainEnd = $(".trainEnd").val();
+    var testEnd = $(".testEnd").val();
+  });
+
   // check nhieu loai benh
   var disease_array = [];
+  var globalDisease=''
   $(".check_disease").click(function () {
     var begin = $(".begin").val();
     var end = $(".end").val();
 
     if (this.checked) {
-      disease_array.push(this.value);
+      //disease_array.push(this.value);
+      globalDisease=this.value;
     } else {
-      disease_array.pop(this.value);
+      //disease_array.pop(this.value);
+    }
+  });
+
+
+  var globalProvince=''
+  $(".check_province").click(function () {
+    var begin = $(".begin").val();
+    var end = $(".end").val();
+
+    if (this.checked) {
+      //disease_array.push(this.value);
+      globalProvince=this.value;
+    } else {
+      //disease_array.pop(this.value);
     }
   });
   // check nhieu yeu to
@@ -4777,29 +4735,80 @@ $(document).ready(function () {
   // get region climate
 
    $(".predict_button").click(function () {
-     let climate_array_string = climate_array.join("+");
-     $.ajax({
-      url: "/get_prediction",
-      type: "GET",
-      contentType: "application/json;charset=UTF-8",
-      data: {
-        name: climate_array_string,
-        disease : 'dengue_fever'
-      },
-      dataType: "json",
-      success: function (data) {
-        Plotly.newPlot(`monthly_trendline_cases_${order}`, data, {});
-        // monthly number of influenza incidence
-        $(`#title_monthly_trendline_cases_home_${order}`).html(`Monthly number of cases of ${name.split('_').join('  ')}  in Viet Nam from ${begin}-${end}`);
-      },
-    });
+     $(`#prediction_${0}`).remove();
+     let climate_array_string = climate_array.join("-");
+     var disease = globalDisease;
+     var province = globalProvince;
+     var trainBegin = $(".trainBegin").val();
+     var trainEnd = $(".trainEnd").val();
+     var testEnd = $(".testEnd").val();
+     if(globalDisease=='' || globalProvince==''){
+       window.alert("Please Select a disease and province -  For multivariate model also select Climate Factors");
+     } else if (!(trainBegin<trainEnd && trainEnd<testEnd)) {
+       window.alert("Invalid Year Selection")
+       $(".trainBegin").val(1997);
+       $(".indicator_begin_train").text(1997);
+       $(".trainEnd").val(2008);
+       $(".indicator_end_train").text(2008);
+       $(".testEnd").val(2016);
+       $(".indicator_end_test").text(2016);
+     }
+     else {
+       window.alert("Model training - Do not refresh Page")
+       $.ajax({
+         url: "/get_prediction",
+         type: "GET",
+         contentType: "application/json;charset=UTF-8",
+         data: {
+           name: climate_array_string,
+           disease: disease,
+           province: province,
+           trainBegin: trainBegin,
+           trainEnd: trainEnd,
+           testEnd: testEnd
+         },
+         dataType: "json",
+         success: function (data) {
+           Plotly.newPlot(`monthly_cases`, data, {});
+           // monthly number of influenza incidence
+           $(`#title_monthly_cases_${0}`).html(`Projected Monthly number of cases of ${name.split('_').join('  ')}  in Viet Nam from ${begin}-${end}`);
+         }
+       });
+       var html = '';
+       html += `<div class="product-sales-area mg-tb-30" id=prediction_${0}>
+        <div class="container-fluid">
+            <!-- show chart climate in here  -->
+            <div class="row">
+                <!-- begin col 1  -->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="product-sales-chart">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="caption pro-sl-hd">
+                                        <span class="caption-subject" id=title_monthly_cases_${0}><b></b></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- chart in here -->
+                        <div id="monthly_cases" class="monthly_cases"
+                            style="height: auto;width:auto"></div>
+                    </div>
+                </div >
+            </div>
+        </div>
+    </div>`
+       $(".disease_chart").append(html);
+       $('.title_home').html(`Predicted ${disease} Cases in ${province}`)
+     }
   });
 
 
   // title home default
-  title_home(1997, 2019);
+  title_home(1997, 2016);
   function title_home(begin, end) {
-    $('.title_home').html(`Summary Data In Viet Nam From ${begin}-${end}`)
+    $('.title_home').html(`Predict Disease Cases in Vietnam`)
   }
 
 });

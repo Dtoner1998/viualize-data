@@ -27,7 +27,7 @@
               <li><a title="disease" style="font-size:inherit;"><span class="mini-sub-pro">
                     <!-- cac loai benh  -->
                     {% for opt in disease %}
-                    <input type="checkbox" id="{{opt}}" class="check_disease" value="{{opt.strip()}}" name="check_test"
+                    <input type="radio" id="{{opt}}" class="check_disease" value="{{opt.strip()}}" name="check_test"
                       data-check="disease" />
                     <label for="{{opt}}">{{(opt.replace('_',' ')).title()}}</label><br />
                     {% endfor %}
@@ -49,25 +49,48 @@
                   </span></a></li>
             </ul>
           </li>
-
+            <li>
+            <a class="has-arrow" aria-expanded="false">
+              <!-- <span class="educate-icon educate-professor icon-wrap"></span> -->
+              <i class="province selection" aria-hidden="true"></i>
+              <span class="mini-click-non">Province</span></a>
+            <ul class="submenu-angle" aria-expanded="false" style="width:max-content;">
+              <li><a title="Province" style="font-size:inherit;"><span class="mini-sub-pro">
+                    {% for opt in provinces %}
+                    <input type="radio" id="{{opt}}" class="check_province" value="{{opt.strip()}}" name="check_test"
+                      data-check="province" />
+                    <label for="{{opt}}">{{(opt.replace('_',' ')).title()}}</label><br />
+                    {% endfor %}
+                  </span></a></li>
+            </ul>
+          </li>
           <li>
             <a title="Time series" aria-expanded="false"><span class="educate-icon educate-event icon-wrap sub-icon-mg"
                 aria-hidden="true">
-                Begin
+                Begin Training
               </span>
-              <span class="indicator_begin">1997<span></span></span>
-              <input type="range" min="1997" max="2019" value="1997" class="begin" />
+              <span class="indicator_begin_train">1997<span></span></span>
+              <input type="range" min="1997" max="2016" value="1997" class="trainBegin" />
             </a>
           </li>
           <li>
             <a title="Time series" aria-expanded="false"><span class="educate-icon educate-event icon-wrap sub-icon-mg"
                 aria-hidden="true">
-                End
+                End Training
               </span>
-              <span class="indicator_end">2019<span></span></span>
-              <input type="range" min="1997" max="2019" value="2019" class="end" />
+              <span class="indicator_end_train">2010<span></span></span>
+              <input type="range" min="1997" max="2016" value="2010" class="trainEnd" />
             </a>
           </li>
+        <li>
+              <a title="Time series" aria-expanded="false"><span class="educate-icon educate-event icon-wrap sub-icon-mg"
+                aria-hidden="true">
+                End Testing
+              </span>
+              <span class="indicator_end_test">2016<span></span></span>
+              <input type="range" min="1997" max="2016" value="2016" class="testEnd" />
+            </a>
+        </li>
         <input type="button" id="predict_button" class="predict_button" value="Submit" name="Submit"/> </input>
           <!-- end menu  -->
         </ul>

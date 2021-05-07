@@ -17,8 +17,9 @@ from keras.layers import Dense, concatenate
 from keras.layers import LSTM
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_log_error
 from sklearn.preprocessing import LabelEncoder
-
+from sklearn.preprocessing import StandardScaler
 
 class Visual():
     """docstring for"""
@@ -3154,7 +3155,7 @@ class Visual():
         line = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return line
 
-    def create_dataset(self,dataset, look_back):
+    def create_dataset(self, dataset, look_back=1):
         dataX, dataY = [], []
         for i in range(len(dataset) - look_back - 1):
             a = dataset[i:(i + look_back), 0]
@@ -3162,7 +3163,150 @@ class Visual():
             dataY.append(dataset[i + look_back, 0])
         return np.array(dataX), np.array(dataY)
 
-    def series_to_supervised(self,data, n_in=1, n_out=1, dropnan=True):
+    def LSTM_univariate(self, df, disease, province, begin, split, end):
+        np.random.seed(42)
+        df = df.loc[df['province_name'] == province]
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(['date1'], as_index=False).mean()
+        dfplot = df[['date1',disease]]
+        print(dfplot)
+        df = df[[disease]]
+        np.random.seed(42)
+        dataset = df.values
+        dataset = dataset.astype('float32')
+
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        dataset = scaler.fit_transform(dataset)
+        # split into train and test sets
+        train_size = ((split-begin)+1)*12
+        test_size = len(dataset) - train_size
+        train, test = dataset[0:train_size, :], dataset[train_size:len(dataset), :]
+        print(len(train), len(test))
+        look_back = 1
+        trainX, trainY = self.create_dataset(train, look_back)
+        testX, testY = self.create_dataset(test, look_back)
+        trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
+        testX = np.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
+        # create and fit the LSTM network
+        model = Sequential()
+        model.add(LSTM(24, activation='relu',input_shape=(1, look_back), return_sequences=True))
+        model.add(LSTM(16, return_sequences=False))
+        model.add(Dense(8, activation='relu'))
+        #model.add(Dense(32, activation='relu'))
+        #model.add(Dense(16, activation='relu'))
+        model.add(Dense(1))
+        model.compile(loss='mse', optimizer='adam')
+        history = model.fit(trainX, trainY, epochs=50, batch_size=16,validation_data=(testX, testY), verbose=2)
+        trainPredict = model.predict(trainX)
+        testPredict = model.predict(testX)
+        trainPredict = scaler.inverse_transform(trainPredict)
+        trainY = scaler.inverse_transform([trainY])
+        testPredict = scaler.inverse_transform(testPredict)
+        testY = scaler.inverse_transform([testY])
+        dataset=scaler.inverse_transform(dataset)
+        # calculate root mean squared error
+        trainScore = np.math.sqrt(mean_squared_error(trainY[0], trainPredict[:, 0]))
+        print('Train Score: %.2f RMSE' % (trainScore))
+        testScore = np.math.sqrt(mean_squared_error(testY[0], testPredict[:, 0]))
+        print('Test Score: %.2f RMSE' % (testScore))
+
+        trainPredictPlot = np.empty_like(dataset)
+        trainPredictPlot[:, :] = np.nan
+        trainPredictPlot[look_back:len(trainPredict) + look_back, :] = trainPredict
+        # shift test predictions for plotting
+        testPredictPlot = np.empty_like(dataset)
+        testPredictPlot[:, :] = np.nan
+        testPredictPlot[len(trainPredict) + (look_back * 2) + 1:len(dataset) - 1, :] = testPredict
+        # plot baseline and predictions
+
+        pyplot.plot(history.history['loss'], label='train')
+        pyplot.plot(history.history['val_loss'], label='test')
+        pyplot.legend()
+        pyplot.show()
+
+        dfplot['trainValues'] = trainPredictPlot
+        dfplot['testValues'] = testPredictPlot
+
+
+        showPredict=testPredict[-1]
+        showPredict=showPredict[0]
+
+        fig = make_subplots(rows=1, cols=2,
+                            specs=[[{"type": "xy"}, {"type": "domain"}]]
+                            )
+        fig.add_trace(go.Scatter(
+            x=dfplot['date1'],
+            # mean['population']
+            y=(dfplot[str(disease)]),
+            mode='lines', marker_symbol='triangle-up', line_color="blue", name='Values'),row=1, col=1)
+        fig.add_trace(go.Scatter(
+            x=dfplot['date1'],
+            # mean['population']
+            y=(dfplot['trainValues']),
+            mode='lines', marker_symbol='triangle-up', line_color="red", name='Train'),row=1, col=1)
+        fig.add_trace(go.Scatter(
+            x=dfplot['date1'],
+            # mean['population']
+            y=(dfplot['testValues']),
+            mode='lines', marker_symbol='triangle-up', line_color="green", name='Test'),row=1, col=1)
+        fig.add_trace(go.Indicator(
+            mode='number',
+            value=showPredict,
+        ), row=1, col=2)
+
+        fig.update_layout(
+            updatemenus=[
+                dict(
+                    buttons=list([
+                        dict(
+                            args=["type", "bar"],
+                            label="Bar Chart",
+                            method="restyle"
+                        ),
+                        dict(
+                            args=["type", "line"],
+                            label="Line Chart",
+                            method="restyle"
+                        ),
+
+                    ]),
+                    direction="down",
+                    pad={"r": 10, "t": 10},
+                    showactive=True,
+                    x=1.2,
+                    xanchor="right",
+                    y=1.2,
+                    yanchor="top"
+                ),
+
+            ],
+            showlegend=True,
+            xaxis_tickfont_size=14,
+            title='Projected Case Numbers of '+disease,
+            xaxis=dict(
+                title='Year',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            yaxis=dict(
+                title='Cases',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            template="plotly_white",
+            margin={"r": 10, "t": 10, "l": 10, "b": 10},
+            barmode='group',
+            bargap=0.15,
+            bargroupgap=0.1
+        )
+        linesJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        print(model.summary())
+
+        return linesJSON
+
+    def series_to_supervised(self, data, n_in=1, n_out=1, dropnan=True):
+        print("Datatype")
         print(type(data))
         n_vars = 1 if type(data) is list else data.shape[1]
         df = pd.DataFrame(data)
@@ -3186,240 +3330,391 @@ class Visual():
             agg.dropna(inplace=True)
         return agg
 
-    def LSTM_one(self, df, disease):
-        df= df[df['year'].between(int(1997), int(2016))]
-        df = df.groupby(['date1', 'province_code'], as_index=False).mean()
-        df = df.groupby(['date1'], as_index=False).sum()
+
+    def LSTM(self, df, disease, province, features, begin, split, end):
+        np.random.seed(42)
+        df = df.loc[df['province_name'] == province]
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.drop(['year'], axis=1)
+        dfTemp=df
+        df = df.groupby(['date1'], as_index=False).mean()
+        #dfTemp = dfTemp.groupby(['date1', 'province_code'], as_index=False).first()
+        #dfTemp = dfTemp.groupby(['date1'], as_index=False).sum()
+        #df[disease]=dfTemp[disease]
+        columns=[disease]
+        columns=columns+features
+        dataset=df[columns]
+        dfplot=df[['date1',disease]]
+        dfTemp=df[[disease]]
+        dfTemp=dfTemp.values
+        values = dataset.values
+        # integer encode direction
+        # ensure all data is float
+        values = values.astype('float32')
+
+
+
+        # normalize features
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaled = scaler.fit_transform(values)
+        # specify the number of lag hours
+        n_hours = 3
+        n_features = len(features)+1
+        # frame as supervised learning
+        reframed = self.series_to_supervised(scaled, n_hours, 1)
+
+
+
+
+        # split into train and test sets
+        values = reframed.values
+        #train_size = int(len(dataset) * 0.67)
+        #test_size = len(dataset) - train_size
+        n_train_hours = ((split-begin)*12)
+        train = values[:n_train_hours, :]
+        test = values[n_train_hours:, :]
+        # split into input and outputs
+        n_obs = n_hours * n_features
+        train_X, train_y = train[:, :n_obs], train[:, -n_features]
+        test_X, test_y = test[:, :n_obs], test[:, -n_features]
+        print(train_X.shape, len(train_X), train_y.shape)
+        # reshape input to be 3D [samples, timesteps, features]
+        train_X = train_X.reshape((train_X.shape[0], n_hours, n_features))
+        test_X = test_X.reshape((test_X.shape[0], n_hours, n_features))
+        print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
+        print('train_y')
+        print(train_y)
+        print('##########################')
+
+        # design network
+        model = Sequential()
+        model.add(LSTM(32, input_shape=(train_X.shape[1], train_X.shape[2]), return_sequences=True))
+        model.add(LSTM(24, return_sequences=True))
+        model.add(LSTM(16, return_sequences=False))
+        #model.add(Dense(32, activation='tanh'))
+        model.add(Dense(8, activation='relu'))
+        #model.add(Dense(8, activation='relu'))
+        model.add(Dense(1))
+        model.compile(loss='mse', optimizer='adam')
+        # fit network
+        history = model.fit(train_X, train_y, epochs=100, batch_size=16, validation_data=(test_X, test_y), verbose=2,
+                            shuffle=False)
+        # plot history
+        pyplot.plot(history.history['loss'], label='train')
+        pyplot.plot(history.history['val_loss'], label='test')
+        pyplot.legend()
+        pyplot.show()
+
+        # make a prediction
+        yhat = model.predict(test_X)
+        #print('yhat')
+        #print(yhat)
+        # print('-------------------')
+        test_X = test_X.reshape((test_X.shape[0], n_hours * n_features))
+        #invert scaling for forecast
+        print(yhat.shape)
+        print(test_X.shape)
+        inv_yhat = concatenate((yhat, test_X[:, -(n_features-1):]), axis=1)
+        print(inv_yhat.shape)
+        inv_yhat = scaler.inverse_transform(inv_yhat)
+        inv_yhat = inv_yhat[:, 0]
+        # invert scaling for actual
+        test_y = test_y.reshape((len(test_y), 1))
+        # print('test_y')
+        # print(test_y)
+        # print('---------------------------')
+        inv_y = concatenate((test_y, test_X[:, -(n_features-1):]), axis=1)
+        inv_y = scaler.inverse_transform(inv_y)
+        inv_y = inv_y[:, 0]
+        # calculate RMSE
+        rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
+        print('Test RMSE: %.3f' % rmse)
+        print('predicted')
+        print(inv_yhat)
+        print('actual')
+        print(inv_y)
+
+        trainPred=model.predict(train_X)
+        print(trainPred.shape)
+        print(train_X.shape)
+        train_X = train_X.reshape((train_X.shape[0], n_hours * n_features))
+        inv_trainPred= concatenate((trainPred, train_X[:, -(n_features-1):]), axis=1)
+        inv_trainPred = scaler.inverse_transform(inv_trainPred)
+        inv_trainPred = inv_trainPred[:, 0]
+        print(inv_trainPred.shape)
+        inv_trainPred = np.reshape(inv_trainPred, (-1, 1))
+        print(inv_trainPred.shape)
+
+        trainPredictPlot = np.empty_like(dfTemp)
+        trainPredictPlot[:, :] = np.nan
+        trainPredictPlot[n_hours:len(inv_trainPred) + n_hours, :] = inv_trainPred
+        # shift test predictions for plotting
+        testPredictPlot = np.empty_like(dfTemp)
+        testPredictPlot[:, :] = np.nan
+        inv_yhat=np.reshape(inv_yhat, (-1, 1))
+        print(inv_yhat.shape)
+        testPredictPlot[len(inv_trainPred) + (n_hours):len(dataset), :] = inv_yhat
+        # plot baseline and predictions
+
+        dfplot['trainValues'] = trainPredictPlot
+        dfplot['testValues'] = testPredictPlot
+        showPredict=testPredictPlot[-1]
+        showPredict=showPredict[0]
+
+        fig = make_subplots(rows=1, cols=2,
+                            specs=[[{"type": "xy"},{"type": "domain"}]]
+                            )
+        fig.add_trace(go.Scatter(
+            x=dfplot['date1'],
+            # mean['population']
+            y=(dfplot[str(disease)]),
+            mode='lines', marker_symbol='triangle-up', line_color="blue", name='Values'),row=1, col=1)
+        fig.add_trace(go.Scatter(
+            x=dfplot['date1'],
+            # mean['population']
+            y=(dfplot['trainValues']),
+            mode='lines', marker_symbol='triangle-up', line_color="red", name='Train'),row=1, col=1)
+        fig.add_trace(go.Scatter(
+            x=dfplot['date1'],
+            # mean['population']
+            y=(dfplot['testValues']),
+            mode='lines', marker_symbol='triangle-up', line_color="green", name='Test'),row=1, col=1)
+        fig.add_trace(go.Indicator(
+            mode='number',
+            value=showPredict,
+            #domain={'y': [0, 1], 'x': [0.25, 0.75]}
+        ), row=1, col=2)
+
+        fig.update_layout(
+            updatemenus=[
+                dict(
+                    buttons=list([
+                        dict(
+                            args=["type", "line"],
+                            label="Line Chart",
+                            method="restyle"
+                        ),
+                        dict(
+                            args=["type", "bar"],
+                            label="Bar Chart",
+                            method="restyle"
+                        ),
+
+                    ]),
+                    direction="down",
+                    pad={"r": 10, "t": 10},
+                    showactive=True,
+                    x=1.2,
+                    xanchor="right",
+                    y=1.2,
+                    yanchor="top"
+                ),
+
+            ],
+            showlegend=True,
+            xaxis_tickfont_size=14,
+            title='Projected Case Numbers of ' + disease+" in "+province,
+            xaxis=dict(
+                title='Year',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            yaxis=dict(
+                title='Cases',
+                titlefont_size=16,
+                tickfont_size=14,
+            ),
+            template="plotly_white",
+            margin={"r": 10, "t": 10, "l": 10, "b": 10},
+            barmode='group',
+            bargap=0.15,
+            bargroupgap=0.1
+        )
+        linesJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        print(model.summary())
+
+        return linesJSON
+
+
+    def LSTM_evaluate(self, df, disease, province, features, begin, split, end):
+        np.random.seed(42)
+        df = df.loc[df['province_name'] == province]
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.drop(['year'], axis=1)
+        dfTemp=df
+        df = df.groupby(['date1'], as_index=False).mean()
+        #dfTemp = dfTemp.groupby(['date1', 'province_code'], as_index=False).first()
+        #dfTemp = dfTemp.groupby(['date1'], as_index=False).sum()
+        #df[disease]=dfTemp[disease]
+        columns=[disease]
+        columns=columns+features
+        dataset=df[columns]
+        dfplot=df[['date1',disease]]
+        dfTemp=df[[disease]]
+        dfTemp=dfTemp.values
+        values = dataset.values
+        # integer encode direction
+        # ensure all data is float
+        values = values.astype('float32')
+
+
+
+        # normalize features
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaled = scaler.fit_transform(values)
+        # specify the number of lag hours
+        n_hours = 3
+        n_features = len(features)+1
+        # frame as supervised learning
+        reframed = self.series_to_supervised(scaled, n_hours, 1)
+
+
+
+
+        # split into train and test sets
+        values = reframed.values
+        #train_size = int(len(dataset) * 0.67)
+        #test_size = len(dataset) - train_size
+        n_train_hours = ((split-begin)*12)
+        train = values[:n_train_hours, :]
+        test = values[n_train_hours:, :]
+        # split into input and outputs
+        n_obs = n_hours * n_features
+        train_X, train_y = train[:, :n_obs], train[:, -n_features]
+        test_X, test_y = test[:, :n_obs], test[:, -n_features]
+        print(train_X.shape, len(train_X), train_y.shape)
+        # reshape input to be 3D [samples, timesteps, features]
+        train_X = train_X.reshape((train_X.shape[0], n_hours, n_features))
+        test_X = test_X.reshape((test_X.shape[0], n_hours, n_features))
+        print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
+        print('train_y')
+        print(train_y)
+        print('##########################')
+
+        # design network
+        model = Sequential()
+        model.add(LSTM(32, input_shape=(train_X.shape[1], train_X.shape[2]), return_sequences=True))
+        model.add(LSTM(24, return_sequences=True))
+        model.add(LSTM(16, return_sequences=False))
+        #model.add(Dense(32, activation='tanh'))
+        model.add(Dense(8, activation='relu'))
+        #model.add(Dense(8, activation='relu'))
+        model.add(Dense(1))
+        model.compile(loss='mse', optimizer='adam')
+        # fit network
+        history = model.fit(train_X, train_y, epochs=50, batch_size=16, validation_data=(test_X, test_y), verbose=2,
+                            shuffle=False)
+        # plot history
+        # make a prediction
+        yhat = model.predict(test_X)
+        #print('yhat')
+        #print(yhat)
+        # print('-------------------')
+        test_X = test_X.reshape((test_X.shape[0], n_hours * n_features))
+        #invert scaling for forecast
+        print(yhat.shape)
+        print(test_X.shape)
+        inv_yhat = concatenate((yhat, test_X[:, -(n_features-1):]), axis=1)
+        print(inv_yhat.shape)
+        inv_yhat = scaler.inverse_transform(inv_yhat)
+        inv_yhat = inv_yhat[:, 0]
+        # invert scaling for actual
+        test_y = test_y.reshape((len(test_y), 1))
+        # print('test_y')
+        # print(test_y)
+        # print('---------------------------')
+        inv_y = concatenate((test_y, test_X[:, -(n_features-1):]), axis=1)
+        inv_y = scaler.inverse_transform(inv_y)
+        inv_y = inv_y[:, 0]
+        # calculate RMSE
+        rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
+        print('Test RMSE: %.3f' % rmse)
+        print('predicted')
+        print(inv_yhat)
+        print('actual')
+        print(inv_y)
+
+        trainPred=model.predict(train_X)
+        print(trainPred.shape)
+        print(train_X.shape)
+        train_X = train_X.reshape((train_X.shape[0], n_hours * n_features))
+        inv_trainPred= concatenate((trainPred, train_X[:, -(n_features-1):]), axis=1)
+        inv_trainPred = scaler.inverse_transform(inv_trainPred)
+        inv_trainPred = inv_trainPred[:, 0]
+        print(inv_trainPred.shape)
+        inv_trainPred = np.reshape(inv_trainPred, (-1, 1))
+        print(inv_trainPred.shape)
+
+        trainPredictPlot = np.empty_like(dfTemp)
+        trainPredictPlot[:, :] = np.nan
+        trainPredictPlot[n_hours:len(inv_trainPred) + n_hours, :] = inv_trainPred
+        # shift test predictions for plotting
+        testPredictPlot = np.empty_like(dfTemp)
+        testPredictPlot[:, :] = np.nan
+        inv_yhat=np.reshape(inv_yhat, (-1, 1))
+        print(inv_yhat.shape)
+        testPredictPlot[len(inv_trainPred) + (n_hours):len(dataset), :] = inv_yhat
+        # plot baseline and predictions
+        return rmse, history
+
+    def LSTM_univariate_test(self, df, disease, province, begin, split, end):
+        np.random.seed(42)
+        df = df.loc[df['province_name'] == province]
+        df = df[df['year'].between(int(begin), int(end))]
+        df = df.groupby(['date1'], as_index=False).mean()
+        dfplot = df[['date1', disease]]
+        print(dfplot)
         df = df[[disease]]
         np.random.seed(42)
-        dataset=df.values
+        dataset = df.values
         dataset = dataset.astype('float32')
+
         scaler = MinMaxScaler(feature_range=(0, 1))
         dataset = scaler.fit_transform(dataset)
-        train_size = int(len(dataset) * 0.67)
+        # split into train and test sets
+        train_size = ((split - begin) + 1) * 12
         test_size = len(dataset) - train_size
         train, test = dataset[0:train_size, :], dataset[train_size:len(dataset), :]
-        look_back = 3
+        print(len(train), len(test))
+        look_back = 1
         trainX, trainY = self.create_dataset(train, look_back)
         testX, testY = self.create_dataset(test, look_back)
         trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
         testX = np.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
+        # create and fit the LSTM network
         model = Sequential()
-        model.add(LSTM(4, input_shape=(1, look_back)))
+        model.add(LSTM(24, activation='relu', input_shape=(1, look_back), return_sequences=True))
+        model.add(LSTM(16, return_sequences=False))
+        model.add(Dense(8, activation='relu'))
+        # model.add(Dense(32, activation='relu'))
+        # model.add(Dense(16, activation='relu'))
         model.add(Dense(1))
-        model.compile(loss='mean_squared_error', optimizer='adam')
-        model.fit(trainX, trainY, epochs=100, batch_size=1, verbose=2)
+        model.compile(loss='mse', optimizer='adam')
+        history = model.fit(trainX, trainY, epochs=50, batch_size=16, validation_data=(testX, testY), verbose=2)
         trainPredict = model.predict(trainX)
         testPredict = model.predict(testX)
-        # invert predictions
         trainPredict = scaler.inverse_transform(trainPredict)
         trainY = scaler.inverse_transform([trainY])
         testPredict = scaler.inverse_transform(testPredict)
         testY = scaler.inverse_transform([testY])
+        dataset = scaler.inverse_transform(dataset)
         # calculate root mean squared error
         trainScore = np.math.sqrt(mean_squared_error(trainY[0], trainPredict[:, 0]))
         print('Train Score: %.2f RMSE' % (trainScore))
         testScore = np.math.sqrt(mean_squared_error(testY[0], testPredict[:, 0]))
         print('Test Score: %.2f RMSE' % (testScore))
 
+        trainPredictPlot = np.empty_like(dataset)
+        trainPredictPlot[:, :] = np.nan
+        trainPredictPlot[look_back:len(trainPredict) + look_back, :] = trainPredict
+        # shift test predictions for plotting
+        testPredictPlot = np.empty_like(dataset)
+        testPredictPlot[:, :] = np.nan
+        testPredictPlot[len(trainPredict) + (look_back * 2) + 1:len(dataset) - 1, :] = testPredict
+        # plot baseline and predictions
 
-    def LSTM(self, df, disease, features, begin, split, end):
-        df = df[df['year'].between(int(begin), int(end))]
-        df = df.drop(['year'], axis=1)
-        df = df.groupby(['date1', 'province_code'], as_index=False).mean()
-        df = df.groupby(['date1']).sum()
-        df = df.drop(['province_code'], axis=1)
-        columns=[disease]
-        columns=columns+features
-        df=df[columns]
-        values=df.values
-        values = values.astype('float32')
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled = scaler.fit_transform(values)
-        # frame as supervised learning
-        reframed = self.series_to_supervised(scaled, 1, 1)
-        removeColumns=[]
-        for i in range(len(reframed.columns)-1,(len(features)+1),-1):
-            print(i)
-            removeColumns.append(i)
+        dfplot['trainValues'] = trainPredictPlot
+        dfplot['testValues'] = testPredictPlot
 
-        print(removeColumns)
-        reframed.drop(reframed.columns[[removeColumns]], axis=1, inplace=True)
-        print(reframed.head())
-        values = reframed.values
-        trainSplit = (split - begin) * 12
-        train = values[:trainSplit, :]
-        test = values[trainSplit:, :]
-        print(len(train))
-        train_X, train_y = train[:, :-1], train[:, -1]
-        test_X, test_y = test[:, :-1], test[:, -1]
-        # reshape input to be 3D [samples, timesteps, features]
-        train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
-        test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
-        print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
-        model = Sequential()
-        model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-        model.add(Dense(1))
-        model.compile(loss='mae', optimizer='adam')
-        # fit network
-        history = model.fit(train_X, train_y, epochs=100, batch_size=72, validation_data=(test_X, test_y), verbose=2,
-                            shuffle=False)
-        # plot history
-        pyplot.plot(history.history['loss'], label='train')
-        pyplot.plot(history.history['val_loss'], label='test')
-        pyplot.legend()
-        pyplot.show()
-
-        # make a prediction
-        yhat = model.predict(test_X)
-        test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-        # invert scaling for forecast
-        inv_yhat = concatenate((yhat, test_X[:, 1:]), axis=1)
-        inv_yhat = scaler.inverse_transform(inv_yhat)
-        inv_yhat = inv_yhat[:, 0]
-        # invert scaling for actual
-        test_y = test_y.reshape((len(test_y), 1))
-        inv_y = concatenate((test_y, test_X[:, 1:]), axis=1)
-        inv_y = scaler.inverse_transform(inv_y)
-        inv_y = inv_y[:, 0]
-        # calculate RMSE
-        rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-        print('Test RMSE: %.3f' % rmse)
-        print(inv_y)
-        print(inv_yhat)
-
-    def lag_LSTM(self, df, disease, features, begin, split, end):
-        df = df[df['year'].between(int(begin), int(end))]
-        df = df.drop(['year'], axis=1)
-        df = df.groupby(['date1', 'province_code'], as_index=False).mean()
-        print(df)
-        df = df.groupby(['date1']).sum()
-        df = df.drop(['province_code'], axis=1)
-        columns = [disease]
-        columns = columns + features
-        df = df[columns]
-        values = df.values
-        values = values.astype('float32')
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled = scaler.fit_transform(values)
-        # frame as supervised learning
-        # specify the number of lag hours
-        n_months = 3
-        n_features = len(features)
-        print("n_features",n_features)
-        reframed = self.series_to_supervised(scaled, n_months, 1)
-        # frame as supervised learning
-
-        # split into train and test sets
-        values = reframed.values
-        n_train_month = (split-begin)*12
-        train = values[:n_train_month, :]
-        test = values[n_train_month:, :]
-        print("train shape",train.shape)
-        # split into input and outputs
-        n_obs = n_months * n_features
-        train_X, train_y = train[:, :n_obs], train[:, -n_features]
-        test_X, test_y = test[:, :n_obs], test[:, -n_features]
-        print(train_X.shape, len(train_X), train_y.shape)
-        # reshape input to be 3D [samples, timesteps, features]
-        train_X = train_X.reshape((train_X.shape[0], n_months, n_features))
-        print("train X", train_X.shape)
-        test_X = test_X.reshape((test_X.shape[0], n_months, n_features))
-        print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
-
-        # design network
-        model = Sequential()
-        model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-        model.add(Dense(1))
-        model.compile(loss='mae', optimizer='adam')
-        # fit network
-        history = model.fit(train_X, train_y, epochs=100, batch_size=72, validation_data=(test_X, test_y), verbose=2,
-                            shuffle=False)
-        # plot history
-        pyplot.plot(history.history['loss'], label='train')
-        pyplot.plot(history.history['val_loss'], label='test')
-        pyplot.legend()
-        pyplot.show()
-
-        # make a prediction
-        yhat = model.predict(test_X)
-        print(yhat)
-        test_X = test_X.reshape((test_X.shape[0], n_months * n_features))
-        # invert scaling for forecast
-        inv_yhat = concatenate((yhat, test_X[:, -1*n_features:]), axis=1)
-        inv_yhat = scaler.inverse_transform(inv_yhat)
-        inv_yhat = inv_yhat[:, 0]
-        # invert scaling for actual
-        test_y = test_y.reshape((len(test_y), 1))
-        inv_y = concatenate((test_y, test_X[:, -1*n_features:]), axis=1)
-        inv_y = scaler.inverse_transform(inv_y)
-        inv_y = inv_y[:, 0]
-        # calculate RMSE
-        rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-        print('Test RMSE: %.3f' % rmse)
-
-
-    def province_LSTM(self, df, disease, features, begin, split, end):
-        numberOfProvinces=df['province_code'].nunique()
-        df = df[df['year'].between(int(begin), int(end))]
-        df = df.drop(['year'], axis=1)
-        df = df.groupby(['date1', 'province_code']).mean()
-        columns=[disease]
-        columns=columns+features
-        df=df[columns]
-        print(df)
-        values=df.values
-        values = values.astype('float64')
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled = scaler.fit_transform(values)
-        # frame as supervised learning
-        reframed = self.series_to_supervised(scaled, 1, 1)
-        removeColumns=[]
-        for i in range(len(reframed.columns)-1,(len(features)+1),-1):
-            print(i)
-            removeColumns.append(i)
-
-        print(removeColumns)
-        reframed.drop(reframed.columns[[removeColumns]], axis=1, inplace=True)
-        print(reframed.head())
-        values = reframed.values
-        trainSplit = (split - begin) * 12 *(numberOfProvinces)
-        train = values[:trainSplit, :]
-        test = values[trainSplit:, :]
-        print(len(train))
-        train_X, train_y = train[:, :-1], train[:, -1]
-        test_X, test_y = test[:, :-1], test[:, -1]
-        # reshape input to be 3D [samples, timesteps, features]
-        train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
-        test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
-        print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
-        model = Sequential()
-        model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-        model.add(Dense(1))
-        model.compile(loss='mae', optimizer='adam')
-        # fit network
-        history = model.fit(train_X, train_y, epochs=100, batch_size=72, validation_data=(test_X, test_y), verbose=2,
-                            shuffle=False)
-        # plot history
-        pyplot.plot(history.history['loss'], label='train')
-        pyplot.plot(history.history['val_loss'], label='test')
-        pyplot.legend()
-        pyplot.show()
-
-        # make a prediction
-        yhat = model.predict(test_X)
-        test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-        # invert scaling for forecast
-        inv_yhat = concatenate((yhat, test_X[:, 1:]), axis=1)
-        inv_yhat = scaler.inverse_transform(inv_yhat)
-        inv_yhat = inv_yhat[:, 0]
-        # invert scaling for actual
-        test_y = test_y.reshape((len(test_y), 1))
-        inv_y = concatenate((test_y, test_X[:, 1:]), axis=1)
-        inv_y = scaler.inverse_transform(inv_y)
-        inv_y = inv_y[:, 0]
-        # calculate RMSE
-        rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-        print('Test RMSE: %.3f' % rmse)
-        print(inv_y)
-        print(inv_yhat)
+        return testScore, history
